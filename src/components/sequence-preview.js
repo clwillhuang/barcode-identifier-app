@@ -13,11 +13,9 @@ const SequencePreview = ({sequence}) => {
             <em>{organism}</em>
             <p>{organelle}</p>
             <pre>
-                {/* <code> */}
-                    {dna_sequence}
-                {/* </code> */}
+                {dna_sequence}
             </pre>
-            <a href={`https://www.ncbi.nlm.nih.gov/nuccore/${accession_number}`} target='_blank' referrerPolicy='no-referrer'>Visit GenBank entry</a>
+            <a href={`https://www.ncbi.nlm.nih.gov/nuccore/${accession_number}`} target='_blank' rel='noreferrer'>Visit GenBank entry</a>
             
         </ListGroupItem>
     )

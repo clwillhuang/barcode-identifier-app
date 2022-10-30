@@ -7,6 +7,9 @@ import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 import BlastDb from './pages/blastdb';
 import Run from './pages/run';
 import Blast from './pages/blast';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient()
 
 function App() {
   return (
@@ -16,9 +19,12 @@ function App() {
           <NavbarCollapse id="basic-navbar-nav">
             <Nav className='me-auto'>
               <NavbarBrand>Barcode Identifier Web App</NavbarBrand>
-              <NavItem>
-                <NavLink as={Link} to='/'>Home</NavLink>
-              </NavItem>
+                <NavItem>
+                  <NavLink as={Link} to='/'>Home</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink as={Link} to='/blast'>Run</NavLink>
+                </NavItem>
                 <NavItem>
                   <NavLink as={Link} to='/credits'>Credits</NavLink>
                 </NavItem>
@@ -26,12 +32,14 @@ function App() {
           </NavbarCollapse>
         </Container>
       </Navbar>
-      <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='database/:databaseId' element={<BlastDb/>}/>
-        <Route path='run/:runId' element={<Run/>}/>
-        <Route path='blast' element={<Blast/>}/>
-      </Routes>
+      <QueryClientProvider client={queryClient}>
+        <Routes>
+          <Route path='/' element={<Home />}/>
+          <Route path='database/:databaseId' element={<BlastDb/>}/>
+          <Route path='run/:runId' element={<Run/>}/>
+          <Route path='blast' element={<Blast/>}/>
+        </Routes>
+      </QueryClientProvider>
     </div>
   );
 }

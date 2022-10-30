@@ -1,21 +1,31 @@
-import { useEffect, useState } from 'react';
 import { ListGroup } from 'react-bootstrap';
+import { useQuery } from 'react-query';
 import BlastDbPreview from '../components/blastdb-preview';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 
 function Home() {
 
-  let [data, setData] = useState([])
-
-  useEffect(() => {
+  const { isLoading, error, data } = useQuery(['home_databases'], () => 
     fetch(`${urlRoot}/blastdbs/`)
     .then((response) => response.json())
-    .then((data) => {
-      setData(data)
-    } )
-    .catch((e) => console.log(e))
-  }, [])
+  )
+
+  if (isLoading) return (
+    <Wrapper>
+      <div>
+        <p>Retrieving data ...</p>
+      </div>
+    </Wrapper>
+  )
+
+  if (error) return (
+    <Wrapper>
+      <div>
+        <b>Encountered an error fetching databases. Please try again.</b>
+      </div>
+    </Wrapper>
+  )
 
   return (
     <Wrapper>
@@ -24,7 +34,7 @@ function Home() {
         <p>Found {data.length} blast database(s) to run.</p>
       </div>
       <ListGroup>
-        {data.map(db => <BlastDbPreview database={db}></BlastDbPreview>)}
+        {data.map(db => <BlastDbPreview database={db} key={db.id}></BlastDbPreview>)}
       </ListGroup>
     </Wrapper>
   );
