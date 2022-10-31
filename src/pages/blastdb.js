@@ -1,8 +1,8 @@
 import React from 'react'
-import { Breadcrumb, BreadcrumbItem, Button, ListGroup } from 'react-bootstrap';
+import { Breadcrumb, BreadcrumbItem, Button } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
-import SequencePreview from '../components/sequence-preview';
+import DbTable from '../components/db-table';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 
@@ -14,7 +14,7 @@ const BlastDb = () => {
         fetch(`${urlRoot}/blastdbs/${databaseId}`)
         .then((response) => response.json())
     )
-    
+
     if (isLoading) return (
         <Wrapper>
           <div>
@@ -42,9 +42,7 @@ const BlastDb = () => {
                 <Button variant='primary' className='align-middle my-4'>
                     <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
                 </Button>
-                <ListGroup as='ol'>
-                    {data.sequences.map(sequence => <SequencePreview sequence={sequence}/>)}
-                </ListGroup>
+                <DbTable data={data.sequences}></DbTable>
             </div>
         </Wrapper>
     )
