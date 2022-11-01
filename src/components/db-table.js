@@ -2,6 +2,7 @@ import React from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
+import { useQuery } from 'react-query'
 
 // TODO: implement pagination according to this example: https://react-table-v7.tanstack.com/docs/examples/pagination
 const DbTable = ({ data }) => {
@@ -32,6 +33,25 @@ const DbTable = ({ data }) => {
         []
     )
 
+    // const accession_numbers = data.map(x => x.accession_number).join(',')
+    
+    // const genBankUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=${accession_numbers}&rettype=gb&retmode=xml`
+    // const { isLoading, error, data: genBankData } = useQuery([`genbank_fetch`], () =>
+    //     fetch(genBankUrl)
+    //         .then((response) => response),
+    //     {
+    //         retry: false,
+    //         staleTime: Infinity,
+    //         retryDelay: attempt => attempt * 10000 ,
+    //         refetchOnMount: false,
+    //         refetchOnWindowFocus: false,
+    //     }
+    // )
+
+    // if (!isLoading && !error) {
+    //     console.log(genBankData)
+    // }
+
     const { getTableProps,
         getTableBodyProps,
         headerGroups,
@@ -54,7 +74,7 @@ const DbTable = ({ data }) => {
     return (
         <React.Fragment>
             <TablePagination {...{previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize}}/>
-            <Table striped bordered hover {...getTableProps()} >
+            <Table striped bordered hover responsive {...getTableProps()} >
                 <thead>
                     {
                         headerGroups.map(headerGroup => (
@@ -84,24 +104,22 @@ const DbTable = ({ data }) => {
                             prepareRow(row)
                             return (
                                 <tr {...row.getRowProps()}>
-                                    {
-                                        row.cells.map(cell => {
-                                            if (cell.column.id === 'accession_number')
-                                                return (
-                                                    // TODO: Add external link icon
-                                                    <td {...cell.getCellProps()}>
-                                                        <a href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
-                                                            <code>{cell.value}</code>
-                                                        </a>
-                                                    </td>
-                                                )
+                                    {row.cells.map(cell => {
+                                        if (cell.column.id === 'accession_number')
                                             return (
+                                                // TODO: Add external link icon
                                                 <td {...cell.getCellProps()}>
-                                                    {cell.render('Cell')}
+                                                    <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
+                                                        <code>{cell.value}</code>
+                                                    </a>
                                                 </td>
-                                            )
-                                        })
-                                    }
+                                            );
+                                        return (
+                                            <td {...cell.getCellProps()}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        );
+                                    })}
                                 </tr>
                             )
                         })
@@ -114,5 +132,6 @@ const DbTable = ({ data }) => {
 }
 
 export default DbTable;
+
 
 

@@ -42,14 +42,14 @@ const Run = () => {
                 <BreadcrumbItem active>Run results</BreadcrumbItem>
             </Breadcrumb>
             <div>
-                <h1>Blast Run Viewer</h1>
-                <h3>Run Parameters</h3>
+                <h1>blastn Results</h1>
+                <h3>Parameters</h3>
                 <p>Job name: <pre>{run.job_name}</pre></p>
                 <p>Database used: <pre><Link to={`/database/${run.db_used.id}`}>{run.db_used.custom_name}</Link></pre></p>
                 <p>Unique Run Identifier: <pre>{runId}</pre></p>
                 <p>Query sequence:
                 <pre>{run.query_sequence}</pre></p>
-                <h3>Run Results</h3>
+                <h3>Hits</h3>
                 <RunTable data={run.hits} />
             </div>
             <ButtonGroup>

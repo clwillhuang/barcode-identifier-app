@@ -14,7 +14,7 @@ const queryClient = new QueryClient()
 function App() {
 	return (
 		<div>
-			<Navbar expand='md'>
+			<Navbar bg='dark' variant='dark' expand='md'>
 				<Container>
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav className='me-auto'>

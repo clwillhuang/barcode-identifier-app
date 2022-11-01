@@ -78,7 +78,7 @@ const RunTable = ({ data }) => {
         <React.Fragment>
             <p>BLAST run returned <strong>{data.length}</strong> hits</p>
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
-            <Table striped bordered hover {...getTableProps()} >
+            <Table striped bordered hover responsive {...getTableProps()} >
                 <thead>
                     {
                         headerGroups.map(headerGroup => (
@@ -109,18 +109,27 @@ const RunTable = ({ data }) => {
                                 <tr {...row.getRowProps()}>
                                     {
                                         row.cells.map(cell => {
-                                            if (cell.column.id === 'evalue' || cell.column.id === 'bit_score')
+                                            if (cell.column.id === 'evalue' || cell.column.id === 'bit_score') {
                                                 return (
                                                     <td {...cell.getCellProps()}>
                                                         {Number(cell.value)}
                                                     </td>
                                                 )
-                                            return (
-                                                <td {...cell.getCellProps()}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        })
+                                                } else if (cell.column.id === 'subject_accession_version') {
+                                                    // TODO: Add external link icon
+                                                    return(<td {...cell.getCellProps()}>
+                                                        <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
+                                                            <code>{cell.value}</code>
+                                                        </a>
+                                                    </td>)
+                                                } else 
+                                                return (
+                                                    <td {...cell.getCellProps()}>
+                                                        {cell.render('Cell')}
+                                                    </td>
+                                                )
+                                            }
+                                        )
                                     }
                                 </tr>
                             )

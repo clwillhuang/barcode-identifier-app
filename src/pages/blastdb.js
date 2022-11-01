@@ -39,6 +39,10 @@ const BlastDb = () => {
             </Breadcrumb>
             <div>
                 <h1>{data.custom_name}</h1>
+                <strong>Total sequence count</strong>
+                <p>{data.sequences.length}</p>
+                <strong>Description</strong>
+                <p>TODO: Add some description text here.</p>
                 <Button variant='primary' className='align-middle my-4'>
                     <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
                 </Button>
