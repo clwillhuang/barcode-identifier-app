@@ -95,7 +95,7 @@ function Blast() {
                 </FormGroup>
                 <FormGroup>
                     <FormLabel htmlFor='querySequence'>Query Sequence</FormLabel>
-                    <FormControl id='querySequence' name='querySequence' as='textarea' rows={5} onChange={handleChange}></FormControl>
+                    <FormControl id='querySequence' name='querySequence' as='textarea' rows={5} onChange={handleChange} placeholder='Paste sequence as single line by itself, without comments, definitions and headers.'></FormControl>
                 </FormGroup>
                 <Button type='submit' className='my-3'>Submit Query</Button>
             </Form>
