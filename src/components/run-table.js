@@ -3,8 +3,8 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
-import { useQuery } from 'react-query';
-import { urlRoot } from '../url';
+// import { useQuery } from 'react-query';
+// import { urlRoot } from '../url';
 
 const RunTable = ({ initialData }) => {
 
@@ -16,19 +16,19 @@ const RunTable = ({ initialData }) => {
             },
             {
                 Header: 'Organism',
-                accessor: 'organism',
+                accessor: 'db_entry.organism',
             },
             {
                 Header: 'Country',
-                accessor: 'country',
+                accessor: 'db_entry.country',
             },
             {
                 Header: 'Type',
-                accessor: 'type',
+                accessor: 'db_entry.type',
             },
             {
                 Header: 'Isolate',
-                accessor: 'isolate',
+                accessor: 'db_entry.isolate',
             },
             {
                 Header: 'Percent Identity',
@@ -100,32 +100,32 @@ const RunTable = ({ initialData }) => {
             },
             useSortBy, usePagination)
 
-    // fetch organism data
-    const entries_visible = page.map(row => row.original.subject_accession_version)
-    const url = `${urlRoot}/nuccores/${entries_visible.join(',')}`
-    const { isLoading, error } = useQuery([`results_row_accessions`], () =>
-        fetch(url)
-        .then((response) => response.json())
-        .then((newData) => {
-            setTableData(tableData.map(
-                (row, index) => {
-                    // update the current table's data by adding the fields present in the fetched data
-                    let match = newData.find(x => x.accession_number === row.subject_accession_version)
-                    let updatedFields = (({country, organism, isolate}) => ({country, organism, isolate}))(match)
-                    return { ... row, ...updatedFields }
-                } 
-            ))
-        })
-        .catch((e) => console.log(e)),
-    )
+    // optional: fetch organism data from a separate url
+    // const entries_visible = page.map(row => row.original.subject_accession_version)
+    // const url = `${urlRoot}/nuccores/${entries_visible.join(',')}`
+    // const { isLoading, error } = useQuery([`results_row_accessions`], () =>
+    //     fetch(url)
+    //     .then((response) => response.json())
+    //     .then((newData) => {
+    //         setTableData(tableData.map(
+    //             (row, index) => {
+    //                 // update the current table's data by adding the fields present in the fetched data
+    //                 let match = newData.find(x => x.accession_number === row.subject_accession_version)
+    //                 let updatedFields = (({country, organism, isolate}) => ({country, organism, isolate}))(match)
+    //                 return { ... row, ...updatedFields }
+    //             } 
+    //         ))
+    //     })
+    //     .catch((e) => console.log(e)),
+    // )
 
-    if (isLoading) {
-        return(<p>Loading table data ...</p>)
-    }
+    // if (isLoading) {
+    //     return(<p>Loading table data ...</p>)
+    // }
 
-    if (error) {
-        return(<p>Error loading table data ...</p>)
-    }
+    // if (error) {
+    //     return(<p>Error loading table data ...</p>)
+    // }
 
     return (
         <React.Fragment>

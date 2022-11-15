@@ -42,6 +42,30 @@ const RunStatus = () => {
         }
     )
 
+    
+
+    if (isLoading) return (
+        <Wrapper>
+            <div>
+                <p>Retrieving run status ...</p>
+            </div>
+        </Wrapper>
+    )
+
+    if (error) return (
+        <Wrapper>
+            <div>
+                <b>Encountered an error fetching databases. Please try again.</b>
+            </div>
+        </Wrapper>
+    )
+
+    const started = status.job_status === STARTED_STATUS
+    const queued = status.job_status === QUEUED_STATUS
+    const denied = status.job_status === DENIED_STATUS
+    const resolved = status.job_status === ERRORED_STATUS || status.job_status === FINISHED_STATUS 
+    const lastFetchDate = isError ? new Date(errorUpdatedAt) : isSuccess ? new Date(dataUpdatedAt) : null
+
     const getStatus = (status_string) => {
         if (status_string === DENIED_STATUS) {
             return(
@@ -53,22 +77,22 @@ const RunStatus = () => {
             return(
                 <p className='d-inline-flex align-items-center text-dark'>
                     ({status_string}) The job is currently queued for processing.
-                    <Spinner animation="border" role="status"></Spinner>
+                    <Spinner className='mx-2' animation="border" role="status"></Spinner>
                 </p>
             )
         } else if (status_string === STARTED_STATUS) {
             return(
                 <p className='d-inline-flex align-items-center text-warning'>
-                    ({status_string}) The job has passed through the queue and is currently being processed. 
-                    <Spinner animation="border" role="status"></Spinner>
+                    ({status_string}) The job has passed through the queue and is currently being processed.
+                    <Spinner className='mx-2' animation="border" role="status"></Spinner>
                 </p>
             )
         } else if (status_string === FINISHED_STATUS) {
             return(
                 <div>
                     <p className='d-inline-flex align-items-center text-success'>
-                        ({status_string}) The job has completed processing. You will be redirected shortly. 
-                        <Spinner animation="border" role="status"></Spinner>
+                        ({status_string}) The job has completed processing. You will be redirected shortly.
+                        <Spinner className='mx-2' animation="border" role="status"></Spinner>
                     </p>
                 </div>
             )
@@ -106,28 +130,6 @@ const RunStatus = () => {
         }
     }
 
-    if (isLoading) return (
-        <Wrapper>
-            <div>
-                <p>Retrieving run status ...</p>
-            </div>
-        </Wrapper>
-    )
-
-    if (error) return (
-        <Wrapper>
-            <div>
-                <b>Encountered an error fetching databases. Please try again.</b>
-            </div>
-        </Wrapper>
-    )
-
-    const started = status.job_status === STARTED_STATUS
-    const queued = status.job_status === QUEUED_STATUS
-    const denied = status.job_status === DENIED_STATUS
-    const resolved = status.job_status === ERRORED_STATUS || status.job_status === FINISHED_STATUS 
-    const lastFetchDate = isError ? new Date(errorUpdatedAt) : isSuccess ? new Date(dataUpdatedAt) : null
-
     if (!willRedirect && resolved) {
         setTimeout(redirect, 5000)
         setRedirect(true)
@@ -142,23 +144,23 @@ const RunStatus = () => {
             </Breadcrumb>
             <div>
                 <h1>Run status update</h1>
-                <strong>Status</strong>
-                {getStatus(status.job_status)}
+                <h3>Status</h3>
+                <p>{getStatus(status.job_status)}</p>
                 <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
                 <strong>Job name</strong><pre>{status.job_name}</pre>
                 <strong>Run Identifier</strong><pre>{runId}</pre>
 
                 <Accordion>
-                    <Accordion.Item>
-                    <Accordion.Header>View server log</Accordion.Header>
-                    <Accordion.Body>
-                        <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(status.runtime))} ({getTimeSince(new Date(status.runtime))})</p>
-                        {status.job_start_time &&
-                            <p>The server began running this job at {dateFormatter.format(Date.parse(status.job_start_time))} ({getTimeSince(new Date(status.job_start_time))})</p>}
-                        {status.job_end_time &&
-                            <p>The server completed running this job at {dateFormatter.format(Date.parse(status.job_end_time))} ({getTimeSince(new Date(status.job_end_time))})</p>}
-                        <p></p>
-                    </Accordion.Body>
+                    <Accordion.Item eventKey='0'>
+                        <Accordion.Header>View server log</Accordion.Header>
+                        <Accordion.Body>
+                            <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(status.runtime))} ({getTimeSince(new Date(status.runtime))})</p>
+                            {status.job_start_time &&
+                                <p>The server began running this job at {dateFormatter.format(Date.parse(status.job_start_time))} ({getTimeSince(new Date(status.job_start_time))})</p>}
+                            {status.job_end_time &&
+                                <p>The server completed running this job at {dateFormatter.format(Date.parse(status.job_end_time))} ({getTimeSince(new Date(status.job_end_time))})</p>}
+                            <p></p>
+                        </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
             </div>
