@@ -8,6 +8,7 @@ import BlastDb from './pages/blastdb';
 import Run from './pages/run';
 import Blast from './pages/blast';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import RunStatus from './pages/run-status';
 
 const queryClient = new QueryClient()
 
@@ -34,10 +35,11 @@ function App() {
 			</Navbar>
 			<QueryClientProvider client={queryClient}>
 				<Routes>
-					<Route path='/' element={<Home />} />
-					<Route path='database/:databaseId' element={<BlastDb />} />
-					<Route path='run/:runId' element={<Run />} />
-					<Route path='blast' element={<Blast />} />
+					<Route path='/' element={<Home/>} />
+					<Route path='database/:databaseId' element={<BlastDb/>} />
+					<Route path='run/:runId/status' element={<RunStatus/>}/>
+					<Route path='run/:runId/results' element={<Run/>} />
+					<Route path='blast' element={<Blast/>} />
 				</Routes>
 			</QueryClientProvider>
 		</div>

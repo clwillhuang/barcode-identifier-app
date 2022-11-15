@@ -50,7 +50,7 @@ const Run = () => {
                 <p>Query sequence:
                 <pre>{run.query_sequence}</pre></p>
                 <h3>Hits</h3>
-                <RunTable data={run.hits} />
+                <RunTable initialData={run.hits} />               
             </div>
             <ButtonGroup>
                 <Button variant='primary' className='align-middle my-4'>

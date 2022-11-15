@@ -2,14 +2,33 @@ import React from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
+import MakeRow from './run-table-row';
+import { useQuery } from 'react-query';
+import { urlRoot } from '../url';
 
-const RunTable = ({ data }) => {
+const RunTable = ({ initialData }) => {
 
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Accession Version',
+                Header: 'Accession Number',
                 accessor: 'subject_accession_version'
+            },
+            {
+                Header: 'Organism',
+                accessor: 'organism',
+            },
+            {
+                Header: 'Country',
+                accessor: 'country',
+            },
+            {
+                Header: 'Type',
+                accessor: 'type',
+            },
+            {
+                Header: 'Isolate',
+                accessor: 'isolate',
             },
             {
                 Header: 'Percent Identity',
@@ -55,6 +74,13 @@ const RunTable = ({ data }) => {
         []
     )
 
+    // current data in the table
+    const [tableData, setTableData] = React.useState(
+        () => initialData.map(row => {
+            return { ...row }
+        }))
+
+
     const { getTableProps,
         getTableBodyProps,
         headerGroups,
@@ -69,14 +95,41 @@ const RunTable = ({ data }) => {
         state: { pageIndex, pageSize } } = useTable(
             {
                 columns,
-                data,
+                data: tableData,
                 initialState: { pageIndex: 0, pageSize: 50 },
             },
             useSortBy, usePagination)
 
+    // fetch organism data
+    const entries_visible = page.map(row => row.original.subject_accession_version)
+    const url = `${urlRoot}/nuccores/${entries_visible.join(',')}`
+    const { isLoading, error } = useQuery([`results_row_accessions`], () =>
+        fetch(url)
+        .then((response) => response.json())
+        .then((newData) => {
+            setTableData(tableData.map(
+                (row, index) => {
+                    // update the current table's data by adding the fields present in the fetched data
+                    let match = newData.find(x => x.accession_number === row.subject_accession_version)
+                    let updatedFields = (({country, organism, isolate}) => ({country, organism, isolate}))(match)
+                    return { ... row, ...updatedFields }
+                } 
+            ))
+        })
+        .catch((e) => console.log(e)),
+    )
+
+    if (isLoading) {
+        return(<p>Loading table data ...</p>)
+    }
+
+    if (error) {
+        return(<p>Error loading table data ...</p>)
+    }
+
     return (
         <React.Fragment>
-            <p>BLAST run returned <strong>{data.length}</strong> hits</p>
+            <p>BLAST run returned <strong>{tableData.length}</strong> hits</p>
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <Table striped bordered hover responsive {...getTableProps()} >
                 <thead>
@@ -106,32 +159,7 @@ const RunTable = ({ data }) => {
                         page.map((row, i) => {
                             prepareRow(row)
                             return (
-                                <tr {...row.getRowProps()}>
-                                    {
-                                        row.cells.map(cell => {
-                                            if (cell.column.id === 'evalue' || cell.column.id === 'bit_score') {
-                                                return (
-                                                    <td {...cell.getCellProps()}>
-                                                        {Number(cell.value)}
-                                                    </td>
-                                                )
-                                                } else if (cell.column.id === 'subject_accession_version') {
-                                                    // TODO: Add external link icon
-                                                    return(<td {...cell.getCellProps()}>
-                                                        <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
-                                                            <code>{cell.value}</code>
-                                                        </a>
-                                                    </td>)
-                                                } else 
-                                                return (
-                                                    <td {...cell.getCellProps()}>
-                                                        {cell.render('Cell')}
-                                                    </td>
-                                                )
-                                            }
-                                        )
-                                    }
-                                </tr>
+                                <MakeRow key={`row${i}`} row={row}/>
                             )
                         })
                     }

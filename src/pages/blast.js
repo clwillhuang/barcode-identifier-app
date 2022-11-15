@@ -60,7 +60,7 @@ function Blast() {
         fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: JSON.stringify(postBody)})
         .then((response) => response.json())
         .then((data) => {
-            navigate(`/run/${data.id}`)
+            navigate(`/run/${data.id}/status`)
         })
         .catch((e) => console.log(e))
     }
