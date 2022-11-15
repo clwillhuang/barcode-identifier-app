@@ -2,7 +2,7 @@ import React from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
-import { useQuery } from 'react-query'
+// import { useQuery } from 'react-query'
 
 // TODO: implement pagination according to this example: https://react-table-v7.tanstack.com/docs/examples/pagination
 const DbTable = ({ data }) => {
