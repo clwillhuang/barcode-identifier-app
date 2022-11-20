@@ -1,6 +1,6 @@
 import React from 'react'
 import RunTable from '../components/run-table';
-import { Accordion, Breadcrumb, BreadcrumbItem, Button, ButtonGroup } from 'react-bootstrap';
+import { Accordion, Breadcrumb, BreadcrumbItem, Button, ButtonGroup, Col, Container, Row } from 'react-bootstrap';
 
 import { useParams, Link } from 'react-router-dom'
 import Wrapper from '../components/wrapper';
@@ -16,6 +16,34 @@ const Run = () => {
         hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short',
         hour12: false,
     })
+
+    const downloadFile = (format) => {
+        if (typeof window === 'undefined') {
+            console.error('Cannot download CSV file with window undefined.')
+            return 
+        } else if (!(['txt', 'csv'].includes(format))) {
+            console.error(`Format .${format} is not available for export.`)
+            return
+        }
+
+        fetch(`${urlRoot}/runs/${runId}/download?format=${format}`)
+            .then((response) => response.blob())
+            .then((blob) => {
+                const url = window.URL.createObjectURL(
+                    new Blob([blob])
+                )
+                console.log(blob)
+                const link = document.createElement('a', )
+                link.href = url 
+                link.setAttribute('download', `results.${format}`) 
+                document.body.appendChild(link)
+                link.click()
+                link.parentNode.removeChild(link)
+                console.log(`Finished downloading ${format}`)
+            })
+        
+    }
+
     // TODO: Handle bad requests / responses
     const { isLoading, error, data: run } = useQuery([`blast_run_${runId}`], () =>
         fetch(`${urlRoot}/runs/${runId}`)
@@ -47,6 +75,23 @@ const Run = () => {
             </Breadcrumb>
             <div>
                 <h1>blastn Results</h1>
+                <Container className='g-0'>
+                    <Row className='d-flex align-items-center pb-3'>
+                        <Col className='col-auto'>
+                            <span className='d-block' style={{width: 'fit-content'}}>Download as</span>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('csv')}>
+                                .csv
+                            </Button>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('txt')}>
+                                .txt
+                            </Button>
+                        </Col>
+                    </Row>
+                </Container>
                 <h3>Parameters</h3>
                 <strong>Job name</strong>
                 <pre>{run.job_name}</pre>
@@ -59,6 +104,20 @@ const Run = () => {
                 <h3>Hits</h3>
                 <RunTable initialData={run.hits} />               
             </div>
+            <Container className='g-0'>
+                <Row className='py-3'>
+                    <Col className='col-auto'>
+                        <Button variant='primary' className='align-middle my-1'>
+                            <Link to={`/blast/`} className='text-white text-decoration-none'>Run new query</Link>
+                        </Button>
+                    </Col>
+                    <Col className='col-auto'>
+                        <Button variant='secondary' className='align-middle my-1'>
+                            <Link to={`/blast/?database=${run.db_used.id}`} className='text-white text-decoration-none'>Run new query with same database</Link>
+                        </Button>
+                    </Col>
+                </Row>
+            </Container>
             <Accordion>
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>View server log</Accordion.Header>
@@ -72,14 +131,6 @@ const Run = () => {
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
-            <ButtonGroup>
-                <Button variant='primary' className='align-middle my-4'>
-                    <Link to={`/blast/`} className='text-white text-decoration-none'>Run new query</Link>
-                </Button>
-                <Button variant='secondary' className='align-middle my-4'>
-                    <Link to={`/blast/?database=${run.db_used.id}`} className='text-white text-decoration-none'>Run new query with same database</Link>
-                </Button>
-            </ButtonGroup>
 
 
         </Wrapper>

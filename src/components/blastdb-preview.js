@@ -10,16 +10,14 @@ const BlastDbPreview = ({ database }) => {
     return (
         <ListGroupItem className="d-flex flex-column justify-content-between align-items-start">
 
-            <a href={`/database/${id}`}>
-                <h3>{custom_name}</h3>
-            </a>
+            <h3>{custom_name}</h3>
             <p>Contains {sequences.length} nucleotide sequences</p>
 
             <div className='d-inline'>
                 <Button variant='primary' className='align-middle'>
                     <Link to={`/blast/?database=${database.id}`} className='text-white text-decoration-none'>Run a Query</Link>
                 </Button>
-                <Link to={`database/${id}`} className='mx-4 align-middle'>Browse sequences</Link>
+                <Link to={`database/${id}`} className='mx-4 align-middle'>Browse entries</Link>
             </div>
 
         </ListGroupItem>
