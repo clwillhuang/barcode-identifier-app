@@ -29,6 +29,10 @@ const DbTable = ({ data }) => {
                 Header: 'Country',
                 accessor: 'country'
             },
+            {
+                Header: 'Latitude / Longitude',
+                accessor: 'lat_lon'
+            }
         ],
         []
     )

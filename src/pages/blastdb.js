@@ -87,13 +87,11 @@ const BlastDb = () => {
                     </Row>
                 </Container>
 
-                <h3>Details</h3>
-                <strong>Total sequence count</strong>
-                <p>{data.sequences.length}</p>
-                <strong>Description</strong>
-                <p>TODO: Add some description text here.</p>
+                <h3>Description</h3>
+                <p>{data.description}</p>
                 
                 <h3>Database entries</h3>
+                <p className='text-muted'>This database contains {data.sequences.length} entries.</p>
                 <DbTable data={data.sequences}></DbTable>
                 <h3>Export</h3>
                 <Container className='g-0'>
