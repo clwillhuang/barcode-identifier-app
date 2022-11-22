@@ -11,6 +11,10 @@ const RunTable = ({ initialData }) => {
     const columns = React.useMemo(
         () => [
             {
+                Header: 'Query Definition',
+                accessor: 'query_accession_version'
+            },
+            {
                 Header: 'Accession Number',
                 accessor: 'subject_accession_version'
             },

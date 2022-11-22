@@ -14,6 +14,7 @@ function Blast() {
         jobName: '',
         databaseSelect: searchParams.get('database'),
         querySequence: '',
+        queryFile: undefined,
     })
 
     let defaultSelected = searchParams.get('database') 
@@ -40,29 +41,35 @@ function Blast() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        console.log(fields)
 
-        if (fields.querySequence.length < 4)
+        if (typeof window === 'undefined' || typeof window === 'undefined') {
             return
-
-        let postBody = {
-            'query_sequence': fields.querySequence,
-            'id': fields.databaseSelect,
-            'job_name': fields.jobName
-        }
-        let postHeaders = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
         }
 
-        // TODO: Handle bad requests / responses
-        let url = `${urlRoot}/blastdbs/${fields.databaseSelect}/run/`
-        fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: JSON.stringify(postBody)})
-        .then((response) => response.json())
-        .then((data) => {
-            navigate(`/run/${data.id}/status`)
-        })
-        .catch((e) => console.log(e))
+        // TODO: Show an error if there is both a file upload AND a raw text sequence present
+        // if (fields.querySequence.length < 4)
+        //     return
+
+        if (true) {
+            const form_info = document.getElementById('blastForm')
+            const formData = new FormData(form_info)
+            let url = `${urlRoot}/blastdbs/${fields.databaseSelect}/run/`
+
+            let postHeaders = {
+                'Accept': 'application/json',
+            }
+
+            fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: formData})
+                .then((response) => response.json())
+                .then((data) => {
+                    navigate(`/run/${data.id}/status`)
+                })
+                .catch((e) => console.log(e))
+        } 
+    }
+
+    const onFileChange = (event) => {
+        setFields({...fields, 'queryFile': event.target.files[0]})
     }
 
     if (isLoading) return(
@@ -82,20 +89,23 @@ function Blast() {
     return (
         <Wrapper>
             <h2>Submit BLAST Query</h2>
-            <Form onSubmit={handleSubmit}>
+            <Form id='blastForm' onSubmit={handleSubmit}>
                 <FormGroup>
                     <FormLabel htmlFor='jobName'>Job Name (Optional)</FormLabel>
-                    <FormControl id='jobName' name='jobName' as='input' placeholder='Name this query to remind yourself what this query was.' onChange={handleChange}></FormControl>
+                    <FormControl id='jobName' name='job_name' as='input' placeholder='Name this query to remind yourself what this query was.' onChange={handleChange}></FormControl>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel htmlFor='databaseSelect'>Blast Database</FormLabel>
-                    <FormSelect aria-label='Select database to query on' name='databaseSelect' id='databaseSelect' defaultValue={defaultSelected} onChange={handleChange}>
+                    <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={defaultSelected} onChange={handleChange}>
                         {dbs.map(db => <option value={db.id} key={db.id}>{db.custom_name}</option>)}
                     </FormSelect>
                 </FormGroup>
-                <FormGroup>
-                    <FormLabel htmlFor='querySequence'>Query Sequence</FormLabel>
-                    <FormControl id='querySequence' name='querySequence' as='textarea' rows={5} onChange={handleChange} placeholder='Paste sequence as single line by itself, without comments, definitions and headers.'></FormControl>
+                <FormGroup className='mt-3'>
+                    <FormLabel htmlFor='queryFile'>Upload sequence .fasta file</FormLabel>
+                    <FormControl id='queryFile' name='query_file' type='file' onChange={onFileChange}></FormControl>
+                    <p className='my-1'>OR</p>
+                    <FormLabel htmlFor='querySequence'>Paste raw sequence text</FormLabel>
+                    <FormControl id='querySequence' name='query_sequence' as='textarea' rows={5} onChange={handleChange} placeholder='Paste sequence as single line by itself, without comments, definitions and headers.'></FormControl>
                 </FormGroup>
                 <Button type='submit' className='my-3'>Submit Query</Button>
             </Form>

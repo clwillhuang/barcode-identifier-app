@@ -1,6 +1,6 @@
 import React from 'react'
 import RunTable from '../components/run-table';
-import { Accordion, Breadcrumb, BreadcrumbItem, Button, ButtonGroup, Col, Container, Row } from 'react-bootstrap';
+import { Accordion, Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-bootstrap';
 
 import { useParams, Link } from 'react-router-dom'
 import Wrapper from '../components/wrapper';
@@ -32,14 +32,12 @@ const Run = () => {
                 const url = window.URL.createObjectURL(
                     new Blob([blob])
                 )
-                console.log(blob)
                 const link = document.createElement('a', )
                 link.href = url 
                 link.setAttribute('download', `results.${format}`) 
                 document.body.appendChild(link)
                 link.click()
                 link.parentNode.removeChild(link)
-                console.log(`Finished downloading ${format}`)
             })
         
     }
@@ -99,8 +97,8 @@ const Run = () => {
                 <pre><Link to={`/database/${run.db_used.id}`}>{run.db_used.custom_name}</Link></pre>
                 <strong>Unique Run Identifier</strong>
                 <pre>{runId}</pre>
-                <strong>Query sequence</strong>
-                <pre>{run.query_sequence}</pre>
+                <strong>{'Query sequence(s)'}</strong>
+                <pre>{run.queries.map(query => query.definition).join(', ')}</pre>
                 <h3>Hits</h3>
                 <RunTable initialData={run.hits} />               
             </div>
