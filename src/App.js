@@ -9,12 +9,17 @@ import Run from './pages/run';
 import Blast from './pages/blast';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import RunStatus from './pages/run-status';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const queryClient = new QueryClient()
 
 function App() {
 	return (
-		<div>
+		<HelmetProvider>
+			{/* TODO: Remove noindex on production, and uninstall react-helmet-async if no longer required */}
+			<Helmet>
+				<meta name="robots" content="noindex, nofollow" />
+			</Helmet>
 			<Navbar bg='dark' variant='dark' expand='md'>
 				<Container>
 					<NavbarCollapse id="basic-navbar-nav">
@@ -42,7 +47,7 @@ function App() {
 					<Route path='blast' element={<Blast/>} />
 				</Routes>
 			</QueryClientProvider>
-		</div>
+		</HelmetProvider>
 	);
 }
 
