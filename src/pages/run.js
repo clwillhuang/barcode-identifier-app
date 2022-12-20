@@ -45,7 +45,10 @@ const Run = () => {
     // TODO: Handle bad requests / responses
     const { isLoading, error, data: run } = useQuery([`blast_run_${runId}`], () =>
         fetch(`${urlRoot}/runs/${runId}`)
-            .then((response) => response.json())
+            .then((response) => response.json()),
+        {
+            refetchInterval: false,
+        }
     )
 
     if (isLoading) return (

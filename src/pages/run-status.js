@@ -12,7 +12,7 @@ const RunStatus = () => {
     const [willRedirect, setRedirect] = React.useState(false)
 
     const { runId } = useParams();
-    const DEFAULT_REFETCH_INTERVAL = 1000
+    const DEFAULT_REFETCH_INTERVAL = 5000
     const DENIED_STATUS = 'DEN'
     const QUEUED_STATUS = 'QUE'
     const FINISHED_STATUS = 'FIN'

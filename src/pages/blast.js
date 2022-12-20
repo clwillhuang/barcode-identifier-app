@@ -31,7 +31,8 @@ function Blast() {
         {
             onSuccess: (data) => {
                 setDefault(data[0].id)
-            }
+            },
+            refetchInterval: false,
         }
     )
 

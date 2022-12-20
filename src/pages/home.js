@@ -8,7 +8,10 @@ function Home() {
 
 	const { isLoading, error, data } = useQuery(['home_databases'], () =>
 		fetch(`${urlRoot}/blastdbs/`)
-			.then((response) => response.json())
+			.then((response) => response.json()),
+		{
+			refetchInterval: false,
+		}
 	)
 
 	if (isLoading) return (
