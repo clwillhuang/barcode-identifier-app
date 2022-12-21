@@ -2,13 +2,14 @@ import { useCallback, useState } from 'react';
 import { Button, Form, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 
 function Blast() {
 
     let navigate = useNavigate()
-    let [searchParams, setSearchParams] = useSearchParams()
+    let [searchParams] = useSearchParams()
 
     const [fields, setFields] = useState({
         jobName: '',
@@ -24,15 +25,15 @@ function Blast() {
         if (!fields.databaseSelect) setFields({...fields, databaseSelect: defaultDb})
     }, [fields])
 
-    // TODO: handle error fetches
-    const { isLoading, error, data: dbs } = useQuery(['blast_database_options'], () => 
+    const { isLoading, error, data: dbs, isError } = useQuery(['blast_database_options'], () => 
         fetch(`${urlRoot}/blastdbs/`)
-        .then((response) => response.json()),
+        .then(handleResponse()),
         {
             onSuccess: (data) => {
                 setDefault(data[0].id)
             },
             refetchInterval: false,
+            retry: false,
         }
     )
 
@@ -75,21 +76,21 @@ function Blast() {
 
     if (isLoading) return(
         <Wrapper>
-            <h2>Submit BLAST Query</h2>
+            <h2>Submit BLAST Run</h2>
             <p>Loading form data ...</p>
         </Wrapper>
     )
 
-    if (error) return(
+    if (isError) return(
         <Wrapper>
-            <h2>Submit BLAST Query</h2>
-            <b>Error: failed to fetch form</b>
+            <h2>Submit BLAST Run</h2>
+            <ErrorMessage error={error}/>
         </Wrapper>
     )
 
     return (
         <Wrapper>
-            <h2>Submit BLAST Query</h2>
+            <h2>Submit BLAST Run</h2>
             <Form id='blastForm' onSubmit={handleSubmit}>
                 <FormGroup>
                     <FormLabel htmlFor='jobName'>Job Name (Optional)</FormLabel>

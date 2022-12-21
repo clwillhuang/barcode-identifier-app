@@ -7,6 +7,7 @@ import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 import { useQuery } from 'react-query'
 import './run.css'
+import { ErrorMessage, handleResponse } from '../components/error-message';
 
 const Run = () => {
 
@@ -42,12 +43,12 @@ const Run = () => {
         
     }
 
-    // TODO: Handle bad requests / responses
-    const { isLoading, error, data: run } = useQuery([`blast_run_${runId}`], () =>
+    const { isLoading, error, data: run, isError, isSuccess, errorUpdatedAt, dataUpdatedAt } = useQuery([`blast_run_${runId}`], () =>
         fetch(`${urlRoot}/runs/${runId}`)
-            .then((response) => response.json()),
+            .then(handleResponse()),
         {
             refetchInterval: false,
+            retry: false,
         }
     )
 
@@ -59,13 +60,14 @@ const Run = () => {
         </Wrapper>
     )
 
-    if (error) return (
+    if (isError) return (
         <Wrapper>
-            <div>
-                <b>Encountered an error fetching databases. Please try again.</b>
-            </div>
+            <h1>Run Results</h1>
+            <ErrorMessage error={error} text={`Encountered an error fetching the data of run ${runId}. Please try again.`}/>
         </Wrapper>
     )
+
+    const lastFetchDate = isError ? new Date(errorUpdatedAt) : isSuccess ? new Date(dataUpdatedAt) : null
 
     return (
         <Wrapper>
@@ -76,6 +78,7 @@ const Run = () => {
             </Breadcrumb>
             <div>
                 <h1>blastn Results</h1>
+                <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
                 <Container className='g-0'>
                     <Row className='d-flex align-items-center pb-3'>
                         <Col className='col-auto'>

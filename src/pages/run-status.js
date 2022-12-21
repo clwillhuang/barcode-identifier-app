@@ -6,13 +6,14 @@ import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 import { useQuery } from 'react-query'
 import './run.css'
+import { ErrorMessage, handleResponse } from '../components/error-message';
 
 const RunStatus = () => {
     let navigate = useNavigate()
     const [willRedirect, setRedirect] = React.useState(false)
+    const [refetchInterval, setRefetchInterval] = React.useState(5000)
 
     const { runId } = useParams();
-    const DEFAULT_REFETCH_INTERVAL = 5000
     const DENIED_STATUS = 'DEN'
     const QUEUED_STATUS = 'QUE'
     const FINISHED_STATUS = 'FIN'
@@ -21,44 +22,47 @@ const RunStatus = () => {
     const runUrl = `${urlRoot}/runs/${runId}`
     const dateFormatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric', month: 'numeric', day: 'numeric',
-        hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short',
-        hour12: false,
+        hour: 'numeric', minute: 'numeric', second: 'numeric', 
+        timeZoneName: 'short', hour12: false,
     })
 
     function redirect() {
-        navigate(`/run/${status.id}/results`)
+        navigate(`/run/${status.id}/results`);
     }
 
-    // TODO: Handle bad requests / responses
     const { isLoading, error, data: status, dataUpdatedAt, errorUpdatedAt, isError, isSuccess} = useQuery([`blast_poll_${runId}`], () =>
-        fetch(`${runUrl}/status`)
-            .then((response) => response.json()),
+        fetch(`${runUrl}/status`).then(handleResponse(setRefetchInterval)), 
         {
             refetchInterval: (data) => {
-                if (!data) return DEFAULT_REFETCH_INTERVAL
-                let stopFetches = data.job_status === FINISHED_STATUS || data.job_status === DENIED_STATUS || data.job_status === ERRORED_STATUS
-                return !stopFetches ? DEFAULT_REFETCH_INTERVAL : false
+                if (refetchInterval) {
+                    if (!data) return refetchInterval;
+                    let stopFetches = [FINISHED_STATUS, DENIED_STATUS, ERRORED_STATUS].includes(data.job_status)
+                    if (stopFetches) {
+                        setRefetchInterval(false);
+                    } 
+                    return stopFetches ? false : refetchInterval;
+                } else {
+                    return false;
+                }
             },
+            refetchOnWindowFocus: false,
+            retry: false,
         }
     )
 
-    
-
     if (isLoading) return (
         <Wrapper>
-            <div>
-                <p>Retrieving run status ...</p>
-            </div>
+            <p>Retrieving run status ...</p>
         </Wrapper>
     )
 
-    if (error) return (
+    if (isError) return (
         <Wrapper>
-            <div>
-                <b>Encountered an error fetching databases. Please try again.</b>
-            </div>
+            <h1>Run status update</h1>
+            <ErrorMessage error={error} text={`Encountered an error fetching the status of run ${runId}. Please try again.`}/>
         </Wrapper>
     )
+        
 
     const started = status.job_status === STARTED_STATUS
     const queued = status.job_status === QUEUED_STATUS

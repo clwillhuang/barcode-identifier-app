@@ -1,16 +1,18 @@
 import { ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import BlastDbPreview from '../components/blastdb-preview';
+import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 
 function Home() {
 
-	const { isLoading, error, data } = useQuery(['home_databases'], () =>
+	const { isLoading, error, data, isError } = useQuery(['home_databases'], () =>
 		fetch(`${urlRoot}/blastdbs/`)
-			.then((response) => response.json()),
+			.then(handleResponse()),
 		{
 			refetchInterval: false,
+			retry: false,
 		}
 	)
 
@@ -22,11 +24,9 @@ function Home() {
 		</Wrapper>
 	)
 
-	if (error) return (
+	if (isError) return (
 		<Wrapper>
-			<div>
-				<b>Encountered an error fetching databases. Please try again.</b>
-			</div>
+			<ErrorMessage error={error} text="Encountered an error fetching data. Please try again."/>
 		</Wrapper>
 	)
 

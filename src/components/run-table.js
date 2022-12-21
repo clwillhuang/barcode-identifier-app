@@ -127,7 +127,7 @@ const RunTable = ({ initialData }) => {
     //     return(<p>Loading table data ...</p>)
     // }
 
-    // if (error) {
+    // if (isError) {
     //     return(<p>Error loading table data ...</p>)
     // }
 

@@ -10,6 +10,7 @@ import Blast from './pages/blast';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import RunStatus from './pages/run-status';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import NotFound from './pages/not-found';
 
 const queryClient = new QueryClient()
 
@@ -43,8 +44,9 @@ function App() {
 					<Route path='/' element={<Home/>} />
 					<Route path='database/:databaseId' element={<BlastDb/>} />
 					<Route path='run/:runId/status' element={<RunStatus/>}/>
-					<Route path='run/:runId/results' element={<Run/>} />
-					<Route path='blast' element={<Blast/>} />
+					<Route path='run/:runId/results' element={<Run/>}/>
+					<Route path='blast' element={<Blast/>}/>
+					<Route path='*' element={<NotFound/>}/>
 				</Routes>
 			</QueryClientProvider>
 		</HelmetProvider>

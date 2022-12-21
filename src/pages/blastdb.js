@@ -3,6 +3,7 @@ import { Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-b
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
 import DbTable from '../components/db-table';
+import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 
@@ -10,11 +11,12 @@ const BlastDb = () => {
 
     const { databaseId } = useParams();
 
-    const { isLoading, error, data } = useQuery([`blastdb_${databaseId}`], () => 
+    const { isLoading, error, data, isError } = useQuery([`blastdb_${databaseId}`], () => 
         fetch(`${urlRoot}/blastdbs/${databaseId}`)
-        .then((response) => response.json()),
+        .then(handleResponse()),
         {
             refetchInterval: false,
+            retry: false,
         }
     )
 
@@ -58,11 +60,10 @@ const BlastDb = () => {
         </Wrapper>
     )
     
-    if (error) return (
+    if (isError) return (
         <Wrapper>
-            <div>
-            <b>Encountered an error fetching databases. Please try again.</b>
-            </div>
+            <h1>Blast database not found</h1>
+            <ErrorMessage error={error} text="Encountered an error fetching databases. Please try again."/>
         </Wrapper>
     )    
 
@@ -70,10 +71,10 @@ const BlastDb = () => {
         <Wrapper>
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem active>This database</BreadcrumbItem>
+                <BreadcrumbItem active>{data.custom_name}</BreadcrumbItem>
             </Breadcrumb>
             <div>
-                <h1>{data.custom_name}</h1>
+                <h1>Blast database "{data.custom_name}"</h1>
 
                 <Container className='g-0 mb-2'>
                     <Row className='d-flex align-items-center'>
