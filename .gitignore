@@ -6,7 +6,7 @@
 .pnp.js
 
 # keep url private for now
-/src/url.js
+src/url.js
 
 # testing
 /coverage
@@ -24,3 +24,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+

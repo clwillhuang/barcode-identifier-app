@@ -81,14 +81,14 @@ const RunStatus = () => {
             return(
                 <p className='d-inline-flex align-items-center text-dark'>
                     ({status_string}) The job is currently queued for processing.
-                    <Spinner className='mx-2' animation="border" role="status"></Spinner>
+                    <Spinner animation="border" role="status"></Spinner>
                 </p>
             )
         } else if (status_string === STARTED_STATUS) {
             return(
                 <p className='d-inline-flex align-items-center text-warning'>
                     ({status_string}) The job has passed through the queue and is currently being processed.
-                    <Spinner className='mx-2' animation="border" role="status"></Spinner>
+                    <Spinner animation="border" role="status"></Spinner>
                 </p>
             )
         } else if (status_string === FINISHED_STATUS) {
@@ -96,7 +96,7 @@ const RunStatus = () => {
                 <div>
                     <p className='d-inline-flex align-items-center text-success'>
                         ({status_string}) The job has completed processing. You will be redirected shortly.
-                        <Spinner className='mx-2' animation="border" role="status"></Spinner>
+                        <Spinner animation="border" role="status"></Spinner>
                     </p>
                 </div>
             )
