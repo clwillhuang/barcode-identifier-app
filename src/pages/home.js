@@ -1,9 +1,10 @@
 import { ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import BlastDbPreview from '../components/blastdb-preview';
+import CustomHelmet from '../components/custom-helmet';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
-import { urlRoot } from '../url';
+import { appName, urlRoot } from '../url';
 
 function Home() {
 
@@ -16,8 +17,15 @@ function Home() {
 		}
 	)
 
+	const helmet = <CustomHelmet
+		title='Welcome'
+		description={`The ${appName} allows users to query a curated library of Neotropical electric fish sequence barcodes with alignment tools.`}
+		canonical=''
+	/>
+
 	if (isLoading) return (
 		<Wrapper>
+			{helmet}
 			<div>
 				<p>Retrieving data ...</p>
 			</div>
@@ -26,12 +34,14 @@ function Home() {
 
 	if (isError) return (
 		<Wrapper>
-			<ErrorMessage error={error} text="Encountered an error fetching data. Please try again."/>
+			{helmet}
+			<ErrorMessage error={error} text="Encountered an error fetching data. Please try again." />
 		</Wrapper>
 	)
 
 	return (
 		<Wrapper>
+			{helmet}
 			<div>
 				<h2>Databases available</h2>
 				<p>Found {data.length} blast database(s) to run.</p>

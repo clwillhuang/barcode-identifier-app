@@ -3,7 +3,7 @@ import { Pagination, Row, Col, Container } from 'react-bootstrap';
 
 export default function TablePagination({previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize}) {
     return(
-        <Container>
+        <Container className='mt-3'>
             <Row>
                 <Col className='col-8'>
                     <Pagination className='d-flex justify-content-left'>

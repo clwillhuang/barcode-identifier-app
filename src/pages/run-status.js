@@ -7,6 +7,7 @@ import { urlRoot } from '../url';
 import { useQuery } from 'react-query'
 import './run.css'
 import { ErrorMessage, handleResponse } from '../components/error-message';
+import CustomHelmet from '../components/custom-helmet';
 
 const RunStatus = () => {
     let navigate = useNavigate()
@@ -50,14 +51,22 @@ const RunStatus = () => {
         }
     )
 
+    const helmet = <CustomHelmet
+		title='Run results'
+		description='Get the results of your query on a curated reference library of Neotropical electric fish sequences.'
+		canonical='run'
+	/>
+
     if (isLoading) return (
         <Wrapper>
+            {helmet}
             <p>Retrieving run status ...</p>
         </Wrapper>
     )
 
     if (isError) return (
         <Wrapper>
+            {helmet}
             <h1>Run status update</h1>
             <ErrorMessage error={error} text={`Encountered an error fetching the status of run ${runId}. Please try again.`}/>
         </Wrapper>
@@ -73,7 +82,7 @@ const RunStatus = () => {
     const getStatus = (status_string) => {
         if (status_string === DENIED_STATUS) {
             return(
-                <p class='text-danger'>
+                <p className='text-danger'>
                     ({status_string}) The job was denied by the server and will not be run. 
                 </p>
             )
@@ -141,6 +150,7 @@ const RunStatus = () => {
     
     return (
         <Wrapper>
+            {helmet}
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
                 <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>

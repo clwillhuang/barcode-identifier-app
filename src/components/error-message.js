@@ -14,7 +14,7 @@ const handleResponse = (setRefetchInterval) => (response) => {
 const ErrorMessage = ({error, text = 'Encountered an error fetching the status of this run.'}) => {
     return (
         <div>
-            <h2>Error {error.message}</h2>
+            <h4>Error {error.message}</h4>
             <strong>{text}</strong>
             <p>Please try again. If the error persists, contact the site adminstrator.</p>
         </div>

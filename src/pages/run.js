@@ -8,6 +8,7 @@ import { urlRoot } from '../url';
 import { useQuery } from 'react-query'
 import './run.css'
 import { ErrorMessage, handleResponse } from '../components/error-message';
+import CustomHelmet from '../components/custom-helmet';
 
 const Run = () => {
 
@@ -52,8 +53,15 @@ const Run = () => {
         }
     )
 
+    const helmet = <CustomHelmet
+		title='Run results'
+		description='Get the results of your query on a curated reference library of Neotropical electric fish sequences.'
+		canonical='run'
+	/>
+
     if (isLoading) return (
         <Wrapper>
+            {helmet}
             <div>
                 <p>Retrieving data ...</p>
             </div>
@@ -62,6 +70,7 @@ const Run = () => {
 
     if (isError) return (
         <Wrapper>
+            {helmet}
             <h1>Run Results</h1>
             <ErrorMessage error={error} text={`Encountered an error fetching the data of run ${runId}. Please try again.`}/>
         </Wrapper>
@@ -71,6 +80,7 @@ const Run = () => {
 
     return (
         <Wrapper>
+            {helmet}
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
                 <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
@@ -98,7 +108,7 @@ const Run = () => {
                 </Container>
                 <h3>Parameters</h3>
                 <strong>Job name</strong>
-                <pre>{run.job_name}</pre>
+                <pre>{run.job_name || '<no job name given>'}</pre>
                 <strong>Database used</strong>
                 <pre><Link to={`/database/${run.db_used.id}`}>{run.db_used.custom_name}</Link></pre>
                 <strong>Unique Run Identifier</strong>

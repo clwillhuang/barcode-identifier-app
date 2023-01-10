@@ -2,6 +2,7 @@ import React from 'react'
 import { Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
+import CustomHelmet from '../components/custom-helmet';
 import DbTable from '../components/db-table';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
@@ -11,9 +12,9 @@ const BlastDb = () => {
 
     const { databaseId } = useParams();
 
-    const { isLoading, error, data, isError } = useQuery([`blastdb_${databaseId}`], () => 
+    const { isLoading, error, data, isError } = useQuery([`blastdb_${databaseId}`], () =>
         fetch(`${urlRoot}/blastdbs/${databaseId}`)
-        .then(handleResponse()),
+            .then(handleResponse()),
         {
             refetchInterval: false,
             retry: false,
@@ -21,7 +22,7 @@ const BlastDb = () => {
     )
 
     const downloadFile = (format) => {
-        const types = {'text/csv': 'csv', 'text/plain': 'fasta'}
+        const types = { 'text/csv': 'csv', 'text/plain': 'fasta' }
 
         if (typeof window === 'undefined') {
             console.error("Cannot download CSV file with window undefined.")
@@ -30,7 +31,7 @@ const BlastDb = () => {
             console.error(`The format ${format} is not available for export.`)
             return
         }
-        
+
         const fetchHeaders = new Headers()
         fetchHeaders.append('Accept', format)
 
@@ -43,32 +44,41 @@ const BlastDb = () => {
                 const url = window.URL.createObjectURL(
                     new Blob([blob])
                 )
-                const link = document.createElement('a', )
-                link.href = url 
-                link.setAttribute('download', `results.${types[format]}`) 
+                const link = document.createElement('a',)
+                link.href = url
+                link.setAttribute('download', `results.${types[format]}`)
                 document.body.appendChild(link)
                 link.click()
                 link.parentNode.removeChild(link)
             })
     }
 
+    const helmet = <CustomHelmet
+        title='Custom database'
+        description='Browse entries in this custom database.'
+        canonical='database'
+    />
+
     if (isLoading) return (
         <Wrapper>
-          <div>
-            <p>Retrieving data ...</p>
-          </div>
+            {helmet}
+            <div>
+                <p>Retrieving data ...</p>
+            </div>
         </Wrapper>
     )
-    
+
     if (isError) return (
         <Wrapper>
+            {helmet}
             <h1>Blast database not found</h1>
-            <ErrorMessage error={error} text="Encountered an error fetching databases. Please try again."/>
+            <ErrorMessage error={error} text="Encountered an error fetching databases. Please try again." />
         </Wrapper>
-    )    
+    )
 
-    return(
+    return (
         <Wrapper>
+            {helmet}
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
                 <BreadcrumbItem active>{data.custom_name}</BreadcrumbItem>
@@ -88,7 +98,7 @@ const BlastDb = () => {
 
                 <h3>Description</h3>
                 <p>{data.description}</p>
-                
+
                 <h3>Database entries</h3>
                 <p className='text-muted'>This database contains {data.sequences.length} entries.</p>
                 <DbTable data={data.sequences}></DbTable>

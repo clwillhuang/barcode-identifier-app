@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Button, Form, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CustomHelmet from '../components/custom-helmet';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
@@ -114,6 +115,11 @@ function Blast() {
 
     return (
         <Wrapper>
+            <CustomHelmet
+            title='Submit run'
+            description='Submit nucleotide sequences to run BLAST against the barcode database.'
+            canonical='blast'
+            />
             <h2>Submit BLAST Run</h2>
             {
                 responseError &&
@@ -122,14 +128,14 @@ function Blast() {
                     {responseError}
                 </Alert> 
             }
-            <Form id='blastForm' onSubmit={handleSubmit}>
+            <Form id='blastForm' onSubmit={handleSubmit} className='col-12'>
                 <h5>Query Sequence</h5>
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='queryFile'>Upload sequence .fasta file</FormLabel>
                     <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange}></FormControl>
                     <p className='my-1'>OR</p>
                     <FormLabel htmlFor='querySequence'>Paste raw sequence text</FormLabel>
-                    <FormControl isInvalid={sequenceInvalid} id='querySequence' name='query_sequence' as='textarea' rows={5} onChange={handleChange} placeholder='Paste sequence as single line by itself, without comments, definitions and headers.'></FormControl>
+                    <FormControl isInvalid={sequenceInvalid} id='querySequence' name='query_sequence' as='textarea' rows={5} onChange={handleChange} placeholder='Paste sequence as single line without comments, definitions/headers. A future update will allow headers to be included.'></FormControl>
                     <Form.Control.Feedback type="invalid">
                         {"Error: " + responseError}
                     </Form.Control.Feedback>
@@ -137,7 +143,7 @@ function Blast() {
                 <h5>Query Parameters</h5>
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='jobName'>Job Name (Optional)</FormLabel>
-                    <FormControl id='jobName' name='job_name' as='input' placeholder='Name this query to remind yourself what this query was.' onChange={handleChange}></FormControl>
+                    <FormControl id='jobName' name='job_name' as='input' placeholder='Provide this run with a custom name.' onChange={handleChange}></FormControl>
                 </FormGroup>
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='databaseSelect'>Blast Database</FormLabel>

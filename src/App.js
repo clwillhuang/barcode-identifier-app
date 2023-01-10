@@ -9,23 +9,22 @@ import Run from './pages/run';
 import Blast from './pages/blast';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import RunStatus from './pages/run-status';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from 'react-helmet-async';
 import NotFound from './pages/not-found';
+import Credits from './pages/credits';
+import { appName } from './url';
 
 const queryClient = new QueryClient()
 
 function App() {
 	return (
 		<HelmetProvider>
-			{/* TODO: Remove noindex on production, and uninstall react-helmet-async if no longer required */}
-			<Helmet>
-				<meta name="robots" content="noindex, nofollow" />
-			</Helmet>
-			<Navbar bg='dark' variant='dark' expand='md'>
+			<Navbar bg='dark' variant='dark' expand='sm'>
 				<Container>
+					<NavbarBrand>{appName}</NavbarBrand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav className='me-auto'>
-							<NavbarBrand>Barcode Identifier Web App</NavbarBrand>
 							<NavItem>
 								<NavLink as={Link} to='/'>Home</NavLink>
 							</NavItem>
@@ -41,12 +40,13 @@ function App() {
 			</Navbar>
 			<QueryClientProvider client={queryClient}>
 				<Routes>
-					<Route path='/' element={<Home/>} />
-					<Route path='database/:databaseId' element={<BlastDb/>} />
-					<Route path='run/:runId/status' element={<RunStatus/>}/>
-					<Route path='run/:runId/results' element={<Run/>}/>
-					<Route path='blast' element={<Blast/>}/>
-					<Route path='*' element={<NotFound/>}/>
+					<Route path='/' element={<Home />} />
+					<Route path='database/:databaseId' element={<BlastDb />} />
+					<Route path='run/:runId/status' element={<RunStatus />} />
+					<Route path='run/:runId/results' element={<Run />} />
+					<Route path='blast' element={<Blast />} />
+					<Route path='credits' element={<Credits />} />
+					<Route path='*' element={<NotFound />} />
 				</Routes>
 			</QueryClientProvider>
 		</HelmetProvider>

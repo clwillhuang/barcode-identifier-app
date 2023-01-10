@@ -1,11 +1,10 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
-import styles from './wrapper.module.css'
 
 export default function Wrapper({children}) {
     return(
         <Container>
-            <div className={styles.wrapperDiv}>
+            <div className="className='col-12 col-md-9 mx-auto py-4">
                 {children}
             </div>
         </Container>

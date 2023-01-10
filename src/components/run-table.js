@@ -3,6 +3,7 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
+import { IconContext } from 'react-icons'
 // import { useQuery } from 'react-query';
 // import { urlRoot } from '../url';
 
@@ -27,6 +28,10 @@ const RunTable = ({ initialData }) => {
                 accessor: 'db_entry.country',
             },
             {
+                Header: 'Latitude / Longitude',
+                accessor: 'db_entry.lat_lon',
+            },
+            {
                 Header: 'Type',
                 accessor: 'db_entry.type',
             },
@@ -42,30 +47,30 @@ const RunTable = ({ initialData }) => {
                 Header: 'Alignment Length',
                 accessor: 'alignment_length'
             },
-            {
-                Header: 'Mismatches',
-                accessor: 'mismatches'
-            },
-            {
-                Header: 'Gap Opens',
-                accessor: 'gap_opens'
-            },
-            {
-                Header: 'Query Start',
-                accessor: 'query_start'
-            },
-            {
-                Header: 'Query End',
-                accessor: 'query_end'
-            },
-            {
-                Header: 'Sequence Start',
-                accessor: 'sequence_start'
-            },
-            {
-                Header: 'Sequence End',
-                accessor: 'sequence_end'
-            },
+            // {
+            //     Header: 'Mismatches',
+            //     accessor: 'mismatches'
+            // },
+            // {
+            //     Header: 'Gap Opens',
+            //     accessor: 'gap_opens'
+            // },
+            // {
+            //     Header: 'Query Start',
+            //     accessor: 'query_start'
+            // },
+            // {
+            //     Header: 'Query End',
+            //     accessor: 'query_end'
+            // },
+            // {
+            //     Header: 'Sequence Start',
+            //     accessor: 'sequence_start'
+            // },
+            // {
+            //     Header: 'Sequence End',
+            //     accessor: 'sequence_end'
+            // },
             {
                 Header: 'Evalue',
                 accessor: 'evalue'
@@ -135,7 +140,8 @@ const RunTable = ({ initialData }) => {
         <React.Fragment>
             <p>BLAST run returned <strong>{tableData.length}</strong> hits</p>
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
-            <Table striped bordered hover responsive {...getTableProps()} >
+            <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}}>
+            <Table striped bordered hover responsive {...getTableProps()}>
                 <thead>
                     {
                         headerGroups.map(headerGroup => (
@@ -169,6 +175,7 @@ const RunTable = ({ initialData }) => {
                     }
                 </tbody>
             </Table>
+            </IconContext.Provider>
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
         </React.Fragment>
     )
