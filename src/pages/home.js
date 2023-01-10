@@ -1,4 +1,4 @@
-import { ListGroup } from 'react-bootstrap';
+import { Alert, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import BlastDbPreview from '../components/blastdb-preview';
 import CustomHelmet from '../components/custom-helmet';
@@ -27,6 +27,7 @@ function Home() {
 		<Wrapper>
 			{helmet}
 			<div>
+				<Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
 				<p>Retrieving data ...</p>
 			</div>
 		</Wrapper>
@@ -34,6 +35,7 @@ function Home() {
 
 	if (isError) return (
 		<Wrapper>
+			<Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
 			{helmet}
 			<ErrorMessage error={error} text="Encountered an error fetching data. Please try again." />
 		</Wrapper>
@@ -43,6 +45,7 @@ function Home() {
 		<Wrapper>
 			{helmet}
 			<div>
+				<Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
 				<h2>Databases available</h2>
 				<p>Found {data.length} blast database(s) to run.</p>
 			</div>

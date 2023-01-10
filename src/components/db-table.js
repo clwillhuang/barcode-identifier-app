@@ -40,17 +40,17 @@ const DbTable = ({ data }) => {
                 Header: 'Organism',
                 accessor: 'organism'
             },
+            // {
+            //     Header: 'Definition',
+            //     accessor: 'definition'
+            // },
             {
-                Header: 'Definition',
-                accessor: 'definition'
+                Header: 'Type',
+                accessor: 'type_material'
             },
             {
                 Header: 'Isolate',
                 accessor: 'isolate'
-            },
-            {
-                Header: 'Type',
-                accessor: 'type',
             },
             {
                 Header: 'Country',
@@ -98,7 +98,7 @@ const DbTable = ({ data }) => {
             {
                 columns,
                 data,
-                initialState: { pageIndex: 0, pageSize: 10 },
+                initialState: { pageIndex: 0, pageSize: 100 },
             },
             useSortBy, usePagination)
 

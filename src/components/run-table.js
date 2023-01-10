@@ -33,7 +33,7 @@ const RunTable = ({ initialData }) => {
             },
             {
                 Header: 'Type',
-                accessor: 'db_entry.type',
+                accessor: 'db_entry.type_material',
             },
             {
                 Header: 'Isolate',
