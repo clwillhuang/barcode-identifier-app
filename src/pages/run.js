@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import RunTable from '../components/run-table';
-import { Accordion, Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-bootstrap';
+import { Accordion, Breadcrumb, BreadcrumbItem, Button, Col, Container, Modal, Row } from 'react-bootstrap';
 
 import { useParams, Link } from 'react-router-dom'
 import Wrapper from '../components/wrapper';
@@ -11,7 +11,7 @@ import { ErrorMessage, handleResponse } from '../components/error-message';
 import CustomHelmet from '../components/custom-helmet';
 
 const Run = () => {
-
+    const [errorText, setErrorText] = useState('');
     let { runId } = useParams();
     const dateFormatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric', month: 'numeric', day: 'numeric',
@@ -22,26 +22,51 @@ const Run = () => {
     const downloadFile = (format) => {
         if (typeof window === 'undefined') {
             console.error('Cannot download CSV file with window undefined.')
-            return 
+            return
         } else if (!(['txt', 'csv'].includes(format))) {
             console.error(`Format .${format} is not available for export.`)
             return
         }
 
         fetch(`${urlRoot}/runs/${runId}/download?format=${format}`)
-            .then((response) => response.blob())
-            .then((blob) => {
-                const url = window.URL.createObjectURL(
-                    new Blob([blob])
-                )
-                const link = document.createElement('a', )
-                link.href = url 
-                link.setAttribute('download', `results.${format}`) 
-                document.body.appendChild(link)
-                link.click()
-                link.parentNode.removeChild(link)
+            .then((response) => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error(`${response.status}: ${response.statusText}`);
+                }
             })
-        
+            .then((blob) => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a',);
+                link.href = url;
+                link.setAttribute('download', `results.${format}`);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            })
+            .catch(err => { setErrorText(err.message); })
+    }
+
+    const downloadInput = () => {
+        fetch(`${urlRoot}/runs/${runId}/input-download`)
+            .then((response) => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+            })
+            .then((blob) => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a',);
+                link.href = url;
+                link.setAttribute('download', `query.fasta`);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            })
+            .catch(err => { setErrorText(err.message); })
     }
 
     const { isLoading, error, data: run, isError, isSuccess, errorUpdatedAt, dataUpdatedAt } = useQuery([`blast_run_${runId}`], () =>
@@ -54,10 +79,10 @@ const Run = () => {
     )
 
     const helmet = <CustomHelmet
-		title='Run results'
-		description='Get the results of your query on a curated reference library of Neotropical electric fish sequences.'
-		canonical='run'
-	/>
+        title='Run results'
+        description='Get the results of your query on a curated reference library of Neotropical electric fish sequences.'
+        canonical='run'
+    />
 
     if (isLoading) return (
         <Wrapper>
@@ -72,7 +97,7 @@ const Run = () => {
         <Wrapper>
             {helmet}
             <h1>Run Results</h1>
-            <ErrorMessage error={error} text={`Encountered an error fetching the data of run ${runId}. Please try again.`}/>
+            <ErrorMessage error={error} text={`Encountered an error fetching the data of run ${runId}. Please try again.`} />
         </Wrapper>
     )
 
@@ -86,26 +111,22 @@ const Run = () => {
                 <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
                 <BreadcrumbItem active>Run results</BreadcrumbItem>
             </Breadcrumb>
+            <Modal show={errorText} backdrop='static' keyboard={false}>
+                <Modal.Header>
+                    <Modal.Title>Unexpected Error</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <strong>{errorText}</strong>
+                    <p>Please try again. If the error persists, contact the site adminstrator.</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => setErrorText('')}>Close</Button>
+                </Modal.Footer>
+            </Modal>
             <div>
                 <h1>blastn Results</h1>
                 <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
-                <Container className='g-0'>
-                    <Row className='d-flex align-items-center pb-3'>
-                        <Col className='col-auto'>
-                            <span className='d-block' style={{width: 'fit-content'}}>Download as</span>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('csv')}>
-                                .csv
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('txt')}>
-                                .txt
-                            </Button>
-                        </Col>
-                    </Row>
-                </Container>
+                <hr />
                 <h3>Parameters</h3>
                 <strong>Job name</strong>
                 <pre>{run.job_name || '<no job name given>'}</pre>
@@ -113,11 +134,48 @@ const Run = () => {
                 <pre><Link to={`/database/${run.db_used.id}`}>{run.db_used.custom_name}</Link></pre>
                 <strong>Unique Run Identifier</strong>
                 <pre>{runId}</pre>
-                <strong>{'Query sequence(s)'}</strong>
-                <pre>{run.queries.map(query => query.definition).join(', ')}</pre>
+                <strong>Query Input</strong>
+                <pre>{run.queries.length} nucleotide sequence(s): {run.queries.map(q => q.definition).join()}</pre>
+                <Container className='g-0'>
+                    <Row className='d-flex align-items-center pb-3'>
+                        <Col className='col-auto'>
+                            <span className='d-block' style={{ width: 'fit-content' }}>Download input as</span>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadInput()}>
+                                .fasta
+                            </Button>
+                        </Col>
+                    </Row>
+                </Container>
+                <hr />
                 <h3>Hits</h3>
-                <RunTable initialData={run.hits} />               
+                <p>BLAST run returned <strong>{run.hits.length}</strong> hits</p>
+                {
+                    run.hits.length > 0 &&
+                    <React.Fragment>
+                        <Container className='g-0'>
+                            <Row className='d-flex align-items-center pb-3'>
+                                <Col className='col-auto'>
+                                    <span className='d-block' style={{ width: 'fit-content' }}>Download results as</span>
+                                </Col>
+                                <Col className='col-auto'>
+                                    <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('csv')}>
+                                        .csv
+                                    </Button>
+                                </Col>
+                                <Col className='col-auto'>
+                                    <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('txt')}>
+                                        .txt
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Container>
+                        <RunTable initialData={run.hits} />
+                    </React.Fragment>
+                }
             </div>
+            <hr />
             <Container className='g-0'>
                 <Row className='py-3'>
                     <Col className='col-auto'>
@@ -132,6 +190,7 @@ const Run = () => {
                     </Col>
                 </Row>
             </Container>
+            <hr />
             <Accordion>
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>View server log</Accordion.Header>
@@ -145,8 +204,6 @@ const Run = () => {
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
-
-
         </Wrapper>
     )
 }

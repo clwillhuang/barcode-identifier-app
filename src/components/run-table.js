@@ -138,7 +138,7 @@ const RunTable = ({ initialData }) => {
 
     return (
         <React.Fragment>
-            <p>BLAST run returned <strong>{tableData.length}</strong> hits</p>
+            
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}}>
             <Table striped bordered hover responsive {...getTableProps()}>
