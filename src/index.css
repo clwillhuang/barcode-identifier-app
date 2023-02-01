@@ -11,3 +11,53 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* Extra colors for chartist pies */
+.ct-series.ct-series-p {
+  stroke: #418339
+}
+
+.ct-series.ct-series-q {
+  stroke: #0011ff
+}
+
+.ct-series.ct-series-r {
+  stroke: #452d4e
+}
+
+.ct-series.ct-series-s {
+  stroke: #4e2d31
+}
+
+.ct-series.ct-series-t {
+  stroke: #2d4e34
+}
+
+.ct-series.ct-series-u {
+  stroke: #4e462d
+}
+
+.ct-series.ct-series-v {
+  stroke: #2d4e4c
+}
+
+.ct-series.ct-series-w {
+  stroke: #2d4e37
+}
+
+.ct-series.ct-series-x {
+  stroke: #3e2d4e
+}
+
+.ct-series.ct-series-y {
+  stroke: #2d4e4c
+}
+
+.ct-series.ct-series-z {
+  stroke: #4e2d46
+}
+
+.ct-chart-donut {
+  overflow: initial;
+}

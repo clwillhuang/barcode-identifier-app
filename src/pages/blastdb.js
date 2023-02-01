@@ -3,6 +3,7 @@ import { Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-b
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
 import CustomHelmet from '../components/custom-helmet';
+import DbSummary from '../components/db-summary';
 import DbTable from '../components/db-table';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
@@ -101,6 +102,7 @@ const BlastDb = () => {
 
                 <h3>Database entries</h3>
                 <p className='text-muted'>This database contains {data.sequences.length} entries.</p>
+                <DbSummary sequences={data.sequences}/>
                 <DbTable data={data.sequences}></DbTable>
                 <h3>Export</h3>
                 <Container className='g-0'>
