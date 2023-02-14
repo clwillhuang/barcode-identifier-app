@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
 import { useQuery } from 'react-query'
-import './run.css'
+import styles from './run.module.css'
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import CustomHelmet from '../components/custom-helmet';
 
@@ -156,7 +156,7 @@ const RunStatus = () => {
                 <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
                 <BreadcrumbItem active>Status</BreadcrumbItem>
             </Breadcrumb>
-            <div>
+            <div className={styles.parameters}>
                 <h1>Run status update</h1>
                 <h3>Status</h3>
                 <p>{getStatus(status.job_status)}</p>

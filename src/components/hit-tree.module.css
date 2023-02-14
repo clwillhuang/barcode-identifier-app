@@ -1,0 +1,8 @@
+.treeContainer {
+    overflow: hidden;
+    width: 100%;
+    height: calc(min(500px, 100vh));
+    border-radius: 5px;
+    border: 1px solid darkgray;
+    position: relative;
+}

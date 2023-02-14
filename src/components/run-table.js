@@ -1,11 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
 import { IconContext } from 'react-icons'
-// import { useQuery } from 'react-query';
-// import { urlRoot } from '../url';
 
 const RunTable = ({ initialData }) => {
 
@@ -47,30 +45,6 @@ const RunTable = ({ initialData }) => {
                 Header: 'Alignment Length',
                 accessor: 'alignment_length'
             },
-            // {
-            //     Header: 'Mismatches',
-            //     accessor: 'mismatches'
-            // },
-            // {
-            //     Header: 'Gap Opens',
-            //     accessor: 'gap_opens'
-            // },
-            // {
-            //     Header: 'Query Start',
-            //     accessor: 'query_start'
-            // },
-            // {
-            //     Header: 'Query End',
-            //     accessor: 'query_end'
-            // },
-            // {
-            //     Header: 'Sequence Start',
-            //     accessor: 'sequence_start'
-            // },
-            // {
-            //     Header: 'Sequence End',
-            //     accessor: 'sequence_end'
-            // },
             {
                 Header: 'Evalue',
                 accessor: 'evalue'
@@ -88,7 +62,6 @@ const RunTable = ({ initialData }) => {
         () => initialData.map(row => {
             return { ...row }
         }))
-
 
     const { getTableProps,
         getTableBodyProps,
@@ -109,72 +82,64 @@ const RunTable = ({ initialData }) => {
             },
             useSortBy, usePagination)
 
-    // optional: fetch organism data from a separate url
-    // const entries_visible = page.map(row => row.original.subject_accession_version)
-    // const url = `${urlRoot}/nuccores/${entries_visible.join(',')}`
-    // const { isLoading, error } = useQuery([`results_row_accessions`], () =>
-    //     fetch(url)
-    //     .then((response) => response.json())
-    //     .then((newData) => {
-    //         setTableData(tableData.map(
-    //             (row, index) => {
-    //                 // update the current table's data by adding the fields present in the fetched data
-    //                 let match = newData.find(x => x.accession_number === row.subject_accession_version)
-    //                 let updatedFields = (({country, organism, isolate}) => ({country, organism, isolate}))(match)
-    //                 return { ... row, ...updatedFields }
-    //             } 
-    //         ))
-    //     })
-    //     .catch((e) => console.log(e)),
-    // )
+    useEffect(() => {
+        const tableWidth = document.querySelector('#table-head').getBoundingClientRect().width;
+        document.querySelector('#runcontent').style.width = `${tableWidth}px`
 
-    // if (isLoading) {
-    //     return(<p>Loading table data ...</p>)
-    // }
+        const topScrollBar = document.querySelector('#runtop')
+        const botScrollBar = document.querySelector('#table-container').parentNode
 
-    // if (isError) {
-    //     return(<p>Error loading table data ...</p>)
-    // }
+        topScrollBar.addEventListener("scroll", function () {
+            botScrollBar.scrollLeft = topScrollBar.scrollLeft;
+        });
+
+        botScrollBar.addEventListener("scroll", function () {
+            topScrollBar.scrollLeft = botScrollBar.scrollLeft;
+        });
+    })
 
     return (
         <React.Fragment>
-            
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
-            <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}}>
-            <Table striped bordered hover responsive {...getTableProps()}>
-                <thead>
-                    {
-                        headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {
-                                    headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            <span>
-                                                {column.isSorted
-                                                    ? column.isSortedDesc
-                                                        ? ' 🔽'
-                                                        : ' 🔼'
-                                                    : ''}
-                                            </span>
-                                        </th>
-                                    ))
-                                }
-                            </tr>
-                        ))
-                    }
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                    {
-                        page.map((row, i) => {
-                            prepareRow(row)
-                            return (
-                                <MakeRow key={`row${i}`} row={row}/>
-                            )
-                        })
-                    }
-                </tbody>
-            </Table>
+            <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }}>
+                <div id='runtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
+                    <div id='runcontent' style={{ height: '15px' }}>
+                    </div>
+                </div>
+                <Table id='table-container' striped bordered hover responsive {...getTableProps()}>
+                    <thead id='table-head'>
+                        {
+                            headerGroups.map(headerGroup => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {
+                                        headerGroup.headers.map(column => (
+                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                {column.render('Header')}
+                                                <span>
+                                                    {column.isSorted
+                                                        ? column.isSortedDesc
+                                                            ? ' 🔽'
+                                                            : ' 🔼'
+                                                        : ''}
+                                                </span>
+                                            </th>
+                                        ))
+                                    }
+                                </tr>
+                            ))
+                        }
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                        {
+                            page.map((row, i) => {
+                                prepareRow(row)
+                                return (
+                                    <MakeRow key={`row${i}`} row={row} />
+                                )
+                            })
+                        }
+                    </tbody>
+                </Table>
             </IconContext.Provider>
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
         </React.Fragment>
