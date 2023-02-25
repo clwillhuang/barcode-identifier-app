@@ -144,7 +144,7 @@ const RunStatus = () => {
     }
 
     if (!willRedirect && resolved) {
-        setTimeout(redirect, 5000)
+        setTimeout(redirect, 1000)
         setRedirect(true)
     }
     
