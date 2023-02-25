@@ -6,3 +6,24 @@
     border: 1px solid darkgray;
     position: relative;
 }
+
+.treeContainer path.branch {
+    stroke-width: 5px !important;
+}
+
+.buttonIcon {
+    margin-right: 5px;
+}
+
+.treeCaption {
+    font-size: 0.8em;
+}
+
+.treeSelect {
+    width: 450px;
+    max-width: 100%;
+}
+
+.subtitle {
+    margin-top: 16px;
+}

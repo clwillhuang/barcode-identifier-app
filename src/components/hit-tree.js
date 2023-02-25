@@ -1,14 +1,24 @@
-import { phylotree } from 'phylotree'
+import { Button, Col, Container, FormGroup, FormSelect, Row, Spinner } from 'react-bootstrap';
 import 'phylotree/dist/phylotree.css'
-import React from 'react'
-import { useQuery } from 'react-query'
-import { urlRoot } from '../url'
-import { ErrorMessage, handleResponse } from './error-message'
+import React, { useState } from 'react'
+import { runsFolder, urlRoot } from '../url'
 import styles from './hit-tree.module.css'
+import { BsCloudDownload, BsFileEarmarkText, BsMouse2Fill } from 'react-icons/bs'
+import { Tree } from './Tree';
+import { useQuery } from 'react-query';
+import { ErrorMessage, handleResponse } from './error-message';
 
-const RunTree = ({ runId, enabled, querySequences }) => {
-    const { isLoading, data, error, isError } = useQuery([`tree_${runId}`], () =>
-        fetch(`${urlRoot}/trees/${runId}`)
+const RunTreeTab = ({ run_data, querySequences, enabled }) => {
+    const HIT_TREE = 0, DB_TREE = 1
+
+    const [treeSelected, setTreeSelected] = useState({
+        tree: run_data.create_hit_tree ? run_data.hit_tree : run_data.db_tree,
+        id: run_data.create_hit_tree ? run_data.alignment_job_id : run_data.complete_alignment_job_id
+    })
+
+    // retrieve all database entries
+    const { isLoading, error, data: database, isError } = useQuery([`run_${run_data.id}_db`], () =>
+        fetch(`${urlRoot}/blastdbs/${run_data.db_used.id}`)
             .then(handleResponse()),
         {
             refetchInterval: false,
@@ -16,106 +26,131 @@ const RunTree = ({ runId, enabled, querySequences }) => {
         }
     )
 
-    // TODO: Differentiate between true network errors and post calls 
-    if (isError) {
-        // send POST request to generate tree
-        let url = `${urlRoot}/trees/${runId}/`
-
-        let postHeaders = {
-            'Accept': 'application/json',
-        }
-
-        // TODO: Handle bad requests
-        fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: { 'dummy_field': '' } })
-            .then(response => {
-                if (response.status === 400) {
-                    console.log("POST returned Err 400")
-                } else if (response.status === 201) {
-                    // successful post
-                    console.log("POST request successful")
-                } else if (!response.ok) {
-                    // unexpected error
-                    throw new Error()
-                }
-            })
-            .catch(error => {
-                console.log(`The website encountered an unexpected error.`)
-            })
-
+    if (isLoading) {
         return (
             <div>
-                <p>Tree does not exist. Sending a request to tree ... </p>
-                <ErrorMessage error={error} />
-            </div>)
+                <h3>Phylogenetic tree of hits and query sequences</h3>
+                <p>Multiple sequence alignment by Clustal Omega at EBML-EBI</p>
+                Retrieving data ... <Spinner animation="border" role="status"></Spinner>
+            </div>
+        )
     }
 
-    if (!enabled) return (<div></div>)
-
-    if (isLoading) return (
+    if (isError) return (
         <div>
-            <p>Retrieving tree ... </p>
+            <h3>Phylogenetic tree of hits and query sequences</h3>
+            <p>Multiple sequence alignment by Clustal Omega at EBML-EBI</p>
+            <ErrorMessage error={error} />
         </div>
     )
+
+
+    const downloadAlignment = () => {
+        if (typeof window !== 'undefined') {
+            window.open(`${urlRoot}/${runsFolder}/${run_data.id}/${treeSelected.id}.aln-clustal_num.clustal_num`)
+        }
+    }
+
+    const downloadSequences = () => {
+        if (typeof window !== 'undefined') {
+            window.open(`${urlRoot}/${runsFolder}/${run_data.id}/${treeSelected.id}.sequence.txt`)
+        }
+    }
+
+    const downloadTree = () => {
+        if (typeof window !== 'undefined') {
+            window.open(`${urlRoot}/${runsFolder}/${run_data.id}/${treeSelected.id}.phylotree.ph`)
+        }
+    }
+
+    const copyTreeToClipboard = () => {
+        if (typeof navigator !== 'undefined' && run_data) {
+            navigator.clipboard.writeText(treeSelected.tree);
+            window.document.querySelector('#copyNotif').style.visibility = 'visible';
+            setTimeout(() => {
+                window.document.querySelector('#copyNotif').style.visibility = 'hidden';
+            }, 1000)
+        }
+    }
+
+    const handleTreeSelect = (event) => {
+        const newTreeSelected = parseInt(event.target.value)
+        let newData = { ...treeSelected }
+        if (newTreeSelected === HIT_TREE) {
+            newData.tree = run_data.hit_tree;
+            newData.id = run_data.alignment_job_id;
+        } else if (newTreeSelected === DB_TREE) {
+            newData.tree = run_data.db_tree;
+            newData.id = run_data.complete_alignment_job_id;
+        }
+        setTreeSelected(newData)
+    }
 
     return (
         <div>
-            <strong>Job Status</strong>
-            <p><code>{data.internal_status}</code></p>
-            <strong>MSA Job ID</strong>
-            <p>{data.alignment_job_id}</p>
-            <strong>Phy Job ID</strong>
-            <p>{data.tree_job_id}</p>
-            <strong>Tree</strong>
-            <Tree tree={data.tree} querySequences={querySequences} />
-            <strong>Raw Newick</strong>
-            <p><code>{data.tree}</code></p>
+            <h3>Phylogenetic tree of hits and query sequences</h3>
+            <p>Multiple sequence alignment by Clustal Omega at EBML-EBI</p>
+            <Container>
+                <Row className='pb-3'>
+                    <p>Show</p>
+                    <FormGroup className={styles.treeSelect}>
+                        <FormSelect onChange={handleTreeSelect}>
+                            {run_data.create_hit_tree && <option value={HIT_TREE}>Tree with query and hit sequences only</option>}
+                            {run_data.create_db_tree && <option value={DB_TREE}>Tree with query and all database sequences</option>}
+                        </FormSelect>
+                    </FormGroup>
+                </Row>
+                <Row>
+                    <div className='text-muted'>
+                        <span><BsMouse2Fill /> Click and drag to pan. Scroll to zoom.</span>
+                    </div>
+                </Row>
+                <Tree {...treeSelected} databaseSequences={database.sequences} querySequences={querySequences} enabled={enabled}/>
+                <Row className='mt-3'>
+                    <strong className={styles.subtitle}>Job ID</strong>
+                    <p>{treeSelected.id}</p>
+                </Row>
+                <Row>
+                    <Col className='col-auto'>
+                        <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={downloadAlignment}>
+                            <BsCloudDownload className={styles.buttonIcon} />
+                            Download MSA
+                        </Button>
+                    </Col>
+                    <Col className='col-auto'>
+                        <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={downloadTree}>
+                            <BsCloudDownload className={styles.buttonIcon} />
+                            Download tree
+                        </Button>
+                    </Col>
+                    <Col className='col-auto'>
+                        <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={downloadSequences}>
+                            <BsCloudDownload className={styles.buttonIcon} />
+                            Download sequences
+                        </Button>
+                    </Col>
+                </Row>
+                <Row className='mt-3'>
+                    <strong className={styles.subtitle}>Raw Newick</strong>
+                </Row>
+                <Row className='d-flex align-items-center'>
+                    <Col className='col-auto'>
+                        <Button id='treeCopy' variant='primary' className='align-middle text-white text-decoration-none' onClick={copyTreeToClipboard}>
+                            <BsFileEarmarkText className={styles.buttonIcon} />
+                            Copy to clipboard
+                        </Button>
+                    </Col>
+                    <Col>
+                        <span id='copyNotif' style={{ visibility: 'hidden' }} className='text-success'>Copied!</span>
+                    </Col>
+                </Row>
+                <details>
+                    <summary>Show entire raw string</summary>
+                    <p><code>{treeSelected.tree}</code></p>
+                </details>
+            </Container>
         </div>
     )
 }
 
-class Tree extends React.Component {
-    constructor(props) {
-        super(props);
-        this.tree = this.props.tree.replaceAll('\n', '');
-        this.treeContainer = React.createRef();
-        this.treeContainerId = '#tree_container'
-    }
-
-    componentDidMount() {
-        this.treeObj = new phylotree(this.tree)
-        const elem = document.querySelector(this.treeContainerId)
-        const boundingRect = elem.getBoundingClientRect()
-        
-        this.treeRender = this.treeObj.render({
-            container: this.treeContainerId, // supply ID of tree container div
-            width: boundingRect.width, // set height to that of div
-            height: boundingRect.height, // set height to that of div
-            'left-right-spacing': 'fit-to-size', // fit tree size to box
-            'top-bottom-spacing': 'fit-to-size', // fit tree size to box
-            zoom: true, // allow zoom in/out of tree
-            selectable: false,
-            brush: false // disable selection box brush
-        });
-        const svg = this.treeRender.show()
-
-        // highlight all query sequences with bold
-        let nodes = svg.querySelectorAll('g')
-        let filteredNodes = Array.from(nodes).filter(node => this.props.querySequences.includes(node.getAttribute('data-node-name')));
-        filteredNodes.forEach(node => node.style['font-weight'] = 'bold')
-
-        elem.append(svg)
-    }
-
-    render() {
-        return (
-            <div
-                className={styles.treeContainer}
-                id='tree_container'
-                ref={el => (this.treeContainer = el)}
-                >
-            </div>
-        );
-    }
-}
-
-export default RunTree
+export default RunTreeTab

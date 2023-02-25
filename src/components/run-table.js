@@ -3,12 +3,17 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
+import { BsSortDown, BsSortDownAlt } from 'react-icons/bs'
 import { IconContext } from 'react-icons'
 
 const RunTable = ({ initialData }) => {
 
     const columns = React.useMemo(
         () => [
+            {
+                Header: 'Percent Identity',
+                accessor: 'percent_identity'
+            },
             {
                 Header: 'Query Definition',
                 accessor: 'query_accession_version'
@@ -26,20 +31,12 @@ const RunTable = ({ initialData }) => {
                 accessor: 'db_entry.country',
             },
             {
-                Header: 'Latitude / Longitude',
-                accessor: 'db_entry.lat_lon',
+                Header: 'Specimen Voucher',
+                accessor: 'db_entry.specimen_voucher',
             },
             {
                 Header: 'Type',
                 accessor: 'db_entry.type_material',
-            },
-            {
-                Header: 'Isolate',
-                accessor: 'db_entry.isolate',
-            },
-            {
-                Header: 'Percent Identity',
-                accessor: 'percent_identity'
             },
             {
                 Header: 'Alignment Length',
@@ -52,6 +49,10 @@ const RunTable = ({ initialData }) => {
             {
                 Header: 'Bit Score',
                 accessor: 'bit_score'
+            },
+            {
+                Header: 'Latitude / Longitude',
+                accessor: 'db_entry.lat_lon',
             },
         ],
         []
@@ -118,8 +119,8 @@ const RunTable = ({ initialData }) => {
                                                 <span>
                                                     {column.isSorted
                                                         ? column.isSortedDesc
-                                                            ? ' 🔽'
-                                                            : ' 🔼'
+                                                            ? <BsSortDown size={20}/>
+                                                            : <BsSortDownAlt size={20}/>
                                                         : ''}
                                                 </span>
                                             </th>

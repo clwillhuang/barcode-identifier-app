@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
-import { BsBoxArrowUpRight } from 'react-icons/bs'
+import { BsBoxArrowUpRight, BsSortDown, BsSortDownAlt } from 'react-icons/bs'
 import { IconContext } from 'react-icons'
 
 const resolveCellContent = (cell) => {
@@ -40,10 +40,14 @@ const DbTable = ({ data }) => {
                 Header: 'Organism',
                 accessor: 'organism'
             },
-            // {
-            //     Header: 'Definition',
-            //     accessor: 'definition'
-            // },
+            {
+                Header: 'Specimen Voucher',
+                accessor: 'specimen_voucher'
+            },
+            {
+                Header: 'Country',
+                accessor: 'country'
+            },
             {
                 Header: 'Type',
                 accessor: 'type_material'
@@ -53,13 +57,9 @@ const DbTable = ({ data }) => {
                 accessor: 'isolate'
             },
             {
-                Header: 'Country',
-                accessor: 'country'
-            },
-            {
                 Header: 'Latitude / Longitude',
                 accessor: 'lat_lon'
-            }
+            },
         ],
         []
     )
@@ -102,12 +102,32 @@ const DbTable = ({ data }) => {
             },
             useSortBy, usePagination)
 
+    useEffect(() => {
+        const tableWidth = document.querySelector('#db-table-head').getBoundingClientRect().width;
+        document.querySelector('#dbcontent').style.width = `${tableWidth}px`
+
+        const topScrollBar = document.querySelector('#dbtop')
+        const botScrollBar = document.querySelector('#db-table-container').parentNode
+
+        topScrollBar.addEventListener("scroll", function () {
+            botScrollBar.scrollLeft = topScrollBar.scrollLeft;
+        });
+
+        botScrollBar.addEventListener("scroll", function () {
+            topScrollBar.scrollLeft = botScrollBar.scrollLeft;
+        });
+    })
+
     return (
-        <React.Fragment>
-            <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+        <div style={{marginTop: '50px'}}>
+            <TablePagination  {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}} >
-                <Table striped bordered hover responsive {...getTableProps()} >
-                    <thead>
+                <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
+                    <div id='dbcontent' style={{ height: '15px' }}>
+                    </div>
+                </div>
+                <Table id='db-table-container' striped bordered hover responsive {...getTableProps()} >
+                    <thead id='db-table-head'>
                         {
                             headerGroups.map(headerGroup => (
                                 <tr {...headerGroup.getHeaderGroupProps()}>
@@ -119,8 +139,8 @@ const DbTable = ({ data }) => {
                                                     {/* TODO: Find sorting icons */}
                                                     {column.isSorted
                                                         ? column.isSortedDesc
-                                                            ? ' 🔽'
-                                                            : ' 🔼'
+                                                            ? <BsSortDown size={20}/>
+                                                            : <BsSortDownAlt size={20}/>
                                                         : ''}
                                                 </span>
                                             </th>
@@ -152,7 +172,7 @@ const DbTable = ({ data }) => {
                 </Table>
             </IconContext.Provider>
             <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
-        </React.Fragment>
+        </div>
     )
 }
 

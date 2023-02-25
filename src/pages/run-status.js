@@ -12,7 +12,7 @@ import CustomHelmet from '../components/custom-helmet';
 const RunStatus = () => {
     let navigate = useNavigate()
     const [willRedirect, setRedirect] = React.useState(false)
-    const [refetchInterval, setRefetchInterval] = React.useState(5000)
+    const [refetchInterval, setRefetchInterval] = React.useState(2000)
 
     const { runId } = useParams();
     const DENIED_STATUS = 'DEN'
@@ -96,7 +96,7 @@ const RunStatus = () => {
         } else if (status_string === STARTED_STATUS) {
             return(
                 <p className='d-inline-flex align-items-center text-warning'>
-                    ({status_string}) The job has passed through the queue and is currently being processed.
+                    ({status_string}) The job is currently running.
                     <Spinner animation="border" role="status"></Spinner>
                 </p>
             )
@@ -161,7 +161,7 @@ const RunStatus = () => {
                 <h3>Status</h3>
                 <p>{getStatus(status.job_status)}</p>
                 <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
-                <strong>Job name</strong><pre>{status.job_name}</pre>
+                <strong>Job name</strong><pre>{status.job_name !== '' ? status.job_name : 'No job name given'}</pre>
                 <strong>Run Identifier</strong><pre>{runId}</pre>
 
                 <Accordion>

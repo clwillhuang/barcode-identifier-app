@@ -13,6 +13,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import NotFound from './pages/not-found';
 import Credits from './pages/credits';
 import { appName } from './url';
+import Manual from './pages/manual';
 
 const queryClient = new QueryClient()
 
@@ -32,6 +33,9 @@ function App() {
 								<NavLink as={Link} to='/blast'>Run</NavLink>
 							</NavItem>
 							<NavItem>
+								<NavLink as={Link} to='/manual'>Manual</NavLink>
+							</NavItem>
+							<NavItem>
 								<NavLink as={Link} to='/credits'>Credits</NavLink>
 							</NavItem>
 						</Nav>
@@ -46,6 +50,7 @@ function App() {
 					<Route path='run/:runId/results' element={<Run />} />
 					<Route path='blast' element={<Blast />} />
 					<Route path='credits' element={<Credits />} />
+					<Route path='manual' element={<Manual/>} />
 					<Route path='*' element={<NotFound />} />
 				</Routes>
 			</QueryClientProvider>

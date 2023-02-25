@@ -1,11 +1,12 @@
 import { useCallback, useState } from 'react';
-import { Alert, Button, Form, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
+import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import CustomHelmet from '../components/custom-helmet';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
+import { IoMdSend } from 'react-icons/io'
 
 function Blast() {
 
@@ -15,10 +16,11 @@ function Blast() {
     let [sequenceInvalid, setSequenceInvalid] = useState(false)
 
     const [fields, setFields] = useState({
-        jobName: '',
+        job_name: '',
         databaseSelect: searchParams.get('database'),
-        querySequence: '',
-        queryFile: undefined,
+        create_hit_tree: searchParams.get('createHitTree') ?? false,
+        create_db_tree: searchParams.get('createDbTree') ?? false,
+        query_file: undefined,
     })
 
     let defaultSelected = searchParams.get('database')
@@ -41,7 +43,11 @@ function Blast() {
     )
 
     const handleChange = (event) => {
-        setFields({ ...fields, [event.target.name]: event.target.value })
+        if (event.target.type === 'checkbox') {
+            setFields({ ...fields, [event.target.name]: event.target.checked })    
+        } else {
+            setFields({ ...fields, [event.target.name]: event.target.value })
+        }
         setSequenceInvalid(false)
         setResponseError(null)
     }
@@ -59,7 +65,14 @@ function Blast() {
 
         if (true) {
             const form_info = document.getElementById('blastForm')
-            const formData = new FormData(form_info)
+            let formData = new FormData(form_info)
+            let d = ['create_db_tree', 'create_hit_tree']
+            d.forEach(key => {
+                if (formData.has(key)) {
+                    formData.set(key, formData.get(key) === 'true')
+                }
+            })
+
             let url = `${urlRoot}/blastdbs/${fields.databaseSelect}/run/`
 
             let postHeaders = {
@@ -96,7 +109,7 @@ function Blast() {
     }
 
     const onFileChange = (event) => {
-        setFields({ ...fields, 'queryFile': event.target.files[0] })
+        setFields({ ...fields, 'query_file': event.target.files[0] })
     }
 
     if (isLoading) return (
@@ -129,30 +142,42 @@ function Blast() {
                 </Alert> 
             }
             <Form id='blastForm' onSubmit={handleSubmit} className='col-12'>
-                <h5>Query Sequence</h5>
+                
+                <h5>Query  Sequence</h5>
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='queryFile'>Upload sequence .fasta file</FormLabel>
                     <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange}></FormControl>
-                    <p className='my-1'>OR</p>
+                    <strong className='my-1'>OR</strong><br/>
                     <FormLabel htmlFor='querySequence'>Paste raw sequence text</FormLabel>
-                    <FormControl isInvalid={sequenceInvalid} id='querySequence' name='query_sequence' as='textarea' rows={5} onChange={handleChange} placeholder='Paste sequence as single line without comments, definitions/headers. A future update will allow headers to be included.'></FormControl>
+                    <FormControl isInvalid={sequenceInvalid} id='querySequence' name='query_sequence' as='textarea' rows={5} onChange={handleChange} placeholder='Provide sequences in FASTA format'></FormControl>
                     <Form.Control.Feedback type="invalid">
                         {"Error: " + responseError}
                     </Form.Control.Feedback>
                 </FormGroup>
-                <h5>Query Parameters</h5>
-                <FormGroup className='my-3 mx-5'>
-                    <FormLabel htmlFor='jobName'>Job Name (Optional)</FormLabel>
-                    <FormControl id='jobName' name='job_name' as='input' placeholder='Provide this run with a custom name.' onChange={handleChange}></FormControl>
-                </FormGroup>
+                <h5>Nucleotide BLAST Parameters</h5>
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='databaseSelect'>Blast Database</FormLabel>
                     <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={defaultSelected} onChange={handleChange}>
-                        {dbs.map(db => <option value={db.id} key={db.id}>{db.custom_name}</option>)}
+                        {dbs.map(db => <option value={db.id} key={db.id}>{db.custom_name} ({db.id})</option>)}
                     </FormSelect>
+                    <div className='d-flex justify-content-end'>
+                        <a target='_blank' rel='noreferrer' style={{fontSize: '0.9em', textAlign: 'right'}} href={`/database/${fields.databaseSelect}`}>Browse this database</a>
+                    </div>
                 </FormGroup>
-                
-                <Button disabled={responseError} type='submit' className='my-3'>Submit Query</Button>
+                <h5>Multiple Alignment Parameters</h5>
+                <FormGroup className='my-3 mx-5'>
+                    <FormCheck id='createHitTree' name='create_hit_tree' type='checkbox' value={fields.create_hit_tree} onChange={handleChange} label='Construct tree with only queries and hits (Create hit tree)'></FormCheck>
+                </FormGroup>
+                <FormGroup className='my-3 mx-5'>
+                    <FormCheck id='createDbTree' name='create_db_tree' type='checkbox' onChange={handleChange} value={fields.create_db_tree} label='Construct tree with queries and all database sequences (Create database tree)'></FormCheck>
+                </FormGroup>
+                {/* TODO: Allow tree construction to be turned on/off */}
+                <h5>Job Name</h5>
+                <FormGroup className='my-3 mx-5'>
+                    <FormLabel htmlFor='jobName'>Provide this run with a custom name (optional)</FormLabel>
+                    <FormControl id='jobName' name='job_name' as='input' placeholder='' onChange={handleChange}></FormControl>
+                </FormGroup>
+                <Button disabled={responseError} type='submit' className='my-3'><IoMdSend style={{marginRight: '5px', marginBottom: '2px'}}/>Submit Query</Button>
             </Form>
         </Wrapper>
     );

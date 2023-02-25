@@ -9,7 +9,7 @@ import { useQuery } from 'react-query'
 import styles from './run.module.css'
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import CustomHelmet from '../components/custom-helmet';
-import RunTree from '../components/hit-tree';
+import RunTreeTab from '../components/hit-tree';
 
 const Run = () => {
     const [errorText, setErrorText] = useState('');
@@ -158,11 +158,12 @@ const Run = () => {
                             </React.Fragment>
                         }
                     </Tab>
+                    {
+                        (run.create_db_tree || run.create_hit_tree) &&
                     <Tab eventKey='tree' title='Tree' className={styles.tabs}>
-                        <h3>Phylogenetic tree of hits and query sequences</h3>
-                        <p>Multiple sequence alignment by ClustalOmega and tree construction by SimplePhylogeny at EBML-EBI</p>
-                        <RunTree runId={runId} enabled={key==='tree'} querySequences={run.queries.map(q => q.definition)}/>
+                        <RunTreeTab run_data={run} querySequences={run.queries} enabled={key === 'tree'}/>
                     </Tab>
+                    }
                 </Tabs>
             </div>
             <hr />
@@ -175,7 +176,7 @@ const Run = () => {
             <strong>Unique Run Identifier</strong>
             <pre>{runId}</pre>
             <strong>Query Input</strong>
-            <pre>{run.queries.length} nucleotide sequence(s): {run.queries.map(q => q.definition).join()}</pre>
+            <pre>{run.queries.length} nucleotide sequence(s)</pre>
             </div>
             <Container className='g-0'>
                 <Row className='d-flex align-items-center pb-3'>
@@ -214,6 +215,8 @@ const Run = () => {
                             <p>The server began running this job at {dateFormatter.format(Date.parse(run.job_start_time))}</p>}
                         {run.job_end_time &&
                             <p>The server completed running this job at {dateFormatter.format(Date.parse(run.job_end_time))}</p>}
+                        {run.job_error_time && 
+                            <p>The server encountered an unexpected error and the job was terminated at {dateFormatter.format(Date.parse(run.job_error_time))}</p>}
                         <p></p>
                     </Accordion.Body>
                 </Accordion.Item>
