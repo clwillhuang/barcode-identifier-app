@@ -50,7 +50,7 @@ const Manual = () => {
             <CustomHelmet
                 title='Manual and Documentation'
                 description='Citations and references to the parties involved in making this website possible.'
-                canonical='credits'
+                canonical='manual'
             />
             {renderContent()}
         </Wrapper>

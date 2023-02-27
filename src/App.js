@@ -14,6 +14,7 @@ import NotFound from './pages/not-found';
 import Credits from './pages/credits';
 import { appName } from './url';
 import Manual from './pages/manual';
+import ApiDocs from './pages/api-docs';
 
 const queryClient = new QueryClient()
 
@@ -38,6 +39,9 @@ function App() {
 							<NavItem>
 								<NavLink as={Link} to='/credits'>Credits</NavLink>
 							</NavItem>
+							<NavItem>
+								<NavLink as={Link} to='/api-docs'>API Docs</NavLink>
+							</NavItem>
 						</Nav>
 					</NavbarCollapse>
 				</Container>
@@ -50,7 +54,8 @@ function App() {
 					<Route path='run/:runId/results' element={<Run />} />
 					<Route path='blast' element={<Blast />} />
 					<Route path='credits' element={<Credits />} />
-					<Route path='manual' element={<Manual/>} />
+					<Route path='manual' element={<Manual />} />
+					<Route path='api-docs' element={<ApiDocs />} />
 					<Route path='*' element={<NotFound />} />
 				</Routes>
 			</QueryClientProvider>
