@@ -14,7 +14,9 @@ const BlastDb = () => {
     const { databaseId } = useParams();
 
     const { isLoading, error, data, isError } = useQuery([`blastdb_${databaseId}`], () =>
-        fetch(`${urlRoot}/blastdbs/${databaseId}`)
+        fetch(`${urlRoot}/blastdbs/${databaseId}`, {
+            mode: 'cors'
+        })
             .then(handleResponse()),
         {
             refetchInterval: false,
@@ -23,12 +25,12 @@ const BlastDb = () => {
     )
 
     const downloadFile = (format) => {
-        const types = { 'text/csv': 'csv', 'text/plain': 'fasta' }
+        const types = { 'text/csv': 'csv', 'text/x-fasta': 'fasta' }
 
         if (typeof window === 'undefined') {
             console.error("Cannot download CSV file with window undefined.")
             return
-        } else if (!(['text/csv', 'text/plain'].includes(format))) {
+        } else if (!Object.keys(types).includes(format)) {
             console.error(`The format ${format} is not available for export.`)
             return
         }
@@ -82,10 +84,11 @@ const BlastDb = () => {
             {helmet}
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
+                <BreadcrumbItem href='/database'>Databases</BreadcrumbItem>
                 <BreadcrumbItem active>{data.custom_name}</BreadcrumbItem>
             </Breadcrumb>
             <div>
-                <h1>Blast database "{data.custom_name}"</h1>
+                <h1>"{data.custom_name}"</h1>
 
                 <Container className='g-0 mb-2'>
                     <Row className='d-flex align-items-center'>
@@ -113,7 +116,7 @@ const BlastDb = () => {
                             </Button>
                         </Col>
                         <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('text/plain')}>
+                            <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('text/x-fasta')}>
                                 .fasta
                             </Button>
                         </Col>

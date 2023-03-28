@@ -18,3 +18,13 @@
 .heading > svg {
     color: gray;
 }
+
+.heading:hover .icon {
+    opacity: 1;
+}
+
+.heading .icon {
+    opacity: 0;
+}
+
+

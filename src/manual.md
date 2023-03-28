@@ -49,9 +49,9 @@ This refers to the curated set of nucleotide accessions used to form the search 
 
 ### Multiple Alignment and Tree Parameters
 
-"Create hit tree": If enabled, a multiple sequence alignment job will be run with ClustalOmega hosted at EMBL-EBI using a sequence set made from all the query sequences and all their hits from the BLASTN query.
+"Create hit tree": If enabled, a multiple sequence alignment job will be run with ClustalOmega (hosted at EMBL-EBI) with default parameters using a sequence set made from all the query sequences and all their hits from the BLASTN query.
 
-"Create database tree": If enabled, a multiple sequence alignment job will be run with ClustalOmega hosted at EMBL-EBI using a sequence set made from all the query sequences and all the sequences in the database.
+"Create database tree": If enabled, a multiple sequence alignment job will be run with ClustalOmega (hosted at EMBL-EBI) with default parameters using a sequence set made from all the query sequences and all the sequences in the database.
 
 ### Job Name
 

@@ -136,7 +136,6 @@ const DbTable = ({ data }) => {
                                             <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                                                 {column.render('Header')}
                                                 <span>
-                                                    {/* TODO: Find sorting icons */}
                                                     {column.isSorted
                                                         ? column.isSortedDesc
                                                             ? <BsSortDown size={20}/>

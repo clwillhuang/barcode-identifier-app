@@ -17,7 +17,7 @@ const Headings = ({ level, children }) => {
     const renderText = (children) => (
         <a id={anchor} href={`#${anchor}`}>
             <span>{children}</span>
-            <BsLink45Deg/>
+            <BsLink45Deg className={styles.icon}/>
         </a>
     );
 

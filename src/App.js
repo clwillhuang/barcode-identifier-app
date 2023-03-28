@@ -2,8 +2,6 @@ import './App.css';
 import React from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
-import { Container, Nav, Navbar, NavbarBrand, NavItem, NavLink } from 'react-bootstrap';
-import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 import BlastDb from './pages/blastdb';
 import Run from './pages/run';
 import Blast from './pages/blast';
@@ -12,53 +10,34 @@ import RunStatus from './pages/run-status';
 import { HelmetProvider } from 'react-helmet-async';
 import NotFound from './pages/not-found';
 import Credits from './pages/credits';
-import { appName } from './url';
 import Manual from './pages/manual';
 import ApiDocs from './pages/api-docs';
+import Databases from './pages/databases';
+import NavigationBar from './components/navigation';
+import Footer from './components/footer';
 
 const queryClient = new QueryClient()
 
 function App() {
+
 	return (
 		<HelmetProvider>
-			<Navbar bg='dark' variant='dark' expand='sm'>
-				<Container>
-					<NavbarBrand>{appName}</NavbarBrand>
-					<Navbar.Toggle aria-controls="basic-navbar-nav" />
-					<NavbarCollapse id="basic-navbar-nav">
-						<Nav className='me-auto'>
-							<NavItem>
-								<NavLink as={Link} to='/'>Home</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/blast'>Run</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/manual'>Manual</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/credits'>Credits</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/api-docs'>API Docs</NavLink>
-							</NavItem>
-						</Nav>
-					</NavbarCollapse>
-				</Container>
-			</Navbar>
+			<NavigationBar/>
 			<QueryClientProvider client={queryClient}>
 				<Routes>
-					<Route path='/' element={<Home />} />
-					<Route path='database/:databaseId' element={<BlastDb />} />
-					<Route path='run/:runId/status' element={<RunStatus />} />
-					<Route path='run/:runId/results' element={<Run />} />
-					<Route path='blast' element={<Blast />} />
-					<Route path='credits' element={<Credits />} />
-					<Route path='manual' element={<Manual />} />
-					<Route path='api-docs' element={<ApiDocs />} />
-					<Route path='*' element={<NotFound />} />
+					<Route path='/' element={<Home/>}/>
+					<Route path='database' element={<Databases/>}/>
+					<Route path='database/:databaseId' element={<BlastDb/>}/>
+					<Route path='run/:runId/status' element={<RunStatus/>}/>
+					<Route path='run/:runId/results' element={<Run/>}/>
+					<Route path='blast' element={<Blast/>}/>
+					<Route path='credits' element={<Credits/>}/>
+					<Route path='manual' element={<Manual/>}/>
+					<Route path='api-docs' element={<ApiDocs/>}/>
+					<Route path='*' element={<NotFound/>}/>
 				</Routes>
 			</QueryClientProvider>
+			<Footer/>
 		</HelmetProvider>
 	);
 }

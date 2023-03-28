@@ -10,10 +10,10 @@ import { IoMdSend } from 'react-icons/io'
 
 function Blast() {
 
-    let navigate = useNavigate()
-    let [searchParams] = useSearchParams()
-    let [responseError, setResponseError] = useState(null)
-    let [sequenceInvalid, setSequenceInvalid] = useState(false)
+    let navigate = useNavigate();
+    let [searchParams] = useSearchParams();
+    let [responseError, setResponseError] = useState(null);
+    let [sequenceInvalid, setSequenceInvalid] = useState(false);
 
     const [fields, setFields] = useState({
         job_name: '',
@@ -78,8 +78,6 @@ function Blast() {
             let postHeaders = {
                 'Accept': 'application/json',
             }
-
-            // TODO: Handle bad requests
 
             fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: formData })
             .then(response => {
@@ -171,7 +169,6 @@ function Blast() {
                 <FormGroup className='my-3 mx-5'>
                     <FormCheck id='createDbTree' name='create_db_tree' type='checkbox' onChange={handleChange} value={fields.create_db_tree} label='Construct tree with queries and all database sequences (Create database tree)'></FormCheck>
                 </FormGroup>
-                {/* TODO: Allow tree construction to be turned on/off */}
                 <h5>Job Name</h5>
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='jobName'>Provide this run with a custom name (optional)</FormLabel>
