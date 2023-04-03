@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
-import { BsBoxArrowUpRight, BsSortDown, BsSortDownAlt } from 'react-icons/bs'
+import { FaExternalLinkAlt, FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
 
 const resolveCellContent = (cell) => {
@@ -11,7 +11,7 @@ const resolveCellContent = (cell) => {
             return (
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
                     <code>{cell.value}</code>
-                    <BsBoxArrowUpRight />
+                    <FaExternalLinkAlt />
                 </a>
             );
         case 'lat_lon':
@@ -20,7 +20,7 @@ const resolveCellContent = (cell) => {
                     &&
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`http://maps.google.com/maps?q=${cell.value}`}>
                     <code>{cell.value}</code>
-                    <BsBoxArrowUpRight />
+                    <FaExternalLinkAlt />
                 </a>
             )
         default:
@@ -118,9 +118,11 @@ const DbTable = ({ data }) => {
         });
     })
 
+    const tableTopId = 'db-table-top';
+
     return (
-        <div style={{marginTop: '50px'}}>
-            <TablePagination  {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+        <div style={{marginTop: '50px'}} id={tableTopId}>
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}} >
                 <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
                     <div id='dbcontent' style={{ height: '15px' }}>
@@ -138,8 +140,8 @@ const DbTable = ({ data }) => {
                                                 <span>
                                                     {column.isSorted
                                                         ? column.isSortedDesc
-                                                            ? <BsSortDown size={20}/>
-                                                            : <BsSortDownAlt size={20}/>
+                                                            ? <FaSortAlphaUpAlt size={20}/>
+                                                            : <FaSortAlphaDown size={20}/>
                                                         : ''}
                                                 </span>
                                             </th>
@@ -170,7 +172,7 @@ const DbTable = ({ data }) => {
                     </tbody>
                 </Table>
             </IconContext.Provider>
-            <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
         </div>
     )
 }

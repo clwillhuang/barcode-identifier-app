@@ -3,7 +3,7 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
-import { BsSortDown, BsSortDownAlt } from 'react-icons/bs'
+import { FaSortAlphaDownAlt, FaSortAlphaUpAlt } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
 
 const RunTable = ({ initialData }) => {
@@ -99,9 +99,11 @@ const RunTable = ({ initialData }) => {
         });
     })
 
+    const tableTopId = 'run-table-top';
+
     return (
-        <React.Fragment>
-            <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+        <div id={tableTopId}>
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }}>
                 <div id='runtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
                     <div id='runcontent' style={{ height: '15px' }}>
@@ -119,8 +121,8 @@ const RunTable = ({ initialData }) => {
                                                 <span>
                                                     {column.isSorted
                                                         ? column.isSortedDesc
-                                                            ? <BsSortDown size={20}/>
-                                                            : <BsSortDownAlt size={20}/>
+                                                            ? <FaSortAlphaDownAlt size={20}/>
+                                                            : <FaSortAlphaUpAlt size={20}/>
                                                         : ''}
                                                 </span>
                                             </th>
@@ -142,8 +144,8 @@ const RunTable = ({ initialData }) => {
                     </tbody>
                 </Table>
             </IconContext.Provider>
-            <TablePagination {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
-        </React.Fragment>
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+        </div>
     )
 }
 

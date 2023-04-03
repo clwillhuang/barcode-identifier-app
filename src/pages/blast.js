@@ -6,7 +6,7 @@ import CustomHelmet from '../components/custom-helmet';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import { urlRoot } from '../url';
-import { IoMdSend } from 'react-icons/io'
+import { FaPaperPlane } from 'react-icons/fa'
 
 function Blast() {
 
@@ -174,7 +174,7 @@ function Blast() {
                     <FormLabel htmlFor='jobName'>Provide this run with a custom name (optional)</FormLabel>
                     <FormControl id='jobName' name='job_name' as='input' placeholder='' onChange={handleChange}></FormControl>
                 </FormGroup>
-                <Button disabled={responseError} type='submit' className='my-3'><IoMdSend style={{marginRight: '5px', marginBottom: '2px'}}/>Submit Query</Button>
+                <Button disabled={responseError} type='submit' className='my-3'><FaPaperPlane style={{marginRight: '5px', marginBottom: '2px'}}/>Submit Query</Button>
             </Form>
         </Wrapper>
     );

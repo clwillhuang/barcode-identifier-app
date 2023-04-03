@@ -112,7 +112,7 @@ const Run = () => {
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
                 <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
-                <BreadcrumbItem active>Run results</BreadcrumbItem>
+                <BreadcrumbItem active>Results</BreadcrumbItem>
             </Breadcrumb>
             <Modal show={errorText} backdrop='static' keyboard={false}>
                 <Modal.Header>

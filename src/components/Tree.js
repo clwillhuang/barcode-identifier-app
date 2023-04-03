@@ -2,8 +2,7 @@ import { phylotree } from 'phylotree';
 import { Accordion, Button, Col, Form, FormCheck, FormGroup, Row } from 'react-bootstrap';
 import React from 'react';
 import styles from './hit-tree.module.css';
-import { IoMdRefresh } from 'react-icons/io'
-import { BsImageFill } from 'react-icons/bs'
+import { FaSyncAlt, FaImage } from 'react-icons/fa'
 
 export class Tree extends React.Component {
     constructor(props) {
@@ -304,7 +303,7 @@ export class Tree extends React.Component {
                                         </Col>
                                     </Row>
                                     <Button onClick={() => this.updateTree()}>
-                                        <IoMdRefresh className={styles.buttonIcon} size={20}/>
+                                        <FaSyncAlt className={styles.buttonIcon} size={20}/>
                                         Rerender with new dimensions
                                     </Button>
                                     <Row className='my-3'>
@@ -319,13 +318,13 @@ export class Tree extends React.Component {
                     <Row className='d-flex align-items-center'>
                         <Col className='col-auto'>
                             <Button onClick={() => { this.updateTree(); }}>
-                            <IoMdRefresh className={styles.buttonIcon} size={20}/>
+                            <FaSyncAlt className={styles.buttonIcon} size={20}/>
                                 Refresh tree
                             </Button>
                             </Col>
                         <Col className='col-auto'>
                             <Button onClick={() => { this.downloadTreeSvg(); }}>
-                                <BsImageFill className={styles.buttonIcon} />
+                                <FaImage className={styles.buttonIcon} />
                                 Download current view as SVG
                             </Button>
                         </Col>

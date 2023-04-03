@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { Link, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import BlastDb from './pages/blastdb';
 import Run from './pages/run';

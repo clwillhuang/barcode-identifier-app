@@ -14,7 +14,7 @@ const ApiDocs = () => {
                 canonical='api-docs'
             />
             <h2>Interactive API Documentation</h2>
-            <SwaggerUI url={`${docsRoot}/swagger.yaml`} />
+            <SwaggerUI defaultModelsExpandDepth={-1} url={`${docsRoot}/swagger.yaml`} />
         </Wrapper>
     );
 }

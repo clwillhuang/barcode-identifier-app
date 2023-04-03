@@ -1,4 +1,4 @@
-import { BsBoxArrowUpRight } from 'react-icons/bs'
+import { FaExternalLinkAlt } from 'react-icons/fa'
 
 const resolveCellContents = (cell) => {
     switch (cell.column.id) {
@@ -9,7 +9,7 @@ const resolveCellContents = (cell) => {
             return (
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
                     <code>{cell.value}</code>
-                    <BsBoxArrowUpRight />
+                    <FaExternalLinkAlt />
                 </a>
             );
         case 'db_entry.lat_lon':
@@ -18,7 +18,7 @@ const resolveCellContents = (cell) => {
                     &&
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`http://maps.google.com/maps?q=${cell.value}`}>
                     <code>{cell.value}</code>
-                    <BsBoxArrowUpRight />
+                    <FaExternalLinkAlt />
                 </a>
             )
         default:

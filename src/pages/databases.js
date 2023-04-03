@@ -1,4 +1,4 @@
-import { Alert, Button, ListGroup } from 'react-bootstrap';
+import { Alert, ListGroup } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import BlastDbPreview from '../components/blastdb-preview';
 import CustomHelmet from '../components/custom-helmet';

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from './renderHeadings.module.css'
-import { BsLink45Deg } from 'react-icons/bs'
+import { FaLink } from 'react-icons/fa'
 
 // Custom component to render markdown headings as links with IDs. 
 // This code was modified from a solution proposed by Eric Egli (@eegli) on GitHub.
@@ -17,7 +17,7 @@ const Headings = ({ level, children }) => {
     const renderText = (children) => (
         <a id={anchor} href={`#${anchor}`}>
             <span>{children}</span>
-            <BsLink45Deg className={styles.icon}/>
+            <FaLink size={20} className={styles.icon}/>
         </a>
     );
 

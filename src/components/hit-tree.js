@@ -3,7 +3,7 @@ import 'phylotree/dist/phylotree.css'
 import React, { useState } from 'react'
 import { runsFolder, urlRoot } from '../url'
 import styles from './hit-tree.module.css'
-import { BsCloudDownload, BsFileEarmarkText, BsMouse2Fill } from 'react-icons/bs'
+import { FaCloudDownloadAlt, FaFileAlt, FaMouse } from 'react-icons/fa'
 import { Tree } from './Tree';
 import { useQuery } from 'react-query';
 import { ErrorMessage, handleResponse } from './error-message';
@@ -102,7 +102,7 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
                 </Row>
                 <Row>
                     <div className='text-muted'>
-                        <span><BsMouse2Fill /> Click and drag to pan. Scroll to zoom.</span>
+                        <span><FaMouse /> Click and drag to pan. Scroll to zoom.</span>
                     </div>
                 </Row>
                 <Tree {...treeSelected} databaseSequences={database.sequences} querySequences={querySequences} enabled={enabled}/>
@@ -113,19 +113,19 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
                 <Row>
                     <Col className='col-auto'>
                         <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={downloadAlignment}>
-                            <BsCloudDownload className={styles.buttonIcon} />
+                            <FaCloudDownloadAlt className={styles.buttonIcon} />
                             Download MSA
                         </Button>
                     </Col>
                     <Col className='col-auto'>
                         <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={downloadTree}>
-                            <BsCloudDownload className={styles.buttonIcon} />
+                            <FaCloudDownloadAlt className={styles.buttonIcon} />
                             Download tree
                         </Button>
                     </Col>
                     <Col className='col-auto'>
                         <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={downloadSequences}>
-                            <BsCloudDownload className={styles.buttonIcon} />
+                            <FaCloudDownloadAlt className={styles.buttonIcon} />
                             Download sequences
                         </Button>
                     </Col>
@@ -136,7 +136,7 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
                 <Row className='d-flex align-items-center'>
                     <Col className='col-auto'>
                         <Button id='treeCopy' variant='primary' className='align-middle text-white text-decoration-none' onClick={copyTreeToClipboard}>
-                            <BsFileEarmarkText className={styles.buttonIcon} />
+                            <FaFileAlt className={styles.buttonIcon} />
                             Copy to clipboard
                         </Button>
                     </Col>

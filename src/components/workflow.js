@@ -1,9 +1,5 @@
-import { Alert, Button, ListGroup, Tab, Tabs } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import CustomHelmet from '../components/custom-helmet';
 import styles from './workflow.module.css'
-import { IoMdSend } from 'react-icons/io'
-import { FaServer, FaFileAlt, FaChevronRight, FaDocker, FaDatabase, FaLink, FaChevronDown} from 'react-icons/fa'
+import { FaPaperPlane, FaServer, FaFileAlt, FaChevronRight, FaDocker, FaDatabase, FaLink, FaChevronDown} from 'react-icons/fa'
 import { useState } from 'react';
 
 function Workflow() {
@@ -33,7 +29,7 @@ function Workflow() {
         {
             title: 'Query Submission',
             desc: 'Gather your query sequences in a .fasta file or by pasting into the website. Specify your run parameters and submit.',
-            icon: IoMdSend
+            icon: FaPaperPlane
         },
         {
             title: 'Processing',
@@ -53,7 +49,7 @@ function Workflow() {
                 {
                     workflowData.map((info, index) =>
                         <>
-                            <div className={styles.workflowStep}>
+                            <div className={styles.workflowStep} key={info.title}>
                                 <info.icon size={60}/>
                                 <h3>{info.title}</h3>
                                 <p>{info.desc}</p>
@@ -78,7 +74,7 @@ function Workflow() {
                 <p className={styles.prompt}>I want to ...</p>
                 {
                     ['query a reference library.', 'host a reference library.'].map((text, index) =>
-                        <button className={useCase === index && styles.selected} onClick={() => setUseCase(index)}>{text}</button>)
+                        <button className={useCase === index ? styles.selected : ''} onClick={() => setUseCase(index)}>{text}</button>)
                 }
                 </div>
                 {useCase === 0 && renderWorkflow(queryWorkflow)}

@@ -60,7 +60,7 @@
 }
 
 .workflowStep svg {
-    fill: var(--bs-primary);
+    fill: var(--bs-gray);
     margin: 15px;
 }
 

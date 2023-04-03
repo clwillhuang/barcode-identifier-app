@@ -76,6 +76,8 @@
     border-radius: 15px;
     text-align: center;
     display: flex;
+    margin: 40px auto;
+    padding: 20px;
 }
 
 .ready p {

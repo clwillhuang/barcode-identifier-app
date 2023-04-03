@@ -26,10 +26,7 @@ const RunStatus = () => {
         hour: 'numeric', minute: 'numeric', second: 'numeric', 
         timeZoneName: 'short', hour12: false,
     })
-
-    function redirect() {
-        navigate(`/run/${status.id}/results`);
-    }
+    const redirectDelayInSeconds = 2;
 
     const { isLoading, error, data: status, dataUpdatedAt, errorUpdatedAt, isError, isSuccess} = useQuery([`blast_poll_${runId}`], () =>
         fetch(`${runUrl}/status`).then(handleResponse(setRefetchInterval)), 
@@ -79,6 +76,10 @@ const RunStatus = () => {
     const resolved = status.job_status === ERRORED_STATUS || status.job_status === FINISHED_STATUS 
     const lastFetchDate = isError ? new Date(errorUpdatedAt) : isSuccess ? new Date(dataUpdatedAt) : null
 
+    function getRedirectUrl() {
+        return `/run/${status.id}/results`;
+    }
+
     const getStatus = (status_string) => {
         if (status_string === DENIED_STATUS) {
             return(
@@ -105,8 +106,9 @@ const RunStatus = () => {
                 <div>
                     <p className='d-inline-flex align-items-center text-success'>
                         ({status_string}) The job has completed processing. You will be redirected shortly.
-                        <Spinner animation="border" role="status"></Spinner>
+                        <Spinner className='mx-2' animation="border" role="status"></Spinner>
                     </p>
+                    <p>If you are not directed after {redirectDelayInSeconds} second(s), <a href={getRedirectUrl()}>view results by clicking here.</a></p>
                 </div>
             )
         } else if (status_string === ERRORED_STATUS) {
@@ -144,7 +146,9 @@ const RunStatus = () => {
     }
 
     if (!willRedirect && resolved) {
-        setTimeout(redirect, 1000)
+        setTimeout(() => {
+            navigate(getRedirectUrl())
+        }, redirectDelayInSeconds * 1000)
         setRedirect(true)
     }
     
@@ -183,3 +187,5 @@ const RunStatus = () => {
 }
 
 export default RunStatus
+
+

@@ -2,7 +2,7 @@ import { Container, Nav, Navbar, NavbarBrand, NavItem, NavLink } from 'react-boo
 import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 import { Link, useNavigate } from 'react-router-dom';
 import { appName } from '../url';
-
+import styles from './navigation.module.css'
 
 function NavigationBar () {
 
@@ -11,7 +11,7 @@ function NavigationBar () {
     return(
         <Navbar bg='dark' variant='dark' expand='sm'>
 				<Container>
-					<NavbarBrand onClick={() => navigate('/')}>{appName}</NavbarBrand>
+					<NavbarBrand className={styles.brand} onClick={() => navigate('/')}>{appName}</NavbarBrand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav"/>
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav className='me-auto'>

@@ -21,7 +21,7 @@ function Home() {
 		<div>
 			{helmet}
 			<div className={styles.banner}>
-				<img src='./homepage.jpg' />
+				<img src='./homepage.jpg' alt='Rainforest aerial view' />
 				<div className={styles.overlay}>
 					<h1>DNA barcode libraries made simple.</h1>
 					<p>Perform species identification using taxonomist-curated reference libraries from anywhere.</p>
@@ -40,7 +40,7 @@ function Home() {
 						<Link to='/databases'>Browse databases</Link>
 					</div>
 					<div className={styles.sideImage}>
-						<img src='./database.png' />
+						<img src='./database.png' alt='Screenshot of webpage for browsing sequence database' />
 					</div>
 				</div>
 				<div className={styles.integration}>
@@ -50,7 +50,7 @@ function Home() {
 						<Link to={exampleLink}>View an example</Link>
 					</div>
 					<div className={styles.sideImage}>
-						<img src='./blastn_results.png' />
+						<img src='./blastn_results.png' alt='Screenshot of webpage for browsing blast results' />
 					</div>
 				</div>
 				<div className={styles.user}>
@@ -60,7 +60,7 @@ function Home() {
 						<Link to={exampleLink}>View an example</Link>
 					</div>
 					<div className={styles.sideImage}>
-						<img src='./tree_results.png' />
+						<img src='./tree_results.png' alt='Screenshot of webpage for browsing phylogenetic tree results'/>
 					</div>
 				</div>
 				<div className={styles.user}>
@@ -70,7 +70,7 @@ function Home() {
 						<Link to='/api-docs'>Read our API documentation</Link>
 					</div>
 					<div className={styles.sideImage}>
-						<img src='./api.png' />
+						<img src='./api.png' alt='Screenshot of webpage for browsing api documentation'/>
 					</div>
 				</div>
 				<div className={styles.ready}>
