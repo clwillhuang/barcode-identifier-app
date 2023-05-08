@@ -3,6 +3,7 @@ import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 import CustomHelmet from '../components/custom-helmet';
 import Wrapper from '../components/wrapper';
+import Layout from '../components/layout';
 import { docsRoot } from '../url';
 
 const ApiDocs = () => {
@@ -13,8 +14,10 @@ const ApiDocs = () => {
                 description='View interactive API documentation for the Barcode Identifier API.'
                 canonical='api-docs'
             />
-            <h2>Interactive API Documentation</h2>
-            <SwaggerUI defaultModelsExpandDepth={-1} url={`${docsRoot}/swagger.yaml`} />
+            <Layout>
+                <h2>Interactive API Documentation</h2>
+                <SwaggerUI defaultModelsExpandDepth={-1} url={`${docsRoot}/swagger.yaml`} />
+            </Layout>
         </Wrapper>
     );
 }

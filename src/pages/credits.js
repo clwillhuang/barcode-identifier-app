@@ -1,6 +1,7 @@
 import React from "react";
 import CustomHelmet from "../components/custom-helmet";
 import Wrapper from "../components/wrapper";
+import Layout from '../components/layout';
 import '../index.css'
 
 const Credits = () => {
@@ -20,7 +21,7 @@ const Credits = () => {
                 description='Citations and references to the parties involved in making this website possible.'
                 canonical='credits'
             />
-            <div>
+            <Layout>
                 <h2>Credits</h2>
                 <p className="text-danger my-3">
                     This site, including this page, is still a work in progress. Hence, citations may be inconsistent and attributions inaccurate.
@@ -102,7 +103,7 @@ const Credits = () => {
                 <h5>Image Attribution</h5>
                 <p>Homepage image is by <a href="https://unsplash.com/@wawa01?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Waren Brasse</a> on <a href="https://unsplash.com/photos/IzCUWUi_j8I?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
                 </p>
-            </div>
+            </Layout>
         </Wrapper>
     )
 }

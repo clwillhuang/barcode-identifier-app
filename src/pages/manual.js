@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import CustomHelmet from "../components/custom-helmet";
 import { ErrorMessage } from "../components/error-message";
 import Wrapper from "../components/wrapper";
+import Layout from '../components/layout';
 import '../index.css'
 import manualMd from '../manual.md'
 import Headings from "../renderHeadings";
@@ -52,7 +53,9 @@ const Manual = () => {
                 description='Citations and references to the parties involved in making this website possible.'
                 canonical='manual'
             />
-            {renderContent()}
+            <Layout>
+                {renderContent()}
+            </Layout>
         </Wrapper>
     )
 }

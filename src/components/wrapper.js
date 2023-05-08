@@ -1,12 +1,11 @@
 import React from 'react'
-import { Container } from 'react-bootstrap'
+import NavigationBar from './navigation'
 
 export default function Wrapper({children}) {
     return(
-        <Container>
-            <div className="className='col-12 col-md-9 mx-auto py-4">
-                {children}
-            </div>
-        </Container>
+        <div style={{minHeight: '90vh'}}>
+            <NavigationBar/>
+            {children}
+        </div>
     )
 }

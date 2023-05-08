@@ -1,6 +1,6 @@
 import styles from './workflow.module.css'
 import { FaPaperPlane, FaServer, FaFileAlt, FaChevronRight, FaDocker, FaDatabase, FaLink, FaChevronDown} from 'react-icons/fa'
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function Workflow() {
 
@@ -48,7 +48,7 @@ function Workflow() {
             <div className={styles.workflowGrid}>
                 {
                     workflowData.map((info, index) =>
-                        <>
+                        <React.Fragment key={info.title}>
                             <div className={styles.workflowStep} key={info.title}>
                                 <info.icon size={60}/>
                                 <h3>{info.title}</h3>
@@ -58,7 +58,7 @@ function Workflow() {
                                 <FaChevronRight className={styles.visibleOnWide} size={30} />}
                             {index < queryWorkflow.length - 1 &&
                                 <FaChevronDown className={styles.visibleOnNarrow} size={30} />}
-                        </>
+                        </React.Fragment>
                     )
                 }
             </div>

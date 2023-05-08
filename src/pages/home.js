@@ -1,10 +1,11 @@
 import { Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import CustomHelmet from '../components/custom-helmet';
-import Wrapper from '../components/wrapper';
+import Layout from '../components/layout';
 import { appName } from '../url';
 import styles from './home.module.css'
 import Workflow from '../components/workflow';
+import Wrapper from '../components/wrapper';
 
 function Home() {
 
@@ -18,7 +19,7 @@ function Home() {
 	/>
 
 	return (
-		<div>
+		<Wrapper>
 			{helmet}
 			<div className={styles.banner}>
 				<img src='./homepage.jpg' alt='Rainforest aerial view' />
@@ -31,7 +32,7 @@ function Home() {
 					</div>
 				</div>
 			</div>
-			<Wrapper>
+			<Layout>
 				<Workflow/>
 				<div className={styles.trust}>
 					<div className={styles.content}>
@@ -78,8 +79,8 @@ function Home() {
 					<Button onClick={() => navigate('/blast')}>Submit a query.</Button>
 					<Button onClick={() => navigate('/manual')}>View the user manual.</Button>
 				</div>
-			</Wrapper>
-		</div>
+			</Layout>
+		</Wrapper>
 	);
 }
 

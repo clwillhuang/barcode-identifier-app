@@ -1,7 +1,7 @@
 import { Button, Col, Container, FormGroup, FormSelect, Row, Spinner } from 'react-bootstrap';
 import 'phylotree/dist/phylotree.css'
 import React, { useState } from 'react'
-import { runsFolder, urlRoot } from '../url'
+import { generateHeaders, runsFolder, urlRoot } from '../url'
 import styles from './hit-tree.module.css'
 import { FaCloudDownloadAlt, FaFileAlt, FaMouse } from 'react-icons/fa'
 import { Tree } from './Tree';
@@ -18,7 +18,9 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
 
     // retrieve all database entries
     const { isLoading, error, data: database, isError } = useQuery([`run_${run_data.id}_db`], () =>
-        fetch(`${urlRoot}/blastdbs/${run_data.db_used.id}`)
+        fetch(`${urlRoot}/blastdbs/${run_data.db_used.id}`, {
+            headers: generateHeaders({})
+        })
             .then(handleResponse()),
         {
             refetchInterval: false,

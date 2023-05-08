@@ -1,13 +1,16 @@
 import React from 'react'
 import { Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-bootstrap';
+import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
 import CustomHelmet from '../components/custom-helmet';
 import DbSummary from '../components/db-summary';
 import DbTable from '../components/db-table';
 import { ErrorMessage, handleResponse } from '../components/error-message';
+import Layout from '../components/layout';
 import Wrapper from '../components/wrapper';
-import { urlRoot } from '../url';
+import { generateHeaders, urlRoot } from '../url';
+import styles from './blastdb.module.css'
 
 const BlastDb = () => {
 
@@ -15,7 +18,8 @@ const BlastDb = () => {
 
     const { isLoading, error, data, isError } = useQuery([`blastdb_${databaseId}`], () =>
         fetch(`${urlRoot}/blastdbs/${databaseId}`, {
-            mode: 'cors'
+            mode: 'cors',
+            headers: generateHeaders({})
         })
             .then(handleResponse()),
         {
@@ -35,12 +39,11 @@ const BlastDb = () => {
             return
         }
 
-        const fetchHeaders = new Headers()
-        fetchHeaders.append('Accept', format)
-
         fetch(`${urlRoot}/blastdbs/${databaseId}`, {
             method: `GET`,
-            headers: fetchHeaders
+            headers: generateHeaders({
+                'Accept': format
+            })
         })
             .then((response) => response.blob())
             .then((blob) => {
@@ -64,32 +67,51 @@ const BlastDb = () => {
 
     if (isLoading) return (
         <Wrapper>
+            <Layout>
             {helmet}
             <div>
                 <p>Retrieving data ...</p>
             </div>
+            </Layout>
         </Wrapper>
     )
 
     if (isError) return (
         <Wrapper>
-            {helmet}
-            <h1>Blast database not found</h1>
-            <ErrorMessage error={error} text="Encountered an error fetching databases. Please try again." />
+            <Layout>
+                {helmet}
+                <h1>Blast database not found</h1>
+                <ErrorMessage error={error} text="Encountered an error fetching databases. Please try again." />
+            </Layout>
         </Wrapper>
     )
 
     return (
         <Wrapper>
+            <Layout>
             {helmet}
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem href='/database'>Databases</BreadcrumbItem>
+                <BreadcrumbItem href='/databases'>Databases</BreadcrumbItem>
                 <BreadcrumbItem active>{data.custom_name}</BreadcrumbItem>
             </Breadcrumb>
             <div>
                 <h1>"{data.custom_name}"</h1>
-
+                <div className={styles.visibilityInfo}>
+                    <p className='mt-0 mb-2 text-muted'>
+                    {
+                        data.public ? 
+                        <><FaRegEye />Public Database</> 
+                        : 
+                        <><FaRegEyeSlash/> Private Database</>
+                    }
+                    </p>
+                    <p className='mt-0 mb-2 text-muted'>
+                    <span className='mx-2'>|</span>
+                    Adminstered by {data.owner.username}
+                    </p>
+                </div>
+                <p>{data.description}</p>
                 <Container className='g-0 mb-2'>
                     <Row className='d-flex align-items-center'>
                         <Col className='col-auto'>
@@ -99,13 +121,9 @@ const BlastDb = () => {
                         </Col>
                     </Row>
                 </Container>
-
-                <h3>Description</h3>
-                <p>{data.description}</p>
-
                 <h3>Database entries</h3>
                 <p className='text-muted'>This database contains {data.sequences.length} entries.</p>
-                <DbSummary sequences={data.sequences}/>
+                <DbSummary sequences={data.sequences} />
                 <DbTable data={data.sequences}></DbTable>
                 <h3>Export</h3>
                 <Container className='g-0'>
@@ -123,6 +141,7 @@ const BlastDb = () => {
                     </Row>
                 </Container>
             </div>
+            </Layout>
         </Wrapper>
     )
 }

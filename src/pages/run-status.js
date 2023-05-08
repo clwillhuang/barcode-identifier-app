@@ -2,8 +2,9 @@ import React from 'react'
 import { Accordion, Breadcrumb, BreadcrumbItem, Spinner } from 'react-bootstrap';
 
 import { useParams, useNavigate } from 'react-router-dom'
-import Wrapper from '../components/wrapper';
-import { urlRoot } from '../url';
+import Wrapper from '../components/wrapper'
+import Layout from '../components/layout'
+import { generateHeaders, urlRoot } from '../url';
 import { useQuery } from 'react-query'
 import styles from './run.module.css'
 import { ErrorMessage, handleResponse } from '../components/error-message';
@@ -29,7 +30,10 @@ const RunStatus = () => {
     const redirectDelayInSeconds = 2;
 
     const { isLoading, error, data: status, dataUpdatedAt, errorUpdatedAt, isError, isSuccess} = useQuery([`blast_poll_${runId}`], () =>
-        fetch(`${runUrl}/status`).then(handleResponse(setRefetchInterval)), 
+        fetch(`${runUrl}/status`, {
+            headers: generateHeaders({})
+        })
+        .then(handleResponse(setRefetchInterval)), 
         {
             refetchInterval: (data) => {
                 if (refetchInterval) {
@@ -56,16 +60,20 @@ const RunStatus = () => {
 
     if (isLoading) return (
         <Wrapper>
-            {helmet}
-            <p>Retrieving run status ...</p>
+            <Layout>
+                {helmet}
+                <p>Retrieving run status ...</p>
+            </Layout>
         </Wrapper>
     )
 
     if (isError) return (
         <Wrapper>
-            {helmet}
-            <h1>Run status update</h1>
-            <ErrorMessage error={error} text={`Encountered an error fetching the status of run ${runId}. Please try again.`}/>
+            <Layout>
+                {helmet}
+                <h1>Run status update</h1>
+                <ErrorMessage error={error} text={`Encountered an error fetching the status of run ${runId}. Please try again.`}/>
+            </Layout>
         </Wrapper>
     )
         
@@ -155,33 +163,34 @@ const RunStatus = () => {
     return (
         <Wrapper>
             {helmet}
-            <Breadcrumb>
-                <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
-                <BreadcrumbItem active>Status</BreadcrumbItem>
-            </Breadcrumb>
-            <div className={styles.parameters}>
-                <h1>Run status update</h1>
-                <h3>Status</h3>
-                <p>{getStatus(status.job_status)}</p>
-                <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
-                <strong>Job name</strong><pre>{status.job_name !== '' ? status.job_name : 'No job name given'}</pre>
-                <strong>Run Identifier</strong><pre>{runId}</pre>
-
-                <Accordion>
-                    <Accordion.Item eventKey='0'>
-                        <Accordion.Header>View server log</Accordion.Header>
-                        <Accordion.Body>
-                            <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(status.runtime))} ({getTimeSince(new Date(status.runtime))})</p>
-                            {status.job_start_time &&
-                                <p>The server began running this job at {dateFormatter.format(Date.parse(status.job_start_time))} ({getTimeSince(new Date(status.job_start_time))})</p>}
-                            {status.job_end_time &&
-                                <p>The server completed running this job at {dateFormatter.format(Date.parse(status.job_end_time))} ({getTimeSince(new Date(status.job_end_time))})</p>}
-                            <p></p>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-            </div>
+            <Layout>
+                <Breadcrumb>
+                    <BreadcrumbItem href='/'>Home</BreadcrumbItem>
+                    <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
+                    <BreadcrumbItem active>Status</BreadcrumbItem>
+                </Breadcrumb>
+                <div className={styles.parameters}>
+                    <h1>Run status update</h1>
+                    <h3>Status</h3>
+                    <p>{getStatus(status.job_status)}</p>
+                    <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
+                    <strong>Job name</strong><pre>{status.job_name !== '' ? status.job_name : 'No job name given'}</pre>
+                    <strong>Run Identifier</strong><pre>{runId}</pre>
+                    <Accordion>
+                        <Accordion.Item eventKey='0'>
+                            <Accordion.Header>View server log</Accordion.Header>
+                            <Accordion.Body>
+                                <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(status.runtime))} ({getTimeSince(new Date(status.runtime))})</p>
+                                {status.job_start_time &&
+                                    <p>The server began running this job at {dateFormatter.format(Date.parse(status.job_start_time))} ({getTimeSince(new Date(status.job_start_time))})</p>}
+                                {status.job_end_time &&
+                                    <p>The server completed running this job at {dateFormatter.format(Date.parse(status.job_end_time))} ({getTimeSince(new Date(status.job_end_time))})</p>}
+                                <p></p>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+                </div>
+            </Layout>
         </Wrapper>
     )
 }
