@@ -147,7 +147,7 @@ function Blast() {
                 }
                 <Form id='blastForm' onSubmit={handleSubmit} className='col-12'>
 
-                    <h5>Query  Sequence</h5>
+                    <h5>Query Sequence</h5>
                     <FormGroup className='my-3 mx-5'>
                         <FormLabel htmlFor='queryFile'>Upload sequence .fasta file</FormLabel>
                         <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange}></FormControl>
