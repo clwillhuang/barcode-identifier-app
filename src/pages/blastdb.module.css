@@ -1,0 +1,13 @@
+@media (max-width: 360px) {
+    .visibilityInfo span {
+        display: none;
+    }
+    
+    .visibilityInfo {
+        flex-direction: column;
+    }
+}
+
+.visibilityInfo {
+    display: flex;
+}

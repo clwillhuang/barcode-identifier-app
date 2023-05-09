@@ -1,0 +1,96 @@
+
+.workflow {
+    margin: 50px 0;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+
+@media (max-width: 766px) {
+
+    .workflowGrid {
+        flex-direction: column;
+    }
+
+    .visibleOnWide {
+        display: none;
+    }
+
+    .workflowStep {
+        width: 100%;
+    }
+}
+
+@media (min-width: 766px) {
+    .visibleOnNarrow {
+        display: none;
+    }
+
+    .workflowGrid {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    .workflowStep {
+        width: 30%;
+    }
+}
+
+.gridContainer {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.workflowGrid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.workflowStep {
+    min-height: 200px;
+    height: 100%;
+    align-self: baseline;
+    text-align: center;
+    padding: 15px;
+    /* border: 2px solid gray; */
+    /* border-radius: 15px; */
+}
+
+.workflowStep svg {
+    fill: var(--bs-gray);
+    margin: 15px;
+}
+
+.controls {
+    padding: 10px 0 0 0px;
+}
+
+.workflowOptions {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 25px 10px;
+    background-color: rgb(226, 226, 226);
+    border-radius: 15px;
+    min-height: 400px;
+}
+
+.prompt {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.workflowOptions button {
+    font-size: 20px;
+    margin: auto 15px;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    color: var(--bs-primary);
+}
+
+.workflowOptions .selected {
+    text-decoration: underline;
+}

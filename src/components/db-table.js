@@ -1,10 +1,33 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
-// import { useQuery } from 'react-query'
+import { FaExternalLinkAlt, FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa'
+import { IconContext } from 'react-icons'
 
-// TODO: implement pagination according to this example: https://react-table-v7.tanstack.com/docs/examples/pagination
+const resolveCellContent = (cell) => {
+    switch (cell.column.id) {
+        case 'accession_number':
+            return (
+                <a className='text-nowrap' target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
+                    <code>{cell.value}</code>
+                    <FaExternalLinkAlt />
+                </a>
+            );
+        case 'lat_lon':
+            return (
+                cell.value 
+                    &&
+                <a className='text-nowrap' target='_blank' rel='noreferrer' href={`http://maps.google.com/maps?q=${cell.value}`}>
+                    <code>{cell.value}</code>
+                    <FaExternalLinkAlt />
+                </a>
+            )
+        default:
+            return (cell.render('Cell'));
+    }
+}
+
 const DbTable = ({ data }) => {
 
     const columns = React.useMemo(
@@ -18,27 +41,31 @@ const DbTable = ({ data }) => {
                 accessor: 'organism'
             },
             {
-                Header: 'Definition',
-                accessor: 'definition'
-            },
-            {
-                Header: 'Isolate',
-                accessor: 'isolate'
+                Header: 'Specimen Voucher',
+                accessor: 'specimen_voucher'
             },
             {
                 Header: 'Country',
                 accessor: 'country'
             },
             {
+                Header: 'Type',
+                accessor: 'type_material'
+            },
+            {
+                Header: 'Isolate',
+                accessor: 'isolate'
+            },
+            {
                 Header: 'Latitude / Longitude',
                 accessor: 'lat_lon'
-            }
+            },
         ],
         []
     )
 
     // const accession_numbers = data.map(x => x.accession_number).join(',')
-    
+
     // const genBankUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=${accession_numbers}&rettype=gb&retmode=xml`
     // const { isLoading, error, data: genBankData } = useQuery([`genbank_fetch`], () =>
     //     fetch(genBankUrl)
@@ -71,67 +98,82 @@ const DbTable = ({ data }) => {
             {
                 columns,
                 data,
-                initialState: { pageIndex: 0, pageSize: 15 },
+                initialState: { pageIndex: 0, pageSize: 100 },
             },
             useSortBy, usePagination)
 
+    useEffect(() => {
+        const tableWidth = document.querySelector('#db-table-head').getBoundingClientRect().width;
+        document.querySelector('#dbcontent').style.width = `${tableWidth}px`
+
+        const topScrollBar = document.querySelector('#dbtop')
+        const botScrollBar = document.querySelector('#db-table-container').parentNode
+
+        topScrollBar.addEventListener("scroll", function () {
+            botScrollBar.scrollLeft = topScrollBar.scrollLeft;
+        });
+
+        botScrollBar.addEventListener("scroll", function () {
+            topScrollBar.scrollLeft = botScrollBar.scrollLeft;
+        });
+    })
+
+    const tableTopId = 'db-table-top';
+
     return (
-        <React.Fragment>
-            <TablePagination {...{previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize}}/>
-            <Table striped bordered hover responsive {...getTableProps()} >
-                <thead>
-                    {
-                        headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {
-                                    headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            <span>
-                                                {/* TODO: Find sorting icons */}
-                                                {column.isSorted
-                                                    ? column.isSortedDesc
-                                                        ? ' 🔽'
-                                                        : ' 🔼'
-                                                    : ''}
-                                            </span>
-                                        </th>
-                                    ))
-                                }
-                            </tr>
-                        ))
-                    }
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                    {
-                        page.map((row, i) => {
-                            prepareRow(row)
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map(cell => {
-                                        if (cell.column.id === 'accession_number')
-                                            return (
-                                                // TODO: Add external link icon
-                                                <td {...cell.getCellProps()}>
-                                                    <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
-                                                        <code>{cell.value}</code>
-                                                    </a>
-                                                </td>
-                                            );
-                                        return (
-                                            <td {...cell.getCellProps()}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        );
-                                    })}
+        <div style={{marginTop: '50px'}} id={tableTopId}>
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+            <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}} >
+                <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
+                    <div id='dbcontent' style={{ height: '15px' }}>
+                    </div>
+                </div>
+                <Table id='db-table-container' striped bordered hover responsive {...getTableProps()} >
+                    <thead id='db-table-head'>
+                        {
+                            headerGroups.map(headerGroup => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {
+                                        headerGroup.headers.map(column => (
+                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                {column.render('Header')}
+                                                <span>
+                                                    {column.isSorted
+                                                        ? column.isSortedDesc
+                                                            ? <FaSortAlphaUpAlt size={20}/>
+                                                            : <FaSortAlphaDown size={20}/>
+                                                        : ''}
+                                                </span>
+                                            </th>
+                                        ))
+                                    }
                                 </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </Table>
-            <TablePagination {...{previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize}}/>
-        </React.Fragment>
+                            ))
+                        }
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                        {
+                            page.map((row, i) => {
+                                prepareRow(row)
+                                return (
+                                    <tr {...row.getRowProps()}>
+                                        {
+                                            row.cells.map(cell =>
+                                                <td className='text-nowrap' {...cell.getCellProps()}>
+                                                    {resolveCellContent(cell)}
+                                                    <i className="bi bi-box-arrow-up-right"></i>
+                                                </td>
+                                            )
+                                        }
+                                    </tr>
+                                )
+                            })
+                        }
+                    </tbody>
+                </Table>
+            </IconContext.Provider>
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+        </div>
     )
 }
 

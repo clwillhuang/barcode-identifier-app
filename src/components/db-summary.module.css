@@ -1,0 +1,25 @@
+.graphContainer {
+    display: flex;
+}
+
+@media (max-width: 760px) {
+    .graphContainer {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 760px) {
+    .graphContainer {
+        flex-direction: row;
+    }
+    .graphContainer > div {
+        width: 50%;
+    }
+}
+
+.tooltip {
+    position: fixed;
+    padding: 5px;
+    border-radius: 10px;
+    z-index: 10;
+}

@@ -1,0 +1,9 @@
+.brand:hover {
+    cursor: pointer;
+}
+
+.loggedIn {
+    color: white;
+    align-self: center;
+    margin: 0;
+}

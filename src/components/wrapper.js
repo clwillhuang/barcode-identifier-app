@@ -1,13 +1,11 @@
 import React from 'react'
-import { Container } from 'react-bootstrap'
-import styles from './wrapper.module.css'
+import NavigationBar from './navigation'
 
 export default function Wrapper({children}) {
     return(
-        <Container>
-            <div className={styles.wrapperDiv}>
-                {children}
-            </div>
-        </Container>
+        <div style={{minHeight: '90vh'}}>
+            <NavigationBar/>
+            {children}
+        </div>
     )
 }
