@@ -101,7 +101,7 @@ function Blast() {
                     </FormSelect>
                 </FormGroup>
                 <FormGroup className='mt-3'>
-                    <FormLabel htmlFor='queryFile'>Upload sequence .fasta file</FormLabel>
+                    <FormLabel htmlFor='queryFile'>Upload sequence file (.txt, .fasta, etc.)</FormLabel>
                     <FormControl id='queryFile' name='query_file' type='file' onChange={onFileChange}></FormControl>
                     <p className='my-1'>OR</p>
                     <FormLabel htmlFor='querySequence'>Paste raw sequence text</FormLabel>

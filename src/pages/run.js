@@ -92,7 +92,7 @@ const Run = () => {
                 </Container>
                 <h3>Parameters</h3>
                 <strong>Job name</strong>
-                <pre>{run.job_name}</pre>
+                <pre>{run.job_name === '' ? "Not specified" : run.job_name}</pre>
                 <strong>Database used</strong>
                 <pre><Link to={`/database/${run.db_used.id}`}>{run.db_used.custom_name}</Link></pre>
                 <strong>Unique Run Identifier</strong>
