@@ -12,10 +12,11 @@ import NotFound from './pages/not-found';
 import Credits from './pages/credits';
 import Manual from './pages/manual';
 import ApiDocs from './pages/api-docs';
-import Databases from './pages/databases';
+import Libraries from './pages/libraries';
 import Footer from './components/footer';
 import Login from './pages/login';
 import Logout from './pages/logout';
+import Library from './pages/library';
 
 const queryClient = new QueryClient()
 
@@ -26,8 +27,9 @@ function App() {
 			<QueryClientProvider client={queryClient}>
 				<Routes>
 					<Route path='/' element={<Home/>}/>
-					<Route path='databases' element={<Databases/>}/>
-					<Route path='databases/:databaseId' element={<BlastDb/>}/>
+					<Route path='libraries' element={<Libraries/>}/>
+					<Route path='libraries/:libraryId' element={<Library/>}/>
+					<Route path='libraries/:libraryId/version/:databaseId' element={<BlastDb/>}/>
 					<Route path='run/:runId/status' element={<RunStatus/>}/>
 					<Route path='run/:runId/results' element={<Run/>}/>
 					<Route path='blast' element={<Blast/>}/>

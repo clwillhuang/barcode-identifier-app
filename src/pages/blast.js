@@ -18,7 +18,8 @@ function Blast() {
 
     const [fields, setFields] = useState({
         job_name: '',
-        databaseSelect: searchParams.get('database'),
+        librarySelect: searchParams.get('library') ?? undefined,
+        databaseSelect: searchParams.get('database') ?? undefined,
         create_hit_tree: searchParams.get('createHitTree') ?? false,
         create_db_tree: searchParams.get('createDbTree') ?? false,
         query_file: undefined,
@@ -31,8 +32,23 @@ function Blast() {
         if (!fields.databaseSelect) setFields({ ...fields, databaseSelect: defaultDb })
     }, [fields])
 
-    const { isLoading, error, data: dbs, isError } = useQuery(['blast_database_options'], () =>
-        fetch(`${urlRoot}/blastdbs/`, {
+    const { isLoading: isLibraryLoading, error: libraryError, data: libraryData, isError: isLibraryError } = useQuery(['blast_library_options'], () =>
+        fetch(`${urlRoot}/libraries/`, {
+            headers: generateHeaders({}),
+        })
+            .then(handleResponse()),
+        {
+            onSuccess: (data) => {
+                let newLibrary = data.length > 0 ? data[0].id : undefined
+                setFields({...fields, librarySelect: newLibrary, databaseSelect: undefined })
+            },
+            refetchInterval: false,
+            retry: false,
+        }
+    )
+
+    const { isLoading, error, data: dbs, isError } = useQuery([`database_${fields.librarySelect}`], () =>
+        fetch(`${urlRoot}/libraries/${fields.librarySelect}/versions`, {
             headers: generateHeaders({}),
         })
             .then(handleResponse()),
@@ -40,6 +56,7 @@ function Blast() {
             onSuccess: (data) => {
                 setDefault(data.length > 0 ? data[0].id : undefined)
             },
+            enabled: (typeof fields.librarySelect !== 'undefined'),
             refetchInterval: false,
             retry: false,
         }
@@ -113,7 +130,7 @@ function Blast() {
         setFields({ ...fields, 'query_file': event.target.files[0] })
     }
 
-    if (isLoading) return (
+    if (isLibraryLoading) return (
         <Wrapper>
             {customHelmet()}
             <Layout>
@@ -123,7 +140,7 @@ function Blast() {
         </Wrapper>
     )
 
-    if (isError) return (
+    if (isLibraryError) return (
         <Wrapper>
             {customHelmet()}
             <Layout>
@@ -159,21 +176,36 @@ function Blast() {
                         </Form.Control.Feedback>
                     </FormGroup>
                     <h5>Nucleotide BLAST Parameters</h5>
-                    <FormGroup className='my-3 mx-5'>
-                        <FormLabel htmlFor='databaseSelect'>Blast Database</FormLabel>
-                        {dbs.length > 0 ?
-                            <>
-                                <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={defaultSelected} onChange={handleChange}>
+                    {
+                        (libraryData.length) > 0 ?
+                        <>
+                            <FormGroup className='my-3 mx-5'>
+                                <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
+                                <FormSelect aria-label='Select database to query on' name='id' id='librarySelect' defaultValue={defaultSelected} onChange={handleChange}>
                                     {dbs.map(db => <option value={db.id} key={db.id}>{db.custom_name} ({db.id})</option>)}
                                 </FormSelect>
                                 <div className='d-flex justify-content-end'>
-                                    <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/databases/${fields.databaseSelect}`}>Browse this database</a>
+                                    <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse Reference Library</a>
                                 </div>
-                            </>
-                            :
-                            <Alert variant='danger'>No BLAST databases found</Alert>
-                        }
-                    </FormGroup>
+                            </FormGroup>
+                            {
+                                !isLoading && !isError && dbs.length > 0 ?
+                                    <FormGroup className='my-3 mx-5'>
+                                        <FormLabel htmlFor='databaseSelect'>Library Version</FormLabel>
+                                        <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={defaultSelected} onChange={handleChange}>
+                                            {dbs.map(db => <option value={db.id} key={db.id}>{dbs.version_name} ({db.id})</option>)}
+                                        </FormSelect>
+                                        <div className='d-flex justify-content-end'>
+                                            <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
+                                        </div>
+                                    </FormGroup>
+                                    :
+                                    <Alert variant='danger'>No BLAST databases found</Alert>
+                            }
+                        </>
+                        :
+                        <Alert variant='danger'>No Reference Libraries found</Alert>
+                    }
                     <h5>Multiple Alignment Parameters</h5>
                     <FormGroup className='my-3 mx-5'>
                         <FormCheck id='createHitTree' name='create_hit_tree' type='checkbox' value={fields.create_hit_tree} onChange={handleChange} label='Construct tree with only queries and hits (Create hit tree)'></FormCheck>

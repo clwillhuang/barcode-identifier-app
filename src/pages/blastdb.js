@@ -14,7 +14,7 @@ import styles from './blastdb.module.css'
 
 const BlastDb = () => {
 
-    const { databaseId } = useParams();
+    const { libraryId, databaseId } = useParams();
 
     const { isLoading, error, data, isError } = useQuery([`blastdb_${databaseId}`], () =>
         fetch(`${urlRoot}/blastdbs/${databaseId}`, {
@@ -86,21 +86,24 @@ const BlastDb = () => {
         </Wrapper>
     )
 
+    const { library: { custom_name, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequences } = data
+
     return (
         <Wrapper>
             <Layout>
             {helmet}
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem href='/databases'>Databases</BreadcrumbItem>
-                <BreadcrumbItem active>{data.custom_name}</BreadcrumbItem>
+                <BreadcrumbItem href='/databases'>Reference Library</BreadcrumbItem>
+                <BreadcrumbItem href={`/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
+                <BreadcrumbItem active>Version {version_number}</BreadcrumbItem>
             </Breadcrumb>
             <div>
-                <h1>"{data.custom_name}"</h1>
+                <h1>"{custom_name}"</h1>
                 <div className={styles.visibilityInfo}>
                     <p className='mt-0 mb-2 text-muted'>
                     {
-                        data.public ? 
+                        is_public_library ? 
                         <><FaRegEye />Public Database</> 
                         : 
                         <><FaRegEyeSlash/> Private Database</>
@@ -108,10 +111,12 @@ const BlastDb = () => {
                     </p>
                     <p className='mt-0 mb-2 text-muted'>
                     <span className='mx-2'>|</span>
-                    Adminstered by {data.owner.username}
+                    Adminstered by {username}
                     </p>
                 </div>
-                <p>{data.description}</p>
+                <p>{description}</p>
+                <h3>Version {version_number}</h3>
+                <p>{version_description}</p>
                 <Container className='g-0 mb-2'>
                     <Row className='d-flex align-items-center'>
                         <Col className='col-auto'>
@@ -119,27 +124,22 @@ const BlastDb = () => {
                                 <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
                             </Button>
                         </Col>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('text/csv')}>
+                                Export .csv
+                            </Button>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('text/x-fasta')}>
+                                Export .fasta
+                            </Button>
+                        </Col>
                     </Row>
                 </Container>
                 <h3>Database entries</h3>
-                <p className='text-muted'>This database contains {data.sequences.length} entries.</p>
-                <DbSummary sequences={data.sequences} />
-                <DbTable data={data.sequences}></DbTable>
-                <h3>Export</h3>
-                <Container className='g-0'>
-                    <Row className='d-flex align-items-center pb-3'>
-                        <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('text/csv')}>
-                                .csv
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('text/x-fasta')}>
-                                .fasta
-                            </Button>
-                        </Col>
-                    </Row>
-                </Container>
+                <p className='text-muted'>This database contains {sequences.length} entries.</p>
+                <DbSummary sequences={sequences} />
+                <DbTable data={sequences}></DbTable>
             </div>
             </Layout>
         </Wrapper>

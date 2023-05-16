@@ -38,7 +38,7 @@ function Home() {
 					<div className={styles.content}>
 						<h2>Access a database curated by expert taxonomists</h2>
 						<p>Taxonomists can share reference libraries specific to their field of research, by collecting barcodes from specimens verified to be accurately identified and annotated.</p>
-						<Link to='/databases'>Browse databases</Link>
+						<Link to='/libraries'>View reference libraries</Link>
 					</div>
 					<div className={styles.sideImage}>
 						<img src='./database.png' alt='Screenshot of webpage for browsing sequence database' />

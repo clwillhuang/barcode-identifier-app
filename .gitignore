@@ -5,9 +5,6 @@
 /.pnp
 .pnp.js
 
-# keep url private for now
-src/url.js
-
 # testing
 /coverage
 

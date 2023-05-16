@@ -7,7 +7,7 @@ import { IconContext } from 'react-icons'
 
 const resolveCellContent = (cell) => {
     switch (cell.column.id) {
-        case 'accession_number':
+        case 'version':
             return (
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
                     <code>{cell.value}</code>
@@ -33,8 +33,8 @@ const DbTable = ({ data }) => {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Accession Number',
-                accessor: 'accession_number'
+                Header: 'Accession.Version',
+                accessor: 'version'
             },
             {
                 Header: 'Organism',
