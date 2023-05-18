@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
+import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Spinner } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import CustomHelmet from '../components/custom-helmet';
@@ -25,9 +25,6 @@ function Blast() {
         query_file: undefined,
     })
 
-    let defaultSelected = searchParams.get('database')
-    if (!defaultSelected) defaultSelected = ''
-
     const setDefault = useCallback((defaultDb) => {
         if (!fields.databaseSelect) setFields({ ...fields, databaseSelect: defaultDb })
     }, [fields])
@@ -47,7 +44,7 @@ function Blast() {
         }
     )
 
-    const { isLoading, error, data: dbs, isError } = useQuery([`database_${fields.librarySelect}`], () =>
+    const { isLoading: isDatabaseLoading, error: databaseError, data: databaseData, isError: isDatabaseError } = useQuery([`database_${fields.librarySelect}`], () =>
         fetch(`${urlRoot}/libraries/${fields.librarySelect}/versions`, {
             headers: generateHeaders({}),
         })
@@ -59,6 +56,7 @@ function Blast() {
             enabled: (typeof fields.librarySelect !== 'undefined'),
             refetchInterval: false,
             retry: false,
+            initialData: []
         }
     )
 
@@ -130,6 +128,36 @@ function Blast() {
         setFields({ ...fields, 'query_file': event.target.files[0] })
     }
 
+    const error = isDatabaseError ? databaseError : (isLibraryError ? libraryError : undefined);
+
+    const renderDatabaseOptions = () => {
+        if (isDatabaseLoading) {
+            return(
+                <div><Spinner/> Fetching database data for this reference library</div>
+            )
+        } else if (isDatabaseError) {
+            return(
+                <Alert variant='danger'>Encountered unexpected error retrieving data for this library.</Alert>
+            )
+        } else if (databaseData === null || databaseData.length === 0) {
+            return(
+                <Alert variant='danger'>No BLAST databases are published for this reference library</Alert>
+            )
+        } else {
+            return(
+                <FormGroup className='my-3 mx-5'>
+                    <FormLabel htmlFor='databaseSelect'>Library Version</FormLabel>
+                    <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={databaseData[0]} onChange={handleChange}>
+                        {databaseData.map(db => <option value={db.id} key={db.id}>{db.version_number} ({db.id})</option>)}
+                    </FormSelect> 
+                    <div className='d-flex justify-content-end'>
+                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
+                    </div>
+                </FormGroup>
+            )
+        }
+    }
+
     if (isLibraryLoading) return (
         <Wrapper>
             {customHelmet()}
@@ -181,27 +209,14 @@ function Blast() {
                         <>
                             <FormGroup className='my-3 mx-5'>
                                 <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
-                                <FormSelect aria-label='Select database to query on' name='id' id='librarySelect' defaultValue={defaultSelected} onChange={handleChange}>
-                                    {dbs.map(db => <option value={db.id} key={db.id}>{db.custom_name} ({db.id})</option>)}
+                                <FormSelect aria-label='Select reference library to query on' name='id' id='librarySelect' defaultValue={libraryData[0].id} onChange={handleChange}>
+                                    {libraryData.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
                                 </FormSelect>
                                 <div className='d-flex justify-content-end'>
                                     <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse Reference Library</a>
                                 </div>
                             </FormGroup>
-                            {
-                                !isLoading && !isError && dbs.length > 0 ?
-                                    <FormGroup className='my-3 mx-5'>
-                                        <FormLabel htmlFor='databaseSelect'>Library Version</FormLabel>
-                                        <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={defaultSelected} onChange={handleChange}>
-                                            {dbs.map(db => <option value={db.id} key={db.id}>{dbs.version_name} ({db.id})</option>)}
-                                        </FormSelect>
-                                        <div className='d-flex justify-content-end'>
-                                            <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
-                                        </div>
-                                    </FormGroup>
-                                    :
-                                    <Alert variant='danger'>No BLAST databases found</Alert>
-                            }
+                            {renderDatabaseOptions()}
                         </>
                         :
                         <Alert variant='danger'>No Reference Libraries found</Alert>
@@ -218,7 +233,7 @@ function Blast() {
                         <FormLabel htmlFor='jobName'>Provide this run with a custom name (optional)</FormLabel>
                         <FormControl id='jobName' name='job_name' as='input' placeholder='' onChange={handleChange}></FormControl>
                     </FormGroup>
-                    {dbs.length > 0 ? <Button disabled={responseError} type='submit' className='my-3'><FaPaperPlane style={{ marginRight: '5px', marginBottom: '2px' }} />Submit Query</Button> :
+                    {databaseData.length > 0 ? <Button disabled={responseError} type='submit' className='my-3'><FaPaperPlane style={{ marginRight: '5px', marginBottom: '2px' }} />Submit Query</Button> :
                         <p className='text-danger'>No job submission possible. No eligible databases found.</p>}
                 </Form>
             </Layout>
