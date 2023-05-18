@@ -1,5 +1,5 @@
 import React from 'react'
-import { ListGroupItem, Button } from 'react-bootstrap'
+import { ListGroupItem } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import styles from './library-preview.module.css'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
@@ -26,9 +26,6 @@ const LibraryPreview = ({ library }) => {
                 <span className='mx-2'>|</span>
                 Adminstered by <a>{username}</a>
                 </p>
-            </div>
-            <div className='d-inline'>
-                <Link to={`/libraries/${id}`} className='mx-4 align-middle'>Browse</Link>
             </div>
         </ListGroupItem>
     )

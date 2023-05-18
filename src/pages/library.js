@@ -9,7 +9,7 @@ import Wrapper from '../components/wrapper';
 import { generateHeaders, urlRoot } from '../url';
 import styles from './library.module.css'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
-
+import VersionTable from '../components/version-table';
 
 function Library() {
     const { libraryId } = useParams()
@@ -44,21 +44,23 @@ function Library() {
 
     if (isLoading) return (
         <Wrapper>
-            <div>
+            <Layout>
                 <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
                 <p>Retrieving data ...</p>
-            </div>
+            </Layout>
         </Wrapper>
     )
 
     if (isError) return (
         <Wrapper>
-            <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
-            <ErrorMessage error={error} text="Encountered an error fetching data. Please try again." />
+            <Layout>
+                <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
+                <ErrorMessage error={error} text="Encountered an error fetching data. Please try again." />
+            </Layout>
         </Wrapper>
     )
 
-    const { id, custom_name, description, owner: { username }, public: is_public_library } = libraryData
+    const { id, custom_name, description, owner: { username }, public: is_public_library, latest } = libraryData
 
     return (
         <Wrapper>
@@ -90,9 +92,10 @@ function Library() {
                     </p>
                 </div>
                 <p>{description}</p>
-                <ListGroup>
-                    {versions.map(version => <BlastDbPreview database={version} libraryId={id} key={version.id}></BlastDbPreview>)}
-                </ListGroup>
+                <h3>Latest Version</h3>
+                {console.log(latest)}
+                <BlastDbPreview database={latest} libraryId={id}/>
+                <VersionTable initialData={versions} libraryId={id}/>
             </div>
             </Layout>
         </Wrapper>

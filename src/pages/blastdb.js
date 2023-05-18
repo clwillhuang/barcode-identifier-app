@@ -1,6 +1,6 @@
 import React from 'react'
 import { Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-bootstrap';
-import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import { FaLock, FaLockOpen, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
 import CustomHelmet from '../components/custom-helmet';
@@ -107,6 +107,14 @@ const BlastDb = () => {
                         <><FaRegEye />Public Database</> 
                         : 
                         <><FaRegEyeSlash/> Private Database</>
+                    }
+                    </p>
+                    <span className='mx-2'>|</span>
+                    <p className='text-muted'>
+                    {
+                        locked ?
+                        <><FaLockOpen/> Unpublished</> :
+                        <><FaLock/> Unpublished</>
                     }
                     </p>
                     <p className='mt-0 mb-2 text-muted'>

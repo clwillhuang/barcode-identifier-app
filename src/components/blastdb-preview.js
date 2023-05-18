@@ -19,7 +19,7 @@ const BlastDbPreview = ({ database, libraryId }) => {
             <p>{description}</p>
             <p className='text-muted fst-italic my-0'>Contains {sequence_count} nucleotide sequences</p>
             <p>{locked ? 'Published' : 'Not published yet'}</p>
-            <p>Last updated at {dateFormatter.format(created)}</p>
+            <p>Last updated at {dateFormatter.format(new Date(created))}</p>
             <div className='d-inline'>
                 <Button variant='primary' className='align-middle'>
                     <Link to={`/blast/?database=${id}`} className='text-white text-decoration-none'>Run a Query</Link>
