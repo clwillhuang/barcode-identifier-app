@@ -15,14 +15,14 @@ function Workflow() {
         },
         {
             title: 'Curate',
-            desc: 'Add databases to your website by pulling directly data from GenBank by their accession numbers.',
+            desc: 'Add reference libraries to your website by pulling directly data from GenBank by their accession numbers.',
             icon: FaDatabase,
         },
         {
-            title: 'Share',
-            desc: 'Share the link with users of your site so they can find it.',
+            title: 'Maintain',
+            desc: 'Share the link with users of your site so they can find it. Maintain your libraries by publishing new versions.',
             icon: FaLink,
-        }
+        },
     ]
 
     const queryWorkflow = [
@@ -67,7 +67,7 @@ function Workflow() {
 
     return (
         <div className={styles.workflow} id='workflow'>
-            <h2>Computational tools for highly specialized barcode databases.</h2>
+            <h2>Computational tools for highly specialized barcode reference libraries.</h2>
             <p>We provide researchers with user-friendly tools to access barcode reference libraries or host their own.</p>
             <div className={styles.workflowOptions}>
                 <div className={styles.controls}>

@@ -44,17 +44,19 @@ function Library() {
 
     if (isLoading) return (
         <Wrapper>
-            <div>
+            <Layout>
                 <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
                 <p>Retrieving data ...</p>
-            </div>
+            </Layout>
         </Wrapper>
     )
 
     if (isError) return (
         <Wrapper>
-            <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
-            <ErrorMessage error={error} text="Encountered an error fetching data. Please try again." />
+            <Layout>
+                <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
+                <ErrorMessage error={error} text="Could not find a reference library matching the specified details. Check the website link and please try again." />
+            </Layout>
         </Wrapper>
     )
 

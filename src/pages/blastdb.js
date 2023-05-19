@@ -59,16 +59,14 @@ const BlastDb = () => {
             })
     }
 
-    const helmet = <CustomHelmet
-        title='Custom database'
-        description='Browse entries in this custom database.'
-        canonical='database'
-    />
-
     if (isLoading) return (
         <Wrapper>
             <Layout>
-            {helmet}
+            <CustomHelmet
+                title='BLAST Database'
+                description='Browse a database version of a barcode reference library .'
+                canonical='/libraries'
+            />
             <div>
                 <p>Retrieving data ...</p>
             </div>
@@ -79,9 +77,13 @@ const BlastDb = () => {
     if (isError) return (
         <Wrapper>
             <Layout>
-                {helmet}
-                <h1>Blast database not found</h1>
-                <ErrorMessage error={error} text="Encountered an error fetching databases. Please try again." />
+                <CustomHelmet
+                    title='BLAST Database'
+                    description='Browse a database version of a barcode reference library .'
+                    canonical='/libraries'
+                />
+                <h1>Library version not found</h1>
+                <ErrorMessage error={error} text="Could not find a library version / BLAST database matching the specified details. Check the website link and please try again." />
             </Layout>
         </Wrapper>
     )
@@ -91,10 +93,14 @@ const BlastDb = () => {
     return (
         <Wrapper>
             <Layout>
-            {helmet}
+            <CustomHelmet
+                title={`${custom_name}, ${version_number}`}
+                description='Browse entries in this custom database.'
+                canonical='database'
+            />
             <Breadcrumb>
                 <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem href='/databases'>Reference Library</BreadcrumbItem>
+                <BreadcrumbItem href='/libraries'>Reference Libraries</BreadcrumbItem>
                 <BreadcrumbItem href={`/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
                 <BreadcrumbItem active>Version {version_number}</BreadcrumbItem>
             </Breadcrumb>
@@ -104,7 +110,7 @@ const BlastDb = () => {
                     <p className='mt-0 mb-2 text-muted'>
                     {
                         is_public_library ? 
-                        <><FaRegEye />Public Database</> 
+                        <><FaRegEye/> Public Database</> 
                         : 
                         <><FaRegEyeSlash/> Private Database</>
                     }

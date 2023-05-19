@@ -50,7 +50,7 @@ function Login() {
                     path: '/'
                 }
                 )
-                navigate('/databases')
+                navigate('/libraries')
             })
             .catch(error => {
                 setResponseError('Unable to log in with the credentials provided.')

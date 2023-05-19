@@ -20,9 +20,9 @@ function Libraries() {
     )
 
     const helmet = <CustomHelmet
-		title='Databases'
-		description={`Browse barcode databases available to query against.`}
-		canonical=''
+		title='Libraries'
+		description={`Browse barcode reference libraries available to query against.`}
+		canonical='/libraries'
 	/>
 
     if (isLoading) return (
@@ -42,7 +42,7 @@ function Libraries() {
             <Layout>
                 <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
             {helmet}
-                <ErrorMessage error={error} text="Encountered an error fetching data. Please try again." />
+                <ErrorMessage error={error} text="Could not find reference libraries. Please try again." />
             </Layout>
         </Wrapper>
     )

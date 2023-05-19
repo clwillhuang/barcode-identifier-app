@@ -6,7 +6,7 @@ const Footer = () => {
     // Define the pages array with the names and links of your pages
     const pages = [
         { name: "Home", link: "/" },
-        { name: "Databases", link: "/databases" },
+        { name: "Libraries", link: "/libraries" },
         { name: "Run", link: "/blast" },
         { name: "Manual", link: "/manual" },
         { name: "About", link: "/credits" },

@@ -25,10 +25,6 @@ function Blast() {
         query_file: undefined,
     })
 
-    const setDefault = useCallback((defaultDb) => {
-        if (!fields.databaseSelect) setFields({ ...fields, databaseSelect: defaultDb })
-    }, [fields])
-
     const { isLoading: isLibraryLoading, error: libraryError, data: libraryData, isError: isLibraryError } = useQuery(['blast_library_options'], () =>
         fetch(`${urlRoot}/libraries/`, {
             headers: generateHeaders({}),
@@ -36,8 +32,11 @@ function Blast() {
             .then(handleResponse()),
         {
             onSuccess: (data) => {
-                let newLibrary = data.length > 0 ? data[0].id : undefined
-                setFields({...fields, librarySelect: newLibrary, databaseSelect: undefined })
+                let librarySelection = undefined;
+                if (data.length > 0) {
+                    librarySelection = data.find(library => library.id === fields.librarySelect) ?? data[0].id
+                } 
+                setFields({...fields, librarySelect: librarySelection})
             },
             refetchInterval: false,
             retry: false,
@@ -51,7 +50,10 @@ function Blast() {
             .then(handleResponse()),
         {
             onSuccess: (data) => {
-                setDefault(data.length > 0 ? data[0].id : undefined)
+                let databaseSelection = undefined;
+                if (data.length > 0) 
+                    databaseSelection = data.find(database => database.id === fields.databaseSelect) ?? data[0].id;
+                setFields({...fields, databaseSelect: databaseSelection})
             },
             enabled: (typeof fields.librarySelect !== 'undefined'),
             refetchInterval: false,
@@ -137,7 +139,7 @@ function Blast() {
             )
         } else if (isDatabaseError) {
             return(
-                <Alert variant='danger'>Encountered unexpected error retrieving data for this library.</Alert>
+                <Alert variant='danger'>Could not retrieve a matching database.</Alert>
             )
         } else if (databaseData === null || databaseData.length === 0) {
             return(

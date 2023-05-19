@@ -73,7 +73,7 @@ function NavigationBar () {
 					<NavbarCollapse id="basic-navbar-nav">
 						<Nav className='me-auto'>
 							<NavItem>
-								<NavLink as={Link} to='/libraries'>Databases</NavLink>
+								<NavLink as={Link} to='/libraries'>Libraries</NavLink>
 							</NavItem>
 							<NavItem>
 								<NavLink as={Link} to='/blast'>Run</NavLink>

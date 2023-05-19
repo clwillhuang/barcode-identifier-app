@@ -17,7 +17,7 @@ const LibraryPreview = ({ library }) => {
                 <p className='mt-0 mb-2 text-muted'>
                 {
                     is_public_library ? 
-                    <><FaRegEye />Public Database</> 
+                    <><FaRegEye/> Public Database</> 
                     : 
                     <><FaRegEyeSlash/> Private Database</>
                 }
@@ -26,9 +26,6 @@ const LibraryPreview = ({ library }) => {
                 <span className='mx-2'>|</span>
                 Adminstered by <a>{username}</a>
                 </p>
-            </div>
-            <div className='d-inline'>
-                <Link to={`/libraries/${id}`} className='mx-4 align-middle'>Browse</Link>
             </div>
         </ListGroupItem>
     )
