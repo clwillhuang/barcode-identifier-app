@@ -1,5 +1,5 @@
 import React from 'react'
-import { ListGroupItem, Button } from 'react-bootstrap'
+import { ListGroupItem } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import styles from './library-preview.module.css'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
