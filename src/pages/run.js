@@ -222,13 +222,13 @@ const Run = () => {
                     <Accordion.Item eventKey='0'>
                         <Accordion.Header>View server log</Accordion.Header>
                         <Accordion.Body>
-                            <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(run.runtime))}</p>
-                            {run.job_start_time &&
-                                <p>The server began running this job at {dateFormatter.format(Date.parse(run.job_start_time))}</p>}
-                            {run.job_end_time &&
-                                <p>The server completed running this job at {dateFormatter.format(Date.parse(run.job_end_time))}</p>}
-                            {run.job_error_time &&
-                                <p>The server encountered an unexpected error and the job was terminated at {dateFormatter.format(Date.parse(run.job_error_time))}</p>}
+                            <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(run.received_time))}</p>
+                            {run.start_time &&
+                                <p>The server began running this job at {dateFormatter.format(Date.parse(run.start_time))}</p>}
+                            {run.end_time &&
+                                <p>The server completed running this job at {dateFormatter.format(Date.parse(run.end_time))}</p>}
+                            {run.error_time &&
+                                <p>The server encountered an unexpected error and the job was terminated at {dateFormatter.format(Date.parse(run.error_time))}</p>}
                             <p></p>
                         </Accordion.Body>
                     </Accordion.Item>

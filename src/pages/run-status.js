@@ -38,7 +38,7 @@ const RunStatus = () => {
             refetchInterval: (data) => {
                 if (refetchInterval) {
                     if (!data) return refetchInterval;
-                    let stopFetches = [FINISHED_STATUS, DENIED_STATUS, ERRORED_STATUS].includes(data.job_status)
+                    let stopFetches = [FINISHED_STATUS, DENIED_STATUS, ERRORED_STATUS].includes(data.status)
                     if (stopFetches) {
                         setRefetchInterval(false);
                     } 
@@ -78,10 +78,10 @@ const RunStatus = () => {
     )
         
 
-    const started = status.job_status === STARTED_STATUS
-    const queued = status.job_status === QUEUED_STATUS
-    const denied = status.job_status === DENIED_STATUS
-    const resolved = status.job_status === ERRORED_STATUS || status.job_status === FINISHED_STATUS 
+    const started = status.status === STARTED_STATUS
+    const queued = status.status === QUEUED_STATUS
+    const denied = status.status === DENIED_STATUS
+    const resolved = status.status === ERRORED_STATUS || status.status === FINISHED_STATUS 
     const lastFetchDate = isError ? new Date(errorUpdatedAt) : isSuccess ? new Date(dataUpdatedAt) : null
 
     function getRedirectUrl() {
@@ -172,7 +172,7 @@ const RunStatus = () => {
                 <div className={styles.parameters}>
                     <h1>Run status update</h1>
                     <h3>Status</h3>
-                    <p>{getStatus(status.job_status)}</p>
+                    <p>{getStatus(status.status)}</p>
                     <p className='text-muted'>Last updated: {lastFetchDate ? dateFormatter.format(lastFetchDate) : 'Never'}</p>
                     <strong>Job name</strong><pre>{status.job_name !== '' ? status.job_name : 'No job name given'}</pre>
                     <strong>Run Identifier</strong><pre>{runId}</pre>
@@ -180,11 +180,11 @@ const RunStatus = () => {
                         <Accordion.Item eventKey='0'>
                             <Accordion.Header>View server log</Accordion.Header>
                             <Accordion.Body>
-                                <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(status.runtime))} ({getTimeSince(new Date(status.runtime))})</p>
-                                {status.job_start_time &&
-                                    <p>The server began running this job at {dateFormatter.format(Date.parse(status.job_start_time))} ({getTimeSince(new Date(status.job_start_time))})</p>}
-                                {status.job_end_time &&
-                                    <p>The server completed running this job at {dateFormatter.format(Date.parse(status.job_end_time))} ({getTimeSince(new Date(status.job_end_time))})</p>}
+                                <p>The server received this job and added it to the queue at {dateFormatter.format(Date.parse(status.received_time))} ({getTimeSince(new Date(status.received_time))})</p>
+                                {status.start_time &&
+                                    <p>The server began running this job at {dateFormatter.format(Date.parse(status.start_time))} ({getTimeSince(new Date(status.start_time))})</p>}
+                                {status.end_time &&
+                                    <p>The server completed running this job at {dateFormatter.format(Date.parse(status.end_time))} ({getTimeSince(new Date(status.end_time))})</p>}
                                 <p></p>
                             </Accordion.Body>
                         </Accordion.Item>

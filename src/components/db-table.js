@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
@@ -16,19 +16,47 @@ const resolveCellContent = (cell) => {
             );
         case 'lat_lon':
             return (
-                cell.value 
-                    &&
+                cell.value
+                &&
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`http://maps.google.com/maps?q=${cell.value}`}>
                     <code>{cell.value}</code>
                     <FaExternalLinkAlt />
                 </a>
             )
+        case 'taxon_kingdom':
+        case 'taxon_phylum':
+        case 'taxon_class':
+        case 'taxon_order':
+        case 'taxon_family':
+        case 'taxon_genus':
+        case 'taxon_species':
+            return cell.value ?
+                <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${cell.value.id}`}>
+                    {cell.value.scientific_name}
+                </a>
+                :
+                <span>-</span>
         default:
             return (cell.render('Cell'));
     }
 }
 
 const DbTable = ({ data }) => {
+
+    const sortTaxaAlphabetically = useCallback((rowA, rowB, columnId, desc) => {
+        const valueA = rowA.values[columnId];
+        const valueB = rowB.values[columnId];
+        if (valueA === null && valueB === null) return 0
+        else if (valueA === null) return 1;
+        else if (valueB === null) return -1;
+        if (valueA.scientific_name < valueB.scientific_name) {
+            return desc ? 1 : -1;
+        }
+        if (valueA.scientific_name > valueB.scientific_name) {
+            return desc ? -1 : 1;
+        }
+        return 0;
+    }, [])
 
     const columns = React.useMemo(
         () => [
@@ -60,8 +88,47 @@ const DbTable = ({ data }) => {
                 Header: 'Latitude / Longitude',
                 accessor: 'lat_lon'
             },
+            {
+                Header: 'Modification Date',
+                accessor: 'genbank_modification_date'
+            },
+            {
+                Header: "Kingdom",
+                accessor: "taxon_kingdom",
+                sortType: sortTaxaAlphabetically,
+            },
+            {
+                Header: "Phylum",
+                accessor: "taxon_phylum",
+                sortType: sortTaxaAlphabetically,
+            },
+            {
+                Header: "Class",
+                accessor: "taxon_class",
+                sortType: sortTaxaAlphabetically,
+            },
+            {
+                Header: "Order",
+                accessor: "taxon_order",
+                sortType: sortTaxaAlphabetically,
+            },
+            {
+                Header: "Family",
+                accessor: "taxon_family",
+                sortType: sortTaxaAlphabetically,
+            },
+            {
+                Header: "Genus",
+                accessor: "taxon_genus",
+                sortType: sortTaxaAlphabetically,
+            },
+            {
+                Header: "Species",
+                accessor: "taxon_species",
+                sortType: sortTaxaAlphabetically,
+            }
         ],
-        []
+        [sortTaxaAlphabetically]
     )
 
     // const accession_numbers = data.map(x => x.accession_number).join(',')
@@ -121,10 +188,10 @@ const DbTable = ({ data }) => {
     const tableTopId = 'db-table-top';
 
     return (
-        <div style={{marginTop: '50px'}} id={tableTopId}>
+        <div style={{ marginTop: '50px' }} id={tableTopId}>
             <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
-            <IconContext.Provider value={{ size: '0.8em', className: 'mx-1'}} >
-                <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
+            <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }} >
+                <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px' }}>
                     <div id='dbcontent' style={{ height: '15px' }}>
                     </div>
                 </div>
@@ -140,8 +207,8 @@ const DbTable = ({ data }) => {
                                                 <span>
                                                     {column.isSorted
                                                         ? column.isSortedDesc
-                                                            ? <FaSortAlphaUpAlt size={20}/>
-                                                            : <FaSortAlphaDown size={20}/>
+                                                            ? <FaSortAlphaUpAlt size={20} />
+                                                            : <FaSortAlphaDown size={20} />
                                                         : ''}
                                                 </span>
                                             </th>

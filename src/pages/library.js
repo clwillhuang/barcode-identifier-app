@@ -40,8 +40,6 @@ function Library() {
     const isError = isLibraryError || isVersionError
     const error = libraryError ?? versionError
 
-    console.log(versions)
-
     if (isLoading) return (
         <Wrapper>
             <Layout>
@@ -81,7 +79,7 @@ function Library() {
                     <p className='mt-0 mb-2 text-muted'>
                     {
                         is_public_library ? 
-                        <><FaRegEye />Public Database</> 
+                        <><FaRegEye/> Public Database</> 
                         : 
                         <><FaRegEyeSlash/> Private Database</>
                     }
@@ -93,7 +91,6 @@ function Library() {
                 </div>
                 <p>{description}</p>
                 <h3>Latest Version</h3>
-                {console.log(latest)}
                 <BlastDbPreview database={latest} libraryId={id}/>
                 <VersionTable initialData={versions} libraryId={id}/>
             </div>

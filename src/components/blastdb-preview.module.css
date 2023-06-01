@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    box-shadow: 0 0 4px rgb(171, 171, 171);
+    border-radius: 5px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.description {
+    margin: 3px 0;
+}
+
+.lastUpdated {
+    margin: 3px 0;
+}
+
+.sequenceCount {
+    font-style: italic;
+    margin: 0 unset;
+    color: var(--color_faded);
+}
+
+.buttonRow {
+    display: inline;
+}
+
+.buttonRow button {
+    align-self: center;
+}

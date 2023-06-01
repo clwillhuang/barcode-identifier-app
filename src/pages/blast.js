@@ -34,9 +34,9 @@ function Blast() {
             onSuccess: (data) => {
                 let librarySelection = undefined;
                 if (data.length > 0) {
-                    librarySelection = data.find(library => library.id === fields.librarySelect) ?? data[0].id
-                } 
-                setFields({...fields, librarySelect: librarySelection})
+                    librarySelection = data.find(library => library.id === fields.librarySelect) ?? data[0]
+                }
+                setFields({ ...fields, librarySelect: librarySelection.id })
             },
             refetchInterval: false,
             retry: false,
@@ -44,18 +44,18 @@ function Blast() {
     )
 
     const { isLoading: isDatabaseLoading, error: databaseError, data: databaseData, isError: isDatabaseError } = useQuery([`database_${fields.librarySelect}`], () =>
-        fetch(`${urlRoot}/libraries/${fields.librarySelect}/versions`, {
+        fetch(`${urlRoot}/libraries/${fields.librarySelect.toString()}/versions`, {
             headers: generateHeaders({}),
         })
             .then(handleResponse()),
         {
             onSuccess: (data) => {
                 let databaseSelection = undefined;
-                if (data.length > 0) 
-                    databaseSelection = data.find(database => database.id === fields.databaseSelect) ?? data[0].id;
-                setFields({...fields, databaseSelect: databaseSelection})
+                if (data.length > 0)
+                    databaseSelection = data.find(database => database.id === fields.databaseSelect) ?? data[0];
+                setFields({ ...fields, databaseSelect: databaseSelection.id })
             },
-            enabled: (typeof fields.librarySelect !== 'undefined'),
+            enabled: fields.librarySelect !== undefined,
             refetchInterval: false,
             retry: false,
             initialData: []
@@ -134,24 +134,24 @@ function Blast() {
 
     const renderDatabaseOptions = () => {
         if (isDatabaseLoading) {
-            return(
-                <div><Spinner/> Fetching database data for this reference library</div>
+            return (
+                <div><Spinner /> Fetching database data for this reference library</div>
             )
         } else if (isDatabaseError) {
-            return(
+            return (
                 <Alert variant='danger'>Could not retrieve a matching database.</Alert>
             )
         } else if (databaseData === null || databaseData.length === 0) {
-            return(
+            return (
                 <Alert variant='danger'>No BLAST databases are published for this reference library</Alert>
             )
         } else {
-            return(
+            return (
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='databaseSelect'>Library Version</FormLabel>
-                    <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={databaseData[0]} onChange={handleChange}>
+                    <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={fields.databaseSelect} onChange={handleChange}>
                         {databaseData.map(db => <option value={db.id} key={db.id}>{db.version_number} ({db.id})</option>)}
-                    </FormSelect> 
+                    </FormSelect>
                     <div className='d-flex justify-content-end'>
                         <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
                     </div>
@@ -208,20 +208,20 @@ function Blast() {
                     <h5>Nucleotide BLAST Parameters</h5>
                     {
                         (libraryData.length) > 0 ?
-                        <>
-                            <FormGroup className='my-3 mx-5'>
-                                <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
-                                <FormSelect aria-label='Select reference library to query on' name='id' id='librarySelect' defaultValue={libraryData[0].id} onChange={handleChange}>
-                                    {libraryData.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
-                                </FormSelect>
-                                <div className='d-flex justify-content-end'>
-                                    <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse Reference Library</a>
-                                </div>
-                            </FormGroup>
-                            {renderDatabaseOptions()}
-                        </>
-                        :
-                        <Alert variant='danger'>No Reference Libraries found</Alert>
+                            <>
+                                <FormGroup className='my-3 mx-5'>
+                                    <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
+                                    <FormSelect aria-label='Select reference library to query on' name='id' id='librarySelect' defaultValue={libraryData[0].id} onChange={handleChange}>
+                                        {libraryData.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
+                                    </FormSelect>
+                                    <div className='d-flex justify-content-end'>
+                                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse Reference Library</a>
+                                    </div>
+                                </FormGroup>
+                                {renderDatabaseOptions()}
+                            </>
+                            :
+                            <Alert variant='danger'>No Reference Libraries found</Alert>
                     }
                     <h5>Multiple Alignment Parameters</h5>
                     <FormGroup className='my-3 mx-5'>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
@@ -12,12 +12,20 @@ const resolveCellContent = (cell, libraryId) => {
             return(<span>{cell.value ? 'Published' : 'Unpublished'}</span>)
         case 'id':
             return (<Link to={`/libraries/${libraryId}/version/${cell.value}`}>View</Link>)
+        case 'blastId':
+            return (<Link to={`/blast?library=${libraryId}&database=${cell.value}`}>Query</Link>)
         default:
             return (cell.render('Cell'));
     }
 }
 
 const VersionTable = ({ initialData, libraryId }) => {
+
+    const data = useMemo(() => {
+        return initialData.map(entry => {
+            return {...entry, 'blastId': entry.id}
+        })
+    }, [initialData])
 
     const columns = React.useMemo(
         () => [
@@ -36,13 +44,17 @@ const VersionTable = ({ initialData, libraryId }) => {
             {
                 Header: 'View',
                 accessor: 'id'
+            },
+            {
+                Header: 'Query',
+                accessor: 'blastId'
             }
         ], []
     )
 
     // current data in the table
     const [tableData, setTableData] = React.useState(
-        () => initialData.map(row => {
+        () => data.map(row => {
             return { ...row }
         }))
 

@@ -1,7 +1,7 @@
-.graphContainer {
+/* .graphContainer {
     display: flex;
-}
-
+} */
+/* 
 @media (max-width: 760px) {
     .graphContainer {
         flex-direction: column;
@@ -12,10 +12,7 @@
     .graphContainer {
         flex-direction: row;
     }
-    .graphContainer > div {
-        width: 50%;
-    }
-}
+} */
 
 .tooltip {
     position: fixed;

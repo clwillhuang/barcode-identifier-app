@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react'
-import { ListGroupItem, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import styles from './blastdb-preview.module.css'
 
 const BlastDbPreview = ({ database, libraryId }) => {
-
-    const { id, version_number, sequence_count, description, created, locked } = database
-    
     const dateFormatter = useMemo(() => {
         return new Intl.DateTimeFormat('en-US', {
         year: 'numeric', month: 'numeric', day: 'numeric',
@@ -13,20 +11,28 @@ const BlastDbPreview = ({ database, libraryId }) => {
         timeZoneName: 'short', hour12: false,
     })}, [])
 
+    if (database === null) {
+        return(
+        <div className={styles.container}>
+            <span>This reference library does not have any database versions published yet for queries.</span>
+        </div>
+        )
+    }
+
+    const { id, version_number, custom_name, sequence_count, description, created, locked } = database
+    
     return (
-        <ListGroupItem className="d-flex flex-column justify-content-between align-items-start">
-            <Link to={`/libraries/${libraryId}/version/${id}`}><h3>Version {version_number}</h3></Link>
-            <p>{description}</p>
-            <p className='text-muted fst-italic my-0'>Contains {sequence_count} nucleotide sequences</p>
-            <p>{locked ? 'Published' : 'Not published yet'}</p>
-            <p>Last updated at {dateFormatter.format(new Date(created))}</p>
-            <div className='d-inline'>
-                <Button variant='primary' className='align-middle'>
+        <div className={styles.container}>
+            <Link to={`/libraries/${libraryId}/version/${id}`}><h3>Version {version_number} {custom_name ? `("${custom_name}")` : ''}</h3></Link>
+            <p className={styles.description}>{description}</p>
+            <p className={styles.sequenceCount}>Contains {sequence_count} nucleotide sequences. Last updated at {dateFormatter.format(new Date(created))}</p>
+            <div className={styles.buttonRow}>
+                <Button variant='primary'>
                     <Link to={`/blast/?database=${id}`} className='text-white text-decoration-none'>Run a Query</Link>
                 </Button>
                 <Link to={`/libraries/${libraryId}/version/${id}`} className='mx-4 align-middle'>Browse entries</Link>
             </div>
-        </ListGroupItem>
+        </div>
     )
 }
 

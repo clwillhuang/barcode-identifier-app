@@ -28,6 +28,7 @@ const BlastDb = () => {
         }
     )
 
+    // download a text file with the given format
     const downloadFile = (format) => {
         const types = { 'text/csv': 'csv', 'text/x-fasta': 'fasta' }
 
@@ -57,6 +58,11 @@ const BlastDb = () => {
                 link.click()
                 link.parentNode.removeChild(link)
             })
+    }
+
+    // download file compatible with another tool
+    const downloadFormat = (tool) => {
+
     }
 
     if (isLoading) return (
@@ -119,7 +125,7 @@ const BlastDb = () => {
                     <p className='text-muted'>
                     {
                         locked ?
-                        <><FaLockOpen/> Unpublished</> :
+                        <><FaLockOpen/> Published</> :
                         <><FaLock/> Unpublished</>
                     }
                     </p>
@@ -146,6 +152,34 @@ const BlastDb = () => {
                         <Col className='col-auto'>
                             <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('text/x-fasta')}>
                                 Export .fasta
+                            </Button>
+                        </Col>
+                    </Row>
+                    <span>Export to taxonomic assignment tools:</span>
+                    <Row>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('sintax')}>
+                                SINTAX
+                            </Button>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('rdp')}>
+                                RDP
+                            </Button>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('qiime2')}>
+                                Qiime2
+                            </Button>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('dada2')}>
+                                DADA2
+                            </Button>
+                        </Col>
+                        <Col className='col-auto'>
+                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('idtaxa')}>
+                                IDTAXA
                             </Button>
                         </Col>
                     </Row>

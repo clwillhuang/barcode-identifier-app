@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieChart } from 'chartist'
 import styles from './db-summary.module.css'
+import { Tab, Tabs } from 'react-bootstrap';
 
 class DbSummary extends React.Component {
 
@@ -9,19 +10,37 @@ class DbSummary extends React.Component {
         const { sequences } = this.props;
         let countryData = {};
         let genusData = {};
+        let familyData = {};
+        let orderData = {};
+        let classData = {};
+        let phylumData = {};
+        let kingdomData = {};
+
+        const incre = (dict, obj) => {
+            if (obj !== null) 
+            dict[obj.scientific_name] = (dict[obj.scientific_name] || 0) + 1;
+            else dict['Unknown'] = (dict['Unknown'] || 0) + 1;
+        }
+
         for (const seq of sequences) {
-            let { country, organism } = seq;
+            let { country, 
+                taxon_kingdom,
+                taxon_phylum,
+                taxon_class,
+                taxon_order,
+                taxon_family,
+                taxon_genus } = seq;
             let colon = country.indexOf(':');
             if (colon !== -1) {
                 country = country.substring(0, colon);
             }
-            countryData[country] = countryData[country] ? countryData[country] + 1 : 1;
-
-            let space = organism.indexOf(' ');
-            if (space !== -1) {
-                organism = organism.substring(0, space);
-            }
-            genusData[organism] = genusData[organism] ? genusData[organism] + 1 : 1;
+            countryData[country] = (countryData[country] || 0) + 1;
+            incre(kingdomData, taxon_kingdom)
+            incre(phylumData, taxon_phylum)
+            incre(classData, taxon_class)
+            incre(orderData, taxon_order)
+            incre(familyData, taxon_family)
+            incre(genusData, taxon_genus)
         }
 
         const generateDataObject = (data) => {
@@ -60,8 +79,13 @@ class DbSummary extends React.Component {
             return dataObject;
         }
 
-        this.countryData = generateDataObject(countryData);
-        this.genusData = generateDataObject(genusData);
+        this.charts = ['country', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom']
+        this.data = [countryData, genusData, familyData, orderData, classData, phylumData, kingdomData].map(d => generateDataObject(d))
+        
+        this.state = {
+            activeData: 0,
+            activeChart: undefined,
+        }
     }
 
     componentDidMount() {
@@ -78,19 +102,11 @@ class DbSummary extends React.Component {
             return value;
             }
             // showLabel: false,
-        };
-        let countryPie = new PieChart('.ct-country',
-            this.countryData,
-            options)
-
-        let genusPie = new PieChart('.ct-genus',
-            this.genusData,
-            options);
-
-        let tt = document.querySelector('.customtt');
-        tt.style.visibility = 'hidden';            
+        };          
 
         const addTooltip = (pie) => {
+            let tt = document.querySelector('.customtt');
+            tt.style.visibility = 'hidden';  
             pie.on('created', function (pie) {
                 var elems = document.querySelectorAll('.ct-slice-donut')
                 elems.forEach(inp => {
@@ -112,24 +128,38 @@ class DbSummary extends React.Component {
                 }) 
             });
         }
-
-        addTooltip(countryPie);
-        addTooltip(genusPie);
+        if (this.state.activeChart) {
+            this.state.activeChart.update(this.data[this.state.activeData])
+        } else {
+            let dataPie = new PieChart(`.ct-chart`, this.data[this.state.activeData], options);
+            addTooltip(dataPie)
+            this.setState({activeChart: dataPie})
+        }
     }
 
     render() {
+        if (this.state.activeChart) {
+            this.state.activeChart.update(this.data[this.state.activeData])
+        } 
+
         return (
+            <>
             <div className={styles.graphContainer}>
                 <span className={'customtt bg-primary text-white ' + styles.tooltip}/>
-                <div>
-                    <p className='text-center'>by country</p>
-                    <div className='ct-country' />
-                </div>
-                <div>
-                    <p className='text-center'>by genus</p>
-                    <div className='ct-genus' />
-                </div>
+                <Tabs onSelect={(key) => {this.setState({activeData: parseInt(key)})}}>
+                    {
+                        this.charts.map((id, index) => {
+                            return(
+                                <Tab eventKey={index} title={id}>
+                                </Tab>
+                            )
+                        })
+                    }
+                </Tabs>
+                <p className='text-center'>by {this.charts[this.state.activeData]}</p>
+                <div className={`ct-chart`} />
             </div>
+            </>
         )
     }
 }
