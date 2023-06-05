@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Breadcrumb, BreadcrumbItem, Button, Col, Container, Row } from 'react-bootstrap';
-import { FaLock, FaLockOpen, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import { FaLock, FaLockOpen, FaRegEye, FaRegEyeSlash, FaInfoCircle } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom'
 import CustomHelmet from '../components/custom-helmet';
@@ -28,54 +28,67 @@ const BlastDb = () => {
         }
     )
 
-    // download a text file with the given format
-    const downloadFile = (format) => {
-        const types = { 'text/csv': 'csv', 'text/x-fasta': 'fasta' }
-
-        if (typeof window === 'undefined') {
-            console.error("Cannot download CSV file with window undefined.")
-            return
-        } else if (!Object.keys(types).includes(format)) {
-            console.error(`The format ${format} is not available for export.`)
-            return
+    const downloadFormats = [
+        {
+            export_format: '',
+            title: 'Basic Export',
+            formats: ['fasta', 'csv', 'tsv', 'xml', 'json']
+        },
+        {
+            export_format: 'qiime2',
+            title: 'QIIME2',
+            formats: ['zip']
+        },
+        {
+            export_format: 'dada2tax',
+            title: 'DADA2 (assignTaxonomy)',
+            formats: ['fasta', 'zip']
+        },
+        {
+            export_format: 'dada2sp',
+            title: 'DADA2 (assignSpecies)',
+            formats: ['fasta', 'zip']
+        },
+        {
+            export_format: 'sintax',
+            title: 'SINTAX (USEARCH)',
+            formats: ['fasta', 'zip']
+        },
+        {
+            export_format: 'rdp',
+            title: 'RDP Classifier',
+            formats: ['zip']
+        },
+        {
+            export_format: 'mothur',
+            title: 'Mothur',
+            formats: ['zip']
         }
+    ]
 
-        fetch(`${urlRoot}/blastdbs/${databaseId}`, {
-            method: `GET`,
-            headers: generateHeaders({
-                'Accept': format
-            })
-        })
-            .then((response) => response.blob())
-            .then((blob) => {
-                const url = window.URL.createObjectURL(
-                    new Blob([blob])
-                )
-                const link = document.createElement('a',)
-                link.href = url
-                link.setAttribute('download', `results.${types[format]}`)
-                document.body.appendChild(link)
-                link.click()
-                link.parentNode.removeChild(link)
-            })
-    }
-
-    // download file compatible with another tool
-    const downloadFormat = (tool) => {
-
-    }
+    const renderRunButton = useCallback(() => {
+        if (locked) {
+            return (
+                <Button variant='primary' className='align-middle'>
+                    <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
+                </Button>)
+        } else {
+            return (
+            <p><FaInfoCircle/>This database has not been published yet, so no BLAST queries can be run.</p>)
+        }
+    })
 
     if (isLoading) return (
         <Wrapper>
             <Layout>
-            <CustomHelmet
-                title='BLAST Database'
-                description='Browse a database version of a barcode reference library .'
-                canonical='/libraries'
-            />
-            <div>
-                <p>Retrieving data ...</p>
-            </div>
+                <CustomHelmet
+                    title='BLAST Database'
+                    description='Browse a database version of a barcode reference library .'
+                    canonical='/libraries'
+                />
+                <div>
+                    <p>Retrieving data ...</p>
+                </div>
             </Layout>
         </Wrapper>
     )
@@ -94,101 +107,86 @@ const BlastDb = () => {
         </Wrapper>
     )
 
-    const { library: { custom_name, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequences } = data
+    const { library: { custom_name, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequences, custom_name: version_custom_name } = data
 
     return (
         <Wrapper>
             <Layout>
-            <CustomHelmet
-                title={`${custom_name}, ${version_number}`}
-                description='Browse entries in this custom database.'
-                canonical='database'
-            />
-            <Breadcrumb>
-                <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem href='/libraries'>Reference Libraries</BreadcrumbItem>
-                <BreadcrumbItem href={`/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
-                <BreadcrumbItem active>Version {version_number}</BreadcrumbItem>
-            </Breadcrumb>
-            <div>
-                <h1>"{custom_name}"</h1>
-                <div className={styles.visibilityInfo}>
-                    <p className='mt-0 mb-2 text-muted'>
-                    {
-                        is_public_library ? 
-                        <><FaRegEye/> Public Database</> 
-                        : 
-                        <><FaRegEyeSlash/> Private Database</>
-                    }
-                    </p>
-                    <span className='mx-2'>|</span>
-                    <p className='text-muted'>
-                    {
-                        locked ?
-                        <><FaLockOpen/> Published</> :
-                        <><FaLock/> Unpublished</>
-                    }
-                    </p>
-                    <p className='mt-0 mb-2 text-muted'>
-                    <span className='mx-2'>|</span>
-                    Adminstered by {username}
-                    </p>
+                <CustomHelmet
+                    title={`${custom_name}, ${version_number}`}
+                    description='Browse entries in this custom database.'
+                    canonical='database'
+                />
+                <Breadcrumb>
+                    <BreadcrumbItem href='/'>Home</BreadcrumbItem>
+                    <BreadcrumbItem href='/libraries'>Reference Libraries</BreadcrumbItem>
+                    <BreadcrumbItem href={`/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
+                    <BreadcrumbItem active>Version {version_number} ("{version_custom_name}")</BreadcrumbItem>
+                </Breadcrumb>
+                <div>
+                    <h1>{custom_name}</h1>
+                    <div className={styles.visibilityInfo}>
+                        <p className='mt-0 mb-2 text-muted'>
+                            {
+                                is_public_library ?
+                                    <><FaRegEye/> Public Database</>
+                                    :
+                                    <><FaRegEyeSlash/> Private Database</>
+                            }
+                        </p>
+                        <span className='mx-2'>|</span>
+                        <p className='text-muted'>
+                            {
+                                locked ?
+                                    <><FaLockOpen/> Published</> :
+                                    <><FaLock/> Unpublished</>
+                            }
+                        </p>
+                        <p className='mt-0 mb-2 text-muted'>
+                            <span className='mx-2'>|</span>
+                            Adminstered by {username}
+                        </p>
+                    </div>
+                    <p>{description}</p>
+                    <h3>Version {version_number} ("{version_custom_name}")</h3>
+                    <p>{version_description}</p>
+                    <Container className='g-0 mb-3'>
+                        {renderRunButton()}
+                        <Row className='my-3'>
+                            <Col className='col-7'>
+                                <h3>Summary</h3>
+                                <p className='text-muted'>Number of sequences: {sequences.length}</p>
+                                <DbSummary sequences={sequences} />
+                            </Col>
+                            <Col className='col-5'>
+                                <h3>Export</h3>
+                                {
+                                    downloadFormats.map(downloadFormat => {
+                                        return (
+                                            <Row key={downloadFormat.title}>
+                                                <Col className='col-6'>
+                                                    <p className='my-1 ml-2'>{downloadFormat.title}:</p>
+                                                </Col>
+                                                <Col className='col-6'>
+                                                    <div className='my-1'>
+                                                        {
+                                                            downloadFormat.formats.map(format => {
+                                                                return (
+                                                                    <a key={`${downloadFormat.title}_${format}`} className='mx-1' href={`${urlRoot}/blastdbs/${databaseId}/export?export_format=${downloadFormat.export_format}&format=${format}`} target='_blank' rel='noreferrer'>{format}</a>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        )
+                                    })
+                                }
+                            </Col>
+                        </Row>
+                    </Container>
+                    <DbTable data={sequences}></DbTable>
                 </div>
-                <p>{description}</p>
-                <h3>Version {version_number}</h3>
-                <p>{version_description}</p>
-                <Container className='g-0 mb-2'>
-                    <Row className='d-flex align-items-center'>
-                        <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle'>
-                                <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('text/csv')}>
-                                Export .csv
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('text/x-fasta')}>
-                                Export .fasta
-                            </Button>
-                        </Col>
-                    </Row>
-                    <span>Export to taxonomic assignment tools:</span>
-                    <Row>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('sintax')}>
-                                SINTAX
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('rdp')}>
-                                RDP
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('qiime2')}>
-                                Qiime2
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('dada2')}>
-                                DADA2
-                            </Button>
-                        </Col>
-                        <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle text-white text-decoration-none' onClick={() => downloadFormat('idtaxa')}>
-                                IDTAXA
-                            </Button>
-                        </Col>
-                    </Row>
-                </Container>
-                <h3>Database entries</h3>
-                <p className='text-muted'>This database contains {sequences.length} entries.</p>
-                <DbSummary sequences={sequences} />
-                <DbTable data={sequences}></DbTable>
-            </div>
             </Layout>
         </Wrapper>
     )

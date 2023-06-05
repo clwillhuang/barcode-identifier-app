@@ -6,61 +6,56 @@ import MakeRow from './run-table-row';
 import { FaSortAlphaDownAlt, FaSortAlphaDown } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
 
-const RunTable = ({ initialData }) => {
+const TaxonomyTable = ({ initialData }) => {
 
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Percent Identity',
-                accessor: 'percent_identity'
-            },
-            {
                 Header: 'Query ID',
-                accessor: 'query_accession_version'
+                accessor: 'definition'
             },
             {
-                Header: 'Accession Number',
-                accessor: 'subject_accession_version'
+                Header: 'Classification Result',
+                accessor: 'results_species_name'
             },
             {
-                Header: 'Organism',
-                accessor: 'db_entry.organism',
+                Header: 'Original Classification',
+                accessor: 'original_species_name'
             },
             {
-                Header: 'Country',
-                accessor: 'db_entry.country',
+                Header: 'Accuracy Category',
+                accessor: 'accuracy_category'
             },
             {
-                Header: 'Specimen Voucher',
-                accessor: 'db_entry.specimen_voucher',
-            },
-            {
-                Header: 'Type',
-                accessor: 'db_entry.type_material',
-            },
-            {
-                Header: 'Alignment Length',
-                accessor: 'alignment_length'
+                Header: 'Percent Identity',
+                accessor: 'highest_percent_identity'
             },
             {
                 Header: 'Evalue',
                 accessor: 'evalue'
-            },
-            {
-                Header: 'Bit Score',
-                accessor: 'bit_score'
-            },
-            {
-                Header: 'Latitude / Longitude',
-                accessor: 'db_entry.lat_lon',
-            },
+            }
         ],
         []
     )
 
     const tableData = useMemo(() => {
         // perform any modifications to incoming props here
-        return initialData
+        const parsedData = initialData.map(query => {
+            query.hits = query.hits.map(hit => {
+                return {
+                    ...hit,
+                    percent_identity: parseFloat(hit.percent_identity),
+                    evalue: parseFloat(hit.evalue)
+                }
+            })
+            const highest_percent_identity_hit = query.hits.reduce((a, b) => a.percent_identity > b.percent_identity ? a : b)
+            return {
+                ...query,
+                highest_percent_identity: highest_percent_identity_hit.percent_identity,
+                evalue: highest_percent_identity_hit.evalue
+            }
+        })
+        return parsedData
     }, [initialData])
 
     const { getTableProps,
@@ -78,17 +73,8 @@ const RunTable = ({ initialData }) => {
             {
                 columns,
                 data: tableData,
-                initialState: { 
-                    pageIndex: 0, 
-                    pageSize: 50, 
-                    enableColumnResizing: false,
-                    sortBy: [
-                        {
-                            id: 'percent_identity',
-                            desc: true
-                        }
-                    ]
-                },
+                enableColumnResizing: false,
+                initialState: { pageIndex: 0, pageSize: 50 },
             },
             useSortBy, usePagination)
 
@@ -158,4 +144,4 @@ const RunTable = ({ initialData }) => {
     )
 }
 
-export default RunTable;
+export default TaxonomyTable;

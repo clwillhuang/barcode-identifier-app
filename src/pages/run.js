@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import RunTable from '../components/run-table';
-import { Accordion, Breadcrumb, BreadcrumbItem, Button, Col, Container, Modal, Row, Tab, Tabs } from 'react-bootstrap';
+import { Accordion, Breadcrumb, BreadcrumbItem, Button, Col, Container, FormGroup, Modal, Row, Tab, Tabs, FormSelect, FormLabel } from 'react-bootstrap';
 
 import { useParams, Link } from 'react-router-dom'
 import Wrapper from '../components/wrapper';
@@ -11,71 +11,23 @@ import styles from './run.module.css'
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import CustomHelmet from '../components/custom-helmet';
 import RunTreeTab from '../components/hit-tree';
+import TaxonomyTable from '../components/taxonomy-table';
 
 const Run = () => {
     const [errorText, setErrorText] = useState('');
     let { runId } = useParams();
     const [key, setKey] = useState('hits')
+    const [selectedQuerySequence, setSelectedQuerySequence] = useState(undefined);
+
+    const onHandleQueryChange = useCallback((event) => {
+        setSelectedQuerySequence(event.target.value)
+    }, [setSelectedQuerySequence])
 
     const dateFormatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric', month: 'numeric', day: 'numeric',
         hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short',
         hour12: false,
     })
-
-    const downloadFile = (format) => {
-        if (typeof window === 'undefined') {
-            console.error('Cannot download CSV file with window undefined.')
-            return
-        } else if (!(['txt', 'csv'].includes(format))) {
-            console.error(`Format .${format} is not available for export.`)
-            return
-        }
-
-        fetch(`${urlRoot}/runs/${runId}/download?format=${format}`, {
-            headers: generateHeaders({})
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.blob();
-                } else {
-                    throw new Error(`${response.status}: ${response.statusText}`);
-                }
-            })
-            .then((blob) => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const link = document.createElement('a',);
-                link.href = url;
-                link.setAttribute('download', `results.${format}`);
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-            })
-            .catch(err => { setErrorText(err.message); })
-    }
-
-    const downloadInput = () => {
-        fetch(`${urlRoot}/runs/${runId}/input-download`, {
-            headers: generateHeaders({})
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.blob();
-                } else {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
-            })
-            .then((blob) => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const link = document.createElement('a',);
-                link.href = url;
-                link.setAttribute('download', `query.fasta`);
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-            })
-            .catch(err => { setErrorText(err.message); })
-    }
 
     const { isLoading, error, data: run, isError, isSuccess, errorUpdatedAt, dataUpdatedAt } = useQuery([`blast_run_${runId}`], () =>
         fetch(`${urlRoot}/runs/${runId}`, {
@@ -85,6 +37,11 @@ const Run = () => {
         {
             refetchInterval: false,
             retry: false,
+            onSuccess: (data) => {
+                if (typeof selectedQuerySequence === 'undefined') {
+                    setSelectedQuerySequence(data.queries.length > 0 ? 0 : undefined)
+                }
+            }
         }
     )
 
@@ -145,35 +102,70 @@ const Run = () => {
                     <Tabs activeKey={key} onSelect={(newKey) => setKey(newKey)}>
                         <Tab eventKey='hits' title='Hits' className={styles.tabs}>
                             <h3>Hits</h3>
-                            <p>BLAST run returned <strong>{run.hits.length}</strong> hits</p>
+                            <Container className='g-0'>
+                                <Row className='d-flex align-items-center pb-3'>
+                                    <Col className='col-auto'>
+                                        <span className='d-block' style={{ width: 'fit-content' }}>Export results as</span>
+                                    </Col>
+                                    {['csv', 'tsv', 'txt'].map(format => {
+                                        return(
+                                            <Col className='col-auto' key={format}>
+                                                <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download?format=${format}`}>
+                                                    .{format}
+                                                </a>
+                                            </Col>
+                                        )
+                                    })}
+                                </Row>
+                            </Container>
+                            <FormGroup>
+                                <FormLabel htmlFor='selectedQuerySequence'>Select a query sequence to browse hits:</FormLabel>
+                                <FormSelect onChange={onHandleQueryChange} name='selectedQuerySequence'>
+                                    {run.queries.map((query_seq, index) => 
+                                        <option value={index} key={`opt_${index}`}>{query_seq.definition}</option>
+                                    )}
+                                </FormSelect>
+                            </FormGroup>
                             {
-                                run.hits.length > 0 &&
-                                <React.Fragment>
-                                    <Container className='g-0'>
-                                        <Row className='d-flex align-items-center pb-3'>
-                                            <Col className='col-auto'>
-                                                <span className='d-block' style={{ width: 'fit-content' }}>Download results as</span>
-                                            </Col>
-                                            <Col className='col-auto'>
-                                                <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadFile('csv')}>
-                                                    .csv
-                                                </Button>
-                                            </Col>
-                                            <Col className='col-auto'>
-                                                <Button variant='primary' className='align-middle text-white text-decoration-none' onClick={() => downloadFile('txt')}>
-                                                    .txt
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                    <RunTable initialData={run.hits} />
-                                </React.Fragment>
-                            }
+                                (typeof selectedQuerySequence !== 'undefined') && 
+                                <>
+                                <div>
+                                    <h5>Query Sequence Details</h5>
+                                    <b>{run.definition}</b>
+                                    <p>Originally reported identification: {run.queries[selectedQuerySequence].original_species_name ?? 'Unspecified'}</p>
+                                    <h5>Classification Results</h5>
+                                    <p>Classification by BLAST: {run.queries[selectedQuerySequence].results_species_name}</p>
+                                    <p>BLAST run returned <strong>{run.queries[selectedQuerySequence].hits.length}</strong> hits</p>
+                                </div>
+                                <RunTable initialData={run.queries[selectedQuerySequence].hits}/>
+                            </>
+                        }
                         </Tab>
                         {
                             (run.create_db_tree || run.create_hit_tree) &&
                             <Tab eventKey='tree' title='Tree' className={styles.tabs}>
                                 <RunTreeTab run_data={run} querySequences={run.queries} enabled={key === 'tree'} />
+                            </Tab>
+                        }
+                        {
+                            (run.create_hit_tree) && 
+                            <Tab eventKey='taxonomy' title='Taxonomy' className={styles.tabs}>
+                                <h3>Taxonomic Assignments</h3>
+                                <Row className='d-flex align-items-center pb-3'>
+                                    <Col className='col-auto'>
+                                        <span className='d-block' style={{ width: 'fit-content' }}>Export taxonomy as</span>
+                                    </Col>
+                                    {['csv', 'tsv'].map(format => {
+                                        return(
+                                            <Col className='col-auto' key={format}>
+                                                <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download/taxonomy?format=${format}`}>
+                                                    .{format}
+                                                </a>
+                                            </Col>
+                                        )
+                                    })}
+                                </Row>
+                                <TaxonomyTable initialData={run.queries}/>
                             </Tab>
                         }
                     </Tabs>
@@ -184,7 +176,7 @@ const Run = () => {
                     <strong>Job name</strong>
                     <pre>{run.job_name || '<no job name given>'}</pre>
                     <strong>Database used</strong>
-                    <pre><Link to={`/libraries/${run.db_used.library.id}/version/${run.db_used.id}`}>{run.db_used.library.custom_name} (Version {run.db_used.version_number}</Link></pre>
+                    <pre><Link to={`/libraries/${run.db_used.library.id}/version/${run.db_used.id}`}>{run.db_used.library.custom_name} (Version {run.db_used.version_number})</Link></pre>
                     <strong>Unique Run Identifier</strong>
                     <pre>{runId}</pre>
                     <strong>Query Input</strong>
@@ -196,9 +188,9 @@ const Run = () => {
                             <span className='d-block' style={{ width: 'fit-content' }}>Download input as</span>
                         </Col>
                         <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle text-white text-decoration-none mx-0' onClick={() => downloadInput()}>
+                            <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download/input`}>
                                 .fasta
-                            </Button>
+                            </a>
                         </Col>
                     </Row>
                 </Container>

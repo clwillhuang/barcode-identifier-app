@@ -74,7 +74,7 @@ function Workflow() {
                 <p className={styles.prompt}>I want to ...</p>
                 {
                     ['query a reference library.', 'host a reference library.'].map((text, index) =>
-                        <button className={useCase === index ? styles.selected : ''} onClick={() => setUseCase(index)}>{text}</button>)
+                        <button key={`wt_${index}`} className={useCase === index ? styles.selected : ''} onClick={() => setUseCase(index)}>{text}</button>)
                 }
                 </div>
                 {useCase === 0 && renderWorkflow(queryWorkflow)}

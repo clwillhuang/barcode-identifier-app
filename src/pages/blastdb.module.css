@@ -11,3 +11,7 @@
 .visibilityInfo {
     display: flex;
 }
+
+svg {
+    margin-right: 3px;
+}

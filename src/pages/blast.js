@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Spinner } from 'react-bootstrap';
+import { useState } from 'react';
+import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import CustomHelmet from '../components/custom-helmet';
@@ -43,7 +43,7 @@ function Blast() {
         }
     )
 
-    const { isLoading: isDatabaseLoading, error: databaseError, data: databaseData, isError: isDatabaseError } = useQuery([`database_${fields.librarySelect}`], () =>
+    const { isFetching: isDatabaseFetching, error: databaseError, data: databaseData, isError: isDatabaseError } = useQuery([`database_${fields.librarySelect}`], () =>
         fetch(`${urlRoot}/libraries/${fields.librarySelect.toString()}/versions`, {
             headers: generateHeaders({}),
         })
@@ -128,20 +128,18 @@ function Blast() {
 
     const onFileChange = (event) => {
         setFields({ ...fields, 'query_file': event.target.files[0] })
+        setSequenceInvalid(false)
+        setResponseError(null)
     }
 
     const error = isDatabaseError ? databaseError : (isLibraryError ? libraryError : undefined);
 
     const renderDatabaseOptions = () => {
-        if (isDatabaseLoading) {
-            return (
-                <div><Spinner /> Fetching database data for this reference library</div>
-            )
-        } else if (isDatabaseError) {
+        if (isDatabaseError) {
             return (
                 <Alert variant='danger'>Could not retrieve a matching database.</Alert>
             )
-        } else if (databaseData === null || databaseData.length === 0) {
+        } else if (!isDatabaseFetching && (databaseData === null || databaseData.length === 0)) {
             return (
                 <Alert variant='danger'>No BLAST databases are published for this reference library</Alert>
             )
@@ -149,8 +147,8 @@ function Blast() {
             return (
                 <FormGroup className='my-3 mx-5'>
                     <FormLabel htmlFor='databaseSelect'>Library Version</FormLabel>
-                    <FormSelect aria-label='Select database to query on' name='id' id='databaseSelect' defaultValue={fields.databaseSelect} onChange={handleChange}>
-                        {databaseData.map(db => <option value={db.id} key={db.id}>{db.version_number} ({db.id})</option>)}
+                    <FormSelect aria-label='Select database to query on' name='databaseSelect' id='databaseSelect' defaultValue={fields.databaseSelect} onChange={handleChange}>
+                        {databaseData.map(db => <option value={db.id} key={db.id}>Version {db.version_number}, "{db.custom_name}" ({db.id})</option>)}
                     </FormSelect>
                     <div className='d-flex justify-content-end'>
                         <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
@@ -211,11 +209,11 @@ function Blast() {
                             <>
                                 <FormGroup className='my-3 mx-5'>
                                     <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
-                                    <FormSelect aria-label='Select reference library to query on' name='id' id='librarySelect' defaultValue={libraryData[0].id} onChange={handleChange}>
+                                    <FormSelect aria-label='Select reference library to query on' name='librarySelect' id='librarySelect' defaultValue={libraryData[0].id} onChange={handleChange}>
                                         {libraryData.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
                                     </FormSelect>
                                     <div className='d-flex justify-content-end'>
-                                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse Reference Library</a>
+                                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse this reference library</a>
                                     </div>
                                 </FormGroup>
                                 {renderDatabaseOptions()}
@@ -225,7 +223,7 @@ function Blast() {
                     }
                     <h5>Multiple Alignment Parameters</h5>
                     <FormGroup className='my-3 mx-5'>
-                        <FormCheck id='createHitTree' name='create_hit_tree' type='checkbox' value={fields.create_hit_tree} onChange={handleChange} label='Construct tree with only queries and hits (Create hit tree)'></FormCheck>
+                        <FormCheck id='createHitTree' name='create_hit_tree' type='checkbox' value={fields.create_hit_tree} onChange={handleChange} label='Construct tree with only queries and hits (Create hit tree), and evaluate accuracy of species identities'></FormCheck>
                     </FormGroup>
                     <FormGroup className='my-3 mx-5'>
                         <FormCheck id='createDbTree' name='create_db_tree' type='checkbox' onChange={handleChange} value={fields.create_db_tree} label='Construct tree with queries and all database sequences (Create database tree)'></FormCheck>

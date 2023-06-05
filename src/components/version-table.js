@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
-import { FaSortAlphaDownAlt, FaSortAlphaUpAlt } from 'react-icons/fa'
+import { FaSortAlphaDownAlt, FaSortAlphaDown } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
 import { Link } from 'react-router-dom'
 
@@ -38,8 +38,12 @@ const VersionTable = ({ initialData, libraryId }) => {
                 accessor: 'custom_name'
             },
             {
+                Header: 'Sequence Count',
+                accessor: 'sequence_count'
+            },
+            {
                 Header: 'Published',
-                accessor: 'locked'
+                accessor: 'locked',
             },
             {
                 Header: 'View',
@@ -73,9 +77,11 @@ const VersionTable = ({ initialData, libraryId }) => {
             {
                 columns,
                 data: tableData,
-                initialState: { pageIndex: 0, pageSize: 50 },
+                enableColumnResizing: false,
+                initialState: { pageIndex: 0, pageSize: 50 }
             },
-            useSortBy, usePagination)
+            useSortBy, 
+            usePagination)
 
     useEffect(() => {
         const tableWidth = document.querySelector('#table-head').getBoundingClientRect().width;
@@ -116,7 +122,7 @@ const VersionTable = ({ initialData, libraryId }) => {
                                                     {column.isSorted
                                                         ? column.isSortedDesc
                                                             ? <FaSortAlphaDownAlt size={20}/>
-                                                            : <FaSortAlphaUpAlt size={20}/>
+                                                            : <FaSortAlphaDown size={20}/>
                                                         : ''}
                                                 </span>
                                             </th>

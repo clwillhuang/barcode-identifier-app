@@ -150,8 +150,7 @@ class DbSummary extends React.Component {
                     {
                         this.charts.map((id, index) => {
                             return(
-                                <Tab eventKey={index} title={id}>
-                                </Tab>
+                                <Tab eventKey={index} title={id} key={id}/>
                             )
                         })
                     }

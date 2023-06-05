@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect } from 'react'
-import { usePagination, useSortBy, useTable } from 'react-table'
+import { usePagination, useSortBy, useTable} from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import { FaExternalLinkAlt, FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
+import styles from './db-table.module.css'
 
 const resolveCellContent = (cell) => {
     switch (cell.column.id) {
@@ -59,96 +60,91 @@ const DbTable = ({ data }) => {
     }, [])
 
     const columns = React.useMemo(
-        () => [
+        () => {
+            const c = [
             {
                 Header: 'Accession.Version',
-                accessor: 'version'
+                accessor: 'version',
+                description: 'Accession.version of GenBank sequence version.'
             },
             {
                 Header: 'Organism',
-                accessor: 'organism'
+                accessor: 'organism',
+                description: 'Source organism annotated on GenBank.'
             },
             {
                 Header: 'Specimen Voucher',
-                accessor: 'specimen_voucher'
+                accessor: 'specimen_voucher',
+                description: 'Specimen voucher specified in the sequence features on GenBank.'
             },
             {
                 Header: 'Country',
-                accessor: 'country'
+                accessor: 'country',
+                description: 'Country of collection specified in the sequence features on GenBank.'
             },
             {
                 Header: 'Type',
-                accessor: 'type_material'
+                accessor: 'type_material',
+                description: 'The type material of the voucher specimen (e.g. paratype, holotype, etc.) annotated on GenBank.'
             },
             {
                 Header: 'Isolate',
-                accessor: 'isolate'
+                accessor: 'isolate',
             },
             {
                 Header: 'Latitude / Longitude',
-                accessor: 'lat_lon'
+                accessor: 'lat_lon',
+                description: 'Latitude and longitude of collection site, expressed using decimal degrees and compass direction.'
             },
             {
                 Header: 'Modification Date',
-                accessor: 'genbank_modification_date'
+                accessor: 'genbank_modification_date',
+                description: 'GenBank record modification date, specified at the top of the GenBank flat file.'
             },
             {
                 Header: "Kingdom",
                 accessor: "taxon_kingdom",
-                sortType: sortTaxaAlphabetically,
             },
             {
                 Header: "Phylum",
                 accessor: "taxon_phylum",
-                sortType: sortTaxaAlphabetically,
             },
             {
                 Header: "Class",
                 accessor: "taxon_class",
-                sortType: sortTaxaAlphabetically,
             },
             {
                 Header: "Order",
                 accessor: "taxon_order",
-                sortType: sortTaxaAlphabetically,
             },
             {
                 Header: "Family",
                 accessor: "taxon_family",
-                sortType: sortTaxaAlphabetically,
             },
             {
                 Header: "Genus",
                 accessor: "taxon_genus",
-                sortType: sortTaxaAlphabetically,
             },
             {
                 Header: "Species",
                 accessor: "taxon_species",
-                sortType: sortTaxaAlphabetically,
             }
-        ],
+        ]
+            return c.map(cc => {
+                if (cc.accessor.startsWith('taxon_')) {
+                    return {
+                        ...cc,
+                        sortType: sortTaxaAlphabetically,
+                        description: `The ${cc.accessor.slice(6)} of the source organism's lineage, written with the scientific
+                        name of the corresponding NCBI taxonomy node. Click links to view taxa in the NCBI Taxonomy Browser.`
+                    }
+                } else {
+                    return cc;
+                }
+            })
+        },
         [sortTaxaAlphabetically]
     )
-
-    // const accession_numbers = data.map(x => x.accession_number).join(',')
-
-    // const genBankUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=${accession_numbers}&rettype=gb&retmode=xml`
-    // const { isLoading, error, data: genBankData } = useQuery([`genbank_fetch`], () =>
-    //     fetch(genBankUrl)
-    //         .then((response) => response),
-    //     {
-    //         retry: false,
-    //         staleTime: Infinity,
-    //         retryDelay: attempt => attempt * 10000 ,
-    //         refetchOnMount: false,
-    //         refetchOnWindowFocus: false,
-    //     }
-    // )
-
-    // if (!isLoading && !error) {
-    //     console.log(genBankData)
-    // }
 
     const { getTableProps,
         getTableBodyProps,
@@ -164,8 +160,14 @@ const DbTable = ({ data }) => {
         state: { pageIndex, pageSize } } = useTable(
             {
                 columns,
-                data,
-                initialState: { pageIndex: 0, pageSize: 100 },
+                data: data,
+                disableResizing: true,
+                initialState: { pageIndex: 0, pageSize: 50, sortBy: [
+                    {
+                        id: 'version',
+                        desc: false
+                    }
+                ]},
             },
             useSortBy, usePagination)
 
@@ -202,15 +204,17 @@ const DbTable = ({ data }) => {
                                 <tr {...headerGroup.getHeaderGroupProps()}>
                                     {
                                         headerGroup.headers.map(column => (
-                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                            <th {...column.getHeaderProps(column.getSortByToggleProps())} className={styles.details}>
                                                 {column.render('Header')}
-                                                <span>
-                                                    {column.isSorted
-                                                        ? column.isSortedDesc
-                                                            ? <FaSortAlphaUpAlt size={20} />
-                                                            : <FaSortAlphaDown size={20} />
-                                                        : ''}
-                                                </span>
+                                                {column.isSorted
+                                                    ? column.isSortedDesc
+                                                        ? <FaSortAlphaUpAlt size={20} />
+                                                        : <FaSortAlphaDown size={20} />
+                                                    : ''}
+                                                    <span>
+                                                    {column.description ? column.description : column.Header}
+                                                    <br/><br/><em>Click to sort.</em>
+                                                    </span>
                                             </th>
                                         ))
                                     }
