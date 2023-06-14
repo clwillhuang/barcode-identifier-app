@@ -67,7 +67,7 @@ const BlastDb = () => {
     ]
 
     const renderRunButton = useCallback(() => {
-        if (locked) {
+        if (data.locked) {
             return (
                 <Button variant='primary' className='align-middle'>
                     <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
@@ -76,7 +76,7 @@ const BlastDb = () => {
             return (
             <p><FaInfoCircle/>This database has not been published yet, so no BLAST queries can be run.</p>)
         }
-    })
+    }, [data])
 
     if (isLoading) return (
         <Wrapper>
@@ -123,6 +123,7 @@ const BlastDb = () => {
                     <BreadcrumbItem href={`/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
                     <BreadcrumbItem active>Version {version_number} ("{version_custom_name}")</BreadcrumbItem>
                 </Breadcrumb>
+
                 <div>
                     <h1>{custom_name}</h1>
                     <div className={styles.visibilityInfo}>
@@ -153,12 +154,12 @@ const BlastDb = () => {
                     <Container className='g-0 mb-3'>
                         {renderRunButton()}
                         <Row className='my-3'>
-                            <Col className='col-7'>
+                            <Col className='col-12 col-sm-7'>
                                 <h3>Summary</h3>
                                 <p className='text-muted'>Number of sequences: {sequences.length}</p>
                                 <DbSummary sequences={sequences} />
                             </Col>
-                            <Col className='col-5'>
+                            <Col className='col-12 col-sm-5'>
                                 <h3>Export</h3>
                                 {
                                     downloadFormats.map(downloadFormat => {

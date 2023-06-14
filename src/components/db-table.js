@@ -1,13 +1,20 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { usePagination, useSortBy, useTable} from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
-import { FaExternalLinkAlt, FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa'
+import { FaExternalLinkAlt, FaSearch, FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
+import SequencePopup from './sequence-popup';
 import styles from './db-table.module.css'
 
-const resolveCellContent = (cell) => {
+const resolveCellContent = (cell, modalShow) => {
     switch (cell.column.id) {
+        case 'id':
+            return(
+                <a className='text-nowrap' target='_blank' rel='noreferrer' onClick={() => modalShow(cell.value)}>
+                    <FaSearch />
+                </a>
+            )
         case 'version':
             return (
                 <a className='text-nowrap' target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/nuccore/${cell.value}`}>
@@ -44,6 +51,8 @@ const resolveCellContent = (cell) => {
 
 const DbTable = ({ data }) => {
 
+    const [ sequenceShown, setSequenceShown] = useState(null);
+
     const sortTaxaAlphabetically = useCallback((rowA, rowB, columnId, desc) => {
         const valueA = rowA.values[columnId];
         const valueB = rowB.values[columnId];
@@ -62,6 +71,11 @@ const DbTable = ({ data }) => {
     const columns = React.useMemo(
         () => {
             const c = [
+            {
+                Header: 'Info',
+                accessor: 'id',
+                description: 'Unique identifier of sequence within this app.'
+            },
             {
                 Header: 'Accession.Version',
                 accessor: 'version',
@@ -191,6 +205,7 @@ const DbTable = ({ data }) => {
 
     return (
         <div style={{ marginTop: '50px' }} id={tableTopId}>
+            <SequencePopup nuccoreId={sequenceShown} setSequenceShown={setSequenceShown}/>
             <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }} >
                 <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px' }}>
@@ -231,7 +246,7 @@ const DbTable = ({ data }) => {
                                         {
                                             row.cells.map(cell =>
                                                 <td className='text-nowrap' {...cell.getCellProps()}>
-                                                    {resolveCellContent(cell)}
+                                                    {resolveCellContent(cell, setSequenceShown)}
                                                     <i className="bi bi-box-arrow-up-right"></i>
                                                 </td>
                                             )
