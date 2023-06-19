@@ -1,6 +1,6 @@
-import { FaExternalLinkAlt } from 'react-icons/fa'
+import { FaExternalLinkAlt, FaSearch } from 'react-icons/fa'
 
-const resolveCellContents = (cell) => {
+const resolveCellContents = (cell, modalShow) => {
     switch (cell.column.id) {
         case 'evalue':
         case 'bit_score':
@@ -12,6 +12,12 @@ const resolveCellContents = (cell) => {
                     <FaExternalLinkAlt />
                 </a>
             );
+        case 'db_entry.id':
+            return(
+                <button className='text-nowrap' target='_blank' rel='noreferrer' onClick={() => modalShow(cell.value)}>
+                    <FaSearch />
+                </button>
+            )
         case 'db_entry.lat_lon':
             return (
                 cell.value 
@@ -26,12 +32,12 @@ const resolveCellContents = (cell) => {
     }
 }
 
-const makeRow = ({ row }) => {
+const makeRow = ({ row, setSequenceShown }) => {
     return <tr {...row.getRowProps()}>
         {
             row.cells.map(cell =>
                 <td className='text-nowrap' {...cell.getCellProps()}>
-                    {resolveCellContents(cell)}
+                    {resolveCellContents(cell, setSequenceShown)}
                 </td>
             )
         }

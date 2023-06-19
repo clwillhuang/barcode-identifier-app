@@ -7,13 +7,19 @@ import { IconContext } from 'react-icons'
 import { Link } from 'react-router-dom'
 
 const resolveCellContent = (cell, libraryId) => {
+    console.log(cell)
     switch (cell.column.id) {
+        case 'custom_name':
+            return (<Link to={`/libraries/${libraryId}/version/${cell.row.original.id}`}>{cell.value}</Link>)
         case 'locked':
             return(<span>{cell.value ? 'Published' : 'Unpublished'}</span>)
         case 'id':
             return (<Link to={`/libraries/${libraryId}/version/${cell.value}`}>View</Link>)
         case 'blastId':
-            return (<Link to={`/blast?library=${libraryId}&database=${cell.value}`}>Query</Link>)
+            if (cell.value.length > 0) 
+                return (<Link to={`/blast?library=${libraryId}&database=${cell.value}`}>Query</Link>)
+            else 
+                return <></>
         default:
             return (cell.render('Cell'));
     }
@@ -59,7 +65,7 @@ const VersionTable = ({ initialData, libraryId }) => {
     // current data in the table
     const [tableData, setTableData] = React.useState(
         () => data.map(row => {
-            return { ...row }
+            return { ...row, blastId: row.locked ? row.blastId : '' }
         }))
 
     const { getTableProps,

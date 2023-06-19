@@ -69,7 +69,10 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
         let key = `taxon_${name.toLowerCase()}`
         let d = data[key]
         if (typeof d === 'undefined' || d === null) {
-            return 'Unknown'
+            return <div key={name}>
+                <span>{name}: </span>
+                <p>Unknown</p>
+            </div>
         } else {
             return (
                 <div key={name}>

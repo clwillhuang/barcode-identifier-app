@@ -1,12 +1,15 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
 import { FaSortAlphaDownAlt, FaSortAlphaDown } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
+import SequencePopup from './sequence-popup';
 
 const RunTable = ({ initialData }) => {
+    
+    const [ sequenceShown, setSequenceShown] = useState(null);
 
     const columns = React.useMemo(
         () => [
@@ -21,6 +24,10 @@ const RunTable = ({ initialData }) => {
             {
                 Header: 'Accession Number',
                 accessor: 'subject_accession_version'
+            },
+            {
+                Header: 'Info',
+                accessor: 'db_entry.id',
             },
             {
                 Header: 'Organism',
@@ -112,6 +119,7 @@ const RunTable = ({ initialData }) => {
 
     return (
         <div id={tableTopId}>
+            <SequencePopup nuccoreId={sequenceShown} setSequenceShown={setSequenceShown}/>
             <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }}>
                 <div id='runtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
@@ -146,7 +154,7 @@ const RunTable = ({ initialData }) => {
                             page.map((row, i) => {
                                 prepareRow(row)
                                 return (
-                                    <MakeRow key={`row${i}`} row={row} />
+                                    <MakeRow key={`row${i}`} row={row} setSequenceShown={setSequenceShown}/>
                                 )
                             })
                         }

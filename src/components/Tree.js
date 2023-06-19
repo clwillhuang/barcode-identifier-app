@@ -169,13 +169,6 @@ export class Tree extends React.Component {
         svg.style.height = boundingRect.height;
         svg.style.width = boundingRect.width;
 
-        // // replace label with full genus species and accession
-        //     const match = this.props.databaseSequences.find(db_seq => db_seq.accession_number === label);
-        //     if (typeof match !== 'undefined') {
-        //         element.innerHTML = `${match.organism} (${match.accession_number})`;
-        //     }
-        // }
-
         // make all internal nodes transparent
         const internalNodes = svg.querySelectorAll('circle');
         for (let i = 0; i < internalNodes.length; i++) {
@@ -225,7 +218,7 @@ export class Tree extends React.Component {
         const nodes = document.querySelector(this.state.treeContainerId).querySelectorAll('text.phylotree-node-text');
         for (let i = 0; i < nodes.length; i++) {
             let element = nodes[i];
-            const label = element.innerHTML.split('|')[1]
+            const label = element.innerHTML.split('|')[2]
             if (label === 'query') {
                 // bold all query sequences
                 element.style['font-weight'] = 'bold';

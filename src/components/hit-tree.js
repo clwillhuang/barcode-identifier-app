@@ -1,12 +1,10 @@
-import { Button, Col, Container, FormGroup, FormSelect, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Container, FormGroup, FormSelect, Row } from 'react-bootstrap';
 import 'phylotree/dist/phylotree.css'
 import React, { useState } from 'react'
-import { generateHeaders, runsFolder, urlRoot } from '../url'
+import { runsFolder, urlRoot } from '../url'
 import styles from './hit-tree.module.css'
 import { FaCloudDownloadAlt, FaFileAlt, FaMouse } from 'react-icons/fa'
 import { Tree } from './Tree';
-import { useQuery } from 'react-query';
-import { ErrorMessage, handleResponse } from './error-message';
 
 const RunTreeTab = ({ run_data, querySequences, enabled }) => {
     const HIT_TREE = 0, DB_TREE = 1
@@ -15,37 +13,6 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
         tree: run_data.create_hit_tree ? run_data.hit_tree : run_data.db_tree,
         id: run_data.create_hit_tree ? run_data.alignment_job_id : run_data.complete_alignment_job_id
     })
-
-    // retrieve all database entries
-    const { isLoading, error, data: database, isError } = useQuery([`run_${run_data.id}_db`], () =>
-        fetch(`${urlRoot}/blastdbs/${run_data.db_used.id}`, {
-            headers: generateHeaders({})
-        })
-            .then(handleResponse()),
-        {
-            refetchInterval: false,
-            retry: false,
-        }
-    )
-
-    if (isLoading) {
-        return (
-            <div>
-                <h3>Phylogenetic tree of hits and query sequences</h3>
-                <p>Multiple sequence alignment by Clustal Omega at EBML-EBI</p>
-                Retrieving data ... <Spinner animation="border" role="status"></Spinner>
-            </div>
-        )
-    }
-
-    if (isError) return (
-        <div>
-            <h3>Phylogenetic tree of hits and query sequences</h3>
-            <p>Multiple sequence alignment by Clustal Omega at EBML-EBI</p>
-            <ErrorMessage error={error} />
-        </div>
-    )
-
 
     const downloadAlignment = () => {
         if (typeof window !== 'undefined') {
@@ -107,7 +74,7 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
                         <span><FaMouse /> Click and drag to pan. Scroll to zoom.</span>
                     </div>
                 </Row>
-                <Tree {...treeSelected} databaseSequences={database.sequences} querySequences={querySequences} enabled={enabled}/>
+                <Tree {...treeSelected} querySequences={querySequences} enabled={enabled}/>
                 <Row className='mt-3'>
                     <strong className={styles.subtitle}>Job ID</strong>
                     <p>{treeSelected.id}</p>

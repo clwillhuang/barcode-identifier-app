@@ -11,9 +11,9 @@ const resolveCellContent = (cell, modalShow) => {
     switch (cell.column.id) {
         case 'id':
             return(
-                <a className='text-nowrap' target='_blank' rel='noreferrer' onClick={() => modalShow(cell.value)}>
+                <button className='text-nowrap' target='_blank' rel='noreferrer' onClick={() => modalShow(cell.value)}>
                     <FaSearch />
-                </a>
+                </button>
             )
         case 'version':
             return (
