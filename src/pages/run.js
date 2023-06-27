@@ -175,8 +175,14 @@ const Run = () => {
                     <h3>Parameters</h3>
                     <strong>Job name</strong>
                     <pre>{run.job_name || '<no job name given>'}</pre>
-                    <strong>Database used</strong>
-                    <pre><Link to={`/libraries/${run.db_used.library.id}/version/${run.db_used.id}`}>{run.db_used.library.custom_name} (Version {run.db_used.version_number})</Link></pre>
+                    <strong>Reference Library Used</strong>
+                    <pre>
+                        <Link to={`/libraries/${run.db_used.library.id}/`}>{run.db_used.library.custom_name}</Link>
+                    </pre>
+                    <pre className='mx-2'>
+                        <Link to={`/libraries/${run.db_used.library.id}/version/${run.db_used.id}`}>Version {run.db_used.version_number} ({run.db_used.custom_name})</Link>
+                    </pre>
+                    <pre className='mx-2'>({run.db_used.library.marker_gene} reference database)</pre>
                     <strong>Unique Run Identifier</strong>
                     <pre>{runId}</pre>
                     <strong>Query Input</strong>

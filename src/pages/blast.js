@@ -16,7 +16,10 @@ function Blast() {
     let [responseError, setResponseError] = useState(null);
     let [sequenceInvalid, setSequenceInvalid] = useState(false);
 
+    const markerGeneOptions = ['Any', 'CO1', '18S', '16S', '12S', 'CytB', 'ITS']
+
     const [fields, setFields] = useState({
+        markerGene: markerGeneOptions[0],
         job_name: '',
         librarySelect: searchParams.get('library') ?? undefined,
         databaseSelect: searchParams.get('database') ?? undefined,
@@ -78,10 +81,6 @@ function Blast() {
         if (typeof window === 'undefined' || typeof window === 'undefined') {
             return
         }
-
-        // TODO: Show an error if there is both a file upload AND a raw text sequence present
-        // if (fields.querySequence.length < 4)
-        //     return
 
         if (true) {
             const form_info = document.getElementById('blastForm')
@@ -178,6 +177,8 @@ function Blast() {
         </Wrapper>
     )
 
+    const libraries = fields.markerGene === markerGeneOptions[0] ? libraryData : libraryData.filter(lib => lib.marker_gene === fields.markerGene)
+
     return (
         <Wrapper>
             {customHelmet()}
@@ -203,14 +204,21 @@ function Blast() {
                             {"Error: " + responseError}
                         </Form.Control.Feedback>
                     </FormGroup>
+
                     <h5>Nucleotide BLAST Parameters</h5>
+                    <FormGroup className='my-3 mx-5'>
+                        <FormLabel htmlFor='markerGene'>Marker Gene</FormLabel>
+                        <FormSelect aria-label='Select marker gene library to query one' name='markerGene' id='markerGene' defaultValue={markerGeneOptions[0]} onChange={handleChange}>
+                            {markerGeneOptions.map(markerGene => <option value={markerGene} key={markerGene.id}>{markerGene}</option>)}
+                        </FormSelect>
+                    </FormGroup>
                     {
-                        (libraryData.length) > 0 ?
+                        (libraries.length) > 0 ?
                             <>
                                 <FormGroup className='my-3 mx-5'>
                                     <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
-                                    <FormSelect aria-label='Select reference library to query on' name='librarySelect' id='librarySelect' defaultValue={libraryData[0].id} onChange={handleChange}>
-                                        {libraryData.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
+                                    <FormSelect aria-label='Select reference library to query on' name='librarySelect' id='librarySelect' defaultValue={libraries[0].id} onChange={handleChange}>
+                                        {libraries.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
                                     </FormSelect>
                                     <div className='d-flex justify-content-end'>
                                         <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`/libraries/${fields.librarySelect}`}>Browse this reference library</a>
@@ -219,7 +227,7 @@ function Blast() {
                                 {renderDatabaseOptions()}
                             </>
                             :
-                            <Alert variant='danger'>No Reference Libraries found</Alert>
+                            <Alert variant='danger' className='mx-5'>{fields.markerGene === markerGeneOptions[0] ? 'No reference libraries found' : `No reference libraries found for ${fields.markerGene}`}</Alert>
                     }
                     <h5>Multiple Alignment Parameters</h5>
                     <FormGroup className='my-3 mx-5'>

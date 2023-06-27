@@ -1,4 +1,4 @@
-import { Alert, Breadcrumb, BreadcrumbItem, ListGroup } from 'react-bootstrap';
+import { Alert, Breadcrumb, BreadcrumbItem } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import BlastDbPreview from '../components/blastdb-preview';
@@ -58,7 +58,7 @@ function Library() {
         </Wrapper>
     )
 
-    const { id, custom_name, description, owner: { username }, public: is_public_library, latest } = libraryData
+    const { id, custom_name, description, owner: { username }, public: is_public_library, latest, marker_gene } = libraryData
 
     return (
         <Wrapper>
@@ -89,6 +89,7 @@ function Library() {
                     Adminstered by {username}
                     </p>
                 </div>
+                <p>{marker_gene} Reference Database</p>
                 <p>{description}</p>
                 <h3>Latest Version</h3>
                 <BlastDbPreview database={latest} libraryId={id}/>

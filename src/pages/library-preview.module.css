@@ -1,4 +1,4 @@
-@media (max-width: 360px) {
+@media (max-width: 500px) {
     .visibilityInfo span {
         display: none;
     }
@@ -10,4 +10,24 @@
 
 .visibilityInfo {
     display: flex;
+}
+
+.libraryItem {
+    display: 'flex';
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.libraryItemHeader {
+    display: inline-flex;
+}
+
+.libraryItemHeader p {
+    margin: 0 0 0 10px;
+    align-self: center;
+}
+
+.mutedText {
+    margin: 0 0 15px 0;
 }

@@ -107,7 +107,7 @@ const BlastDb = () => {
         </Wrapper>
     )
 
-    const { library: { custom_name, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequences, custom_name: version_custom_name } = data
+    const { library: { custom_name, marker_gene, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequences, custom_name: version_custom_name } = data
 
     return (
         <Wrapper>
@@ -125,7 +125,11 @@ const BlastDb = () => {
                 </Breadcrumb>
 
                 <div>
-                    <h1>{custom_name}</h1>
+                    <span className={styles.header}>
+                        <h1>{custom_name} </h1>
+                        <p>{marker_gene} Reference Library</p>
+                    </span>
+                    
                     <div className={styles.visibilityInfo}>
                         <p className='mt-0 mb-2 text-muted'>
                             {

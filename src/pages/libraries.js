@@ -1,5 +1,6 @@
-import { Alert, ListGroup } from 'react-bootstrap';
+import { Alert, ListGroup, FormSelect, FormGroup, Form, FormLabel } from 'react-bootstrap';
 import { useQuery } from 'react-query';
+import { useState } from 'react';
 import CustomHelmet from '../components/custom-helmet';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Layout from '../components/layout';
@@ -25,6 +26,10 @@ function Libraries() {
 		canonical='/libraries'
 	/>
 
+    const markerGeneOptions = ['Any', 'CO1', '18S', '16S', '12S', 'CytB', 'ITS']
+
+    const [selectedGene, setSelectedGene] = useState(markerGeneOptions[0])
+
     if (isLoading) return (
         <Wrapper>
             <Layout>
@@ -47,6 +52,8 @@ function Libraries() {
         </Wrapper>
     )
 
+    const libraries = selectedGene === 'Any' ? data : data.filter(l => l.marker_gene === selectedGene)
+
     return (
         <Wrapper>
             <Layout>
@@ -54,8 +61,25 @@ function Libraries() {
                     <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
                     <h2>Reference Libraries</h2>
                 </div>
+                <Form id='librariesMarkerGene' className='col-12 col-md-5 col-lg-3 my-4'>
+                    <FormGroup>
+                        <FormLabel htmlFor='markerGene'>Marker Gene</FormLabel>
+                        <FormSelect id='markerGene' name='markerGene' onChange={(event) => setSelectedGene(event.target.value)} defaultValue={markerGeneOptions[0]}>
+                            {
+                                markerGeneOptions.map(markerGene =>
+                                    <option key={markerGene} value={markerGene}>{markerGene}</option>
+                                )
+                            }
+                        </FormSelect>
+                    </FormGroup>
+                </Form>
                 <ListGroup>
-                    {data.map(library => <LibraryPreview library={library} key={library.id}></LibraryPreview>)}
+                    {
+                        libraries.length > 0 ?
+                        libraries.map(library => <LibraryPreview library={library} key={library.id}></LibraryPreview>)
+                        : 
+                        <p>There are no reference libraries published for the {selectedGene} marker gene.</p>
+                    }
                 </ListGroup>
             </Layout>
         </Wrapper>

@@ -1,4 +1,4 @@
-@media (max-width: 360px) {
+@media (max-width: 500px) {
     .visibilityInfo span {
         display: none;
     }
@@ -8,8 +8,23 @@
     }
 }
 
+.header {
+    margin-bottom: 15px;
+    display: inline-flex;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.header p {
+    align-self: flex-end;
+    margin: 0 0 3px 15px;
+}
+
 .visibilityInfo {
     display: flex;
+    flex-wrap: nowrap;
 }
 
 svg {
