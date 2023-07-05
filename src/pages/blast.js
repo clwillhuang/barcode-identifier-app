@@ -26,6 +26,7 @@ function Blast() {
         create_hit_tree: searchParams.get('createHitTree') ?? false,
         create_db_tree: searchParams.get('createDbTree') ?? false,
         query_file: undefined,
+        query_identifiers_file: undefined
     })
 
     const { isLoading: isLibraryLoading, error: libraryError, data: libraryData, isError: isLibraryError } = useQuery(['blast_library_options'], () =>
@@ -125,10 +126,12 @@ function Blast() {
         }
     }
 
-    const onFileChange = (event) => {
-        setFields({ ...fields, 'query_file': event.target.files[0] })
-        setSequenceInvalid(false)
-        setResponseError(null)
+    const onFileChange = (fileFieldName) => {
+        return (event) => {
+            setFields({ ...fields, fileFieldName: event.target.files[0] })
+            setSequenceInvalid(false)
+            setResponseError(null)
+        };
     }
 
     const error = isDatabaseError ? databaseError : (isLibraryError ? libraryError : undefined);
@@ -192,14 +195,35 @@ function Blast() {
                     </Alert>
                 }
                 <Form id='blastForm' onSubmit={handleSubmit} className='col-12'>
-
                     <h5>Query Sequence</h5>
                     <FormGroup className='my-3 mx-5'>
-                        <FormLabel htmlFor='queryFile'>Upload sequence .fasta file</FormLabel>
-                        <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange}></FormControl>
-                        <strong className='my-1'>OR</strong><br />
-                        <FormLabel htmlFor='querySequence'>Paste raw sequence text</FormLabel>
-                        <FormControl isInvalid={sequenceInvalid} id='querySequence' name='query_sequence' as='textarea' rows={5} onChange={handleChange} placeholder='Provide sequences in FASTA format'></FormControl>
+                        <FormLabel htmlFor='queryFile'>
+                            Upload sequence .fasta file
+                        </FormLabel>
+                        <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange('query_file')}/>
+                        <strong className='my-1'>OR</strong><br/>
+                        <FormLabel htmlFor='querySequence'>
+                            Paste raw sequence text
+                        </FormLabel>
+                        <FormControl isInvalid={sequenceInvalid} id='querySequence' 
+                            name='query_sequence' as='textarea' rows={5} 
+                            onChange={handleChange} 
+                            placeholder='Provide sequences in FASTA format'/>
+                        <strong className='my-1'>OR</strong><br/>
+                        <FormLabel htmlFor='queryIdentifiersFile'>
+                            Upload GenBank identifiers in .txt file
+                        </FormLabel>
+                        <FormControl isInvalid={sequenceInvalid} id='queryIdentifiersFile' 
+                            name='query_identifiers_file' type='file' 
+                            onChange={onFileChange('query_identifiers_file')}/>
+                        <strong className='my-1'>OR</strong><br/>
+                        <FormLabel htmlFor='queryIdentifiers'>
+                            GenBank identifiers
+                        </FormLabel>
+                        <FormControl isInvalid={sequenceInvalid} id='queryIdentifiers' 
+                            name='query_identifiers' as='textarea' rows={5} 
+                            onChange={handleChange} 
+                            placeholder='Provide accession number(s) or GI(s)'/>
                         <Form.Control.Feedback type="invalid">
                             {"Error: " + responseError}
                         </Form.Control.Feedback>
