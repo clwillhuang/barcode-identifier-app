@@ -86,7 +86,8 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
     })
 
     const annotations = data.annotations.map((annotation, index) => {
-        const { poster: { username }, timestamp, annotation_type, comment } = annotation
+        const { poster, timestamp, annotation_type, comment } = annotation
+        const username = poster ? poster.username : '<unspecified user>'
         return (
             <div key={index}>
                 <b>{annotation_type}</b><br />

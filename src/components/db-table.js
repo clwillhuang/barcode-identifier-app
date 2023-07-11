@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable} from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
