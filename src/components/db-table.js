@@ -6,6 +6,9 @@ import { FaExternalLinkAlt, FaSearch, FaSortAlphaDown, FaSortAlphaUpAlt } from '
 import { IconContext } from 'react-icons'
 import SequencePopup from './sequence-popup';
 import styles from './db-table.module.css'
+import { generateHeaders, urlRoot } from '../url';
+import { ErrorMessage, handleResponse } from './error-message';
+import { useQuery } from 'react-query';
 
 const resolveCellContent = (cell, modalShow) => {
     switch (cell.column.id) {
@@ -49,7 +52,7 @@ const resolveCellContent = (cell, modalShow) => {
     }
 }
 
-const DbTable = ({ data }) => {
+const DbTable = ({ id, sequenceCount }) => {
 
     const [ sequenceShown, setSequenceShown] = useState(null);
 
@@ -160,32 +163,57 @@ const DbTable = ({ data }) => {
         [sortTaxaAlphabetically]
     )
 
+    const PAGE_SIZE = 50
+    const pageCount = Math.ceil(sequenceCount / PAGE_SIZE)
+    const [currentPage, setCurrentPage] = useState(1)
+
+    const { isLoading, error, data, isError, isSuccess } = useQuery([`blastdb_${id}_${currentPage}`], () =>
+            fetch(`${urlRoot}/blastdbs/${id}/sequences/?page=${currentPage}&page_size=${PAGE_SIZE}`, {
+                headers: generateHeaders({})
+            })
+                .then(handleResponse()),
+            {
+                refetchInterval: false,
+                retry: false,
+                onSuccess: (data) => data.result
+            }
+    ) 
+
+    const canPreviousPage = currentPage > 1;
+    const canNextPage = currentPage < pageCount
+    const nextPage = () => { if (canNextPage) setCurrentPage(currentPage + 1) }
+    const previousPage = () => { if (canPreviousPage) setCurrentPage(currentPage - 1) }
+    const gotoPage = (newPage) => { if (newPage >= 1 && newPage <= pageCount) setCurrentPage(newPage) }
+    const pageIndex = currentPage;
+    const pageSize = PAGE_SIZE;
+
+    const results = useMemo(() => {
+        if (isLoading || isError || !isSuccess) return []
+        else return data.results
+    }, [isSuccess, isLoading, isError, data])
+
     const { getTableProps,
         getTableBodyProps,
         headerGroups,
-        prepareRow,
-        page,
-        canPreviousPage,
-        canNextPage,
-        pageCount,
-        gotoPage,
-        nextPage,
-        previousPage,
-        state: { pageIndex, pageSize } } = useTable(
+        rows,
+        prepareRow } = useTable(
             {
                 columns,
-                data: data,
-                disableResizing: true,
-                initialState: { pageIndex: 0, pageSize: 50, sortBy: [
-                    {
-                        id: 'version',
-                        desc: false
-                    }
-                ]},
-            },
-            useSortBy, usePagination)
+                data: results,
+                // TODO: Implement manual sort
+                manualSorting: true,
+                initialState: {
+                    sortBy: [
+                        {
+                            id: 'version',
+                            desc: false
+                        }
+                    ]
+                }
+            }, useSortBy)
 
     useEffect(() => {
+        if (isLoading || isError) return;
         const tableWidth = document.querySelector('#db-table-head').getBoundingClientRect().width;
         document.querySelector('#dbcontent').style.width = `${tableWidth}px`
 
@@ -202,6 +230,19 @@ const DbTable = ({ data }) => {
     })
 
     const tableTopId = 'db-table-top';
+
+    if (isLoading) {
+        return(
+            <div>Loading data ...</div>
+        )
+    }
+    else if (isError) {
+        if (isLoading) {
+            return(
+                <ErrorMessage error={error}/>
+            )
+        }
+    }
 
     return (
         <div style={{ marginTop: '50px' }} id={tableTopId}>
@@ -239,7 +280,7 @@ const DbTable = ({ data }) => {
                     </thead>
                     <tbody {...getTableBodyProps()}>
                         {
-                            page.map((row, i) => {
+                            rows.map((row, i) => {
                                 prepareRow(row)
                                 return (
                                     <tr {...row.getRowProps()}>

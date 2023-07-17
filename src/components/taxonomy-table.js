@@ -41,19 +41,20 @@ const TaxonomyTable = ({ initialData }) => {
     const tableData = useMemo(() => {
         // perform any modifications to incoming props here
         const parsedData = initialData.map(query => {
-            query.hits = query.hits.map(hit => {
-                return {
-                    ...hit,
-                    percent_identity: parseFloat(hit.percent_identity),
-                    evalue: parseFloat(hit.evalue)
-                }
-            })
-            const highest_percent_identity_hit = query.hits.reduce((a, b) => a.percent_identity > b.percent_identity ? a : b)
-            return {
-                ...query,
-                highest_percent_identity: highest_percent_identity_hit.percent_identity,
-                evalue: highest_percent_identity_hit.evalue
-            }
+            return { ... query }
+            // query.hits = query.hits.map(hit => {
+            //     return {
+            //         ...hit,
+            //         percent_identity: parseFloat(hit.percent_identity),
+            //         evalue: parseFloat(hit.evalue)
+            //     }
+            // })
+            // const highest_percent_identity_hit = query.hits.reduce((a, b) => a.percent_identity > b.percent_identity ? a : b)
+            // return {
+            //     ...query,
+            //     highest_percent_identity: highest_percent_identity_hit.percent_identity,
+            //     evalue: highest_percent_identity_hit.evalue
+            // }
         })
         return parsedData
     }, [initialData])

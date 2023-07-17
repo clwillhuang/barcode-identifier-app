@@ -107,7 +107,7 @@ const BlastDb = () => {
         </Wrapper>
     )
 
-    const { library: { custom_name, marker_gene, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequences, custom_name: version_custom_name } = data
+    const { library: { custom_name, marker_gene, description, public: is_public_library, owner: { username } }, version_number, description: version_description, locked, sequence_count: sequenceCount, custom_name: version_custom_name } = data
 
     return (
         <Wrapper>
@@ -160,8 +160,8 @@ const BlastDb = () => {
                         <Row className='my-3'>
                             <Col className='col-12 col-sm-7'>
                                 <h3>Summary</h3>
-                                <p className='text-muted'>Number of sequences: {sequences.length}</p>
-                                <DbSummary sequences={sequences} />
+                                <p className='text-muted'>Number of sequences: {sequenceCount}</p>
+                                <DbSummary sequences={[]} />
                             </Col>
                             <Col className='col-12 col-sm-5'>
                                 <h3>Export</h3>
@@ -190,7 +190,7 @@ const BlastDb = () => {
                             </Col>
                         </Row>
                     </Container>
-                    <DbTable data={sequences}></DbTable>
+                    <DbTable id={databaseId} sequenceCount={sequenceCount}/>
                 </div>
             </Layout>
         </Wrapper>

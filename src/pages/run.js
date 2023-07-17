@@ -174,27 +174,24 @@ const Run = () => {
                                 <RunTreeTab run_data={run} querySequences={run.queries} enabled={key === 'tree'} />
                             </Tab>
                         }
-                        {
-                            (run.create_hit_tree) && 
-                            <Tab eventKey='taxonomy' title='Taxonomy' className={styles.tabs}>
-                                <h3>Taxonomic Assignments</h3>
-                                <Row className='d-flex align-items-center pb-3'>
-                                    <Col className='col-auto'>
-                                        <span className='d-block' style={{ width: 'fit-content' }}>Export taxonomy as</span>
-                                    </Col>
-                                    {['csv', 'tsv'].map(format => {
-                                        return(
-                                            <Col className='col-auto' key={format}>
-                                                <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download/taxonomy?format=${format}`}>
-                                                    .{format}
-                                                </a>
-                                            </Col>
-                                        )
-                                    })}
-                                </Row>
-                                <TaxonomyTable initialData={run.queries}/>
-                            </Tab>
-                        }
+                        <Tab eventKey='taxonomy' title='Taxonomy' className={styles.tabs}>
+                            <h3>Taxonomic Assignments</h3>
+                            <Row className='d-flex align-items-center pb-3'>
+                                <Col className='col-auto'>
+                                    <span className='d-block' style={{ width: 'fit-content' }}>Export taxonomy as</span>
+                                </Col>
+                                {['csv', 'tsv'].map(format => {
+                                    return(
+                                        <Col className='col-auto' key={format}>
+                                            <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download/taxonomy?format=${format}`}>
+                                                .{format}
+                                            </a>
+                                        </Col>
+                                    )
+                                })}
+                            </Row>
+                            <TaxonomyTable initialData={run.queries}/>
+                        </Tab>
                     </Tabs>
                 </div>
                 <hr />
