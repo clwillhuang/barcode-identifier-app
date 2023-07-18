@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect } from 'react-bootstrap';
-import { useQuery } from 'react-query';
+import { Alert, Button, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Spinner } from 'react-bootstrap';
+import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import CustomHelmet from '../components/custom-helmet';
 import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import Layout from '../components/layout';
 import { generateHeaders, urlRoot } from '../url';
-import { FaPaperPlane } from 'react-icons/fa'
+import { FaFistRaised, FaPaperPlane } from 'react-icons/fa'
+import styles from './blast.module.css'
 
 function Blast() {
 
@@ -76,14 +77,11 @@ function Blast() {
         setResponseError(null)
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
-
-        if (typeof window === 'undefined' || typeof window === 'undefined') {
-            return
-        }
-
-        if (true) {
+    const submitRunMutation = useMutation({
+        mutationFn: async (event) => {
+            if (typeof window === 'undefined' || typeof document === 'undefined') {
+                throw new Error('Unable to locate window')
+            }
             const form_info = document.getElementById('blastForm')
             let formData = new FormData(form_info)
             let d = ['create_db_tree', 'create_hit_tree']
@@ -99,31 +97,22 @@ function Blast() {
                 'Accept': 'application/json',
             })
 
-            fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: formData })
-                .then(response => {
-                    if (response.status === 400) {
-                        // a known error
-                        response.json().then(error => {
-                            setResponseError(error.message)
-                            setSequenceInvalid(true)
-                        })
-                    } else if (response.status === 201) {
-                        // successful post
-                        response.json().then(data => {
-                            navigate(`/run/${data.id}/status`)
-                        })
-                    } else if (!response.ok) {
-                        // unexpected error
-                        setResponseError(`Error ${response.status}: ${response.statusText}.`)
-                        throw new Error()
-                    }
-                })
-                .catch(error => {
-                    console.log(`The website encountered an unexpected error.`)
-                })
+            const response = await fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: formData })
 
+            if (response.ok) {
+                return response.json()
+            } else {
+                setResponseError(`Error ${response.status}: ${response.statusText}.`)
+                setSequenceInvalid(true)
+                throw new Error(`Error ${response.status}: ${response.statusText}.`)
+            }
+        },
+        onSuccess: (data) => navigate(`/run/${data.id}/status`),
+    })
 
-        }
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        submitRunMutation.mutate(event)
     }
 
     const onFileChange = (fileFieldName) => {
@@ -157,6 +146,39 @@ function Blast() {
                     </div>
                 </FormGroup>
             )
+        }
+    }
+
+    const renderSubmitButton = () => {
+        if (databaseData.length > 0) {
+            if (submitRunMutation.isError) {
+                return (
+                    <>
+                        <Button type='submit' className={styles.submitButton}>
+                            <FaPaperPlane style={{ marginRight: '5px', marginBottom: '2px' }} />
+                            Submit
+                        </Button>
+                        <p className='text-danger'>Encountered unexpected error. Please try again.</p>
+                    </>)
+            } else if (submitRunMutation.isSuccess) {
+                return (<p className='text-success'>Submission successful. Redirecting ... to <a href={`/run/${submitRunMutation.data.id}/status`}>/run/${submitRunMutation.data.id}/status</a></p>)
+            } else if (submitRunMutation.isIdle) {
+                return (
+                    <Button disabled={responseError} type='submit' className={styles.submitButton} variant='primary'>
+                        <FaPaperPlane style={{ marginRight: '5px', marginBottom: '2px' }} />
+                        Submit
+                    </Button>
+                )
+            } else if (submitRunMutation.isLoading) {
+                return (
+                    <Button disabled type='submit' className={styles.submitButton}>
+                        <Spinner size='sm' className='mx-2' animation="border" role="status" />
+                        Submitting ...
+                    </Button>
+                )
+            }
+        } else {
+            return (<p className='text-danger'>No job submission possible. No eligible databases found.</p>)
         }
     }
 
@@ -200,30 +222,30 @@ function Blast() {
                         <FormLabel htmlFor='queryFile'>
                             Upload sequence .fasta file
                         </FormLabel>
-                        <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange('query_file')}/>
-                        <strong className='my-1'>OR</strong><br/>
+                        <FormControl isInvalid={sequenceInvalid} id='queryFile' name='query_file' type='file' onChange={onFileChange('query_file')} />
+                        <strong className='my-1'>OR</strong><br />
                         <FormLabel htmlFor='querySequence'>
                             Paste raw sequence text
                         </FormLabel>
-                        <FormControl isInvalid={sequenceInvalid} id='querySequence' 
-                            name='query_sequence' as='textarea' rows={5} 
-                            onChange={handleChange} 
-                            placeholder='Provide sequences in FASTA format'/>
-                        <strong className='my-1'>OR</strong><br/>
+                        <FormControl isInvalid={sequenceInvalid} id='querySequence'
+                            name='query_sequence' as='textarea' rows={5}
+                            onChange={handleChange}
+                            placeholder='Provide sequences in FASTA format' />
+                        <strong className='my-1'>OR</strong><br />
                         <FormLabel htmlFor='queryIdentifiersFile'>
                             Upload GenBank identifiers in .txt file
                         </FormLabel>
-                        <FormControl isInvalid={sequenceInvalid} id='queryIdentifiersFile' 
-                            name='query_identifiers_file' type='file' 
-                            onChange={onFileChange('query_identifiers_file')}/>
-                        <strong className='my-1'>OR</strong><br/>
+                        <FormControl isInvalid={sequenceInvalid} id='queryIdentifiersFile'
+                            name='query_identifiers_file' type='file'
+                            onChange={onFileChange('query_identifiers_file')} />
+                        <strong className='my-1'>OR</strong><br />
                         <FormLabel htmlFor='queryIdentifiers'>
                             GenBank identifiers
                         </FormLabel>
-                        <FormControl isInvalid={sequenceInvalid} id='queryIdentifiers' 
-                            name='query_identifiers' as='textarea' rows={5} 
-                            onChange={handleChange} 
-                            placeholder='Provide accession number(s) or GI(s)'/>
+                        <FormControl isInvalid={sequenceInvalid} id='queryIdentifiers'
+                            name='query_identifiers' as='textarea' rows={5}
+                            onChange={handleChange}
+                            placeholder='Provide accession number(s) or GI(s)' />
                         <Form.Control.Feedback type="invalid">
                             {"Error: " + responseError}
                         </Form.Control.Feedback>
@@ -265,8 +287,7 @@ function Blast() {
                         <FormLabel htmlFor='jobName'>Provide this run with a custom name (optional)</FormLabel>
                         <FormControl id='jobName' name='job_name' as='input' placeholder='' onChange={handleChange}></FormControl>
                     </FormGroup>
-                    {databaseData.length > 0 ? <Button disabled={responseError} type='submit' className='my-3'><FaPaperPlane style={{ marginRight: '5px', marginBottom: '2px' }} />Submit Query</Button> :
-                        <p className='text-danger'>No job submission possible. No eligible databases found.</p>}
+                    {renderSubmitButton()}
                 </Form>
             </Layout>
         </Wrapper>

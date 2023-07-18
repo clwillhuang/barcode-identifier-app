@@ -135,6 +135,7 @@ const RunTable = ({ runId, querySequenceId }) => {
     }, [sortBy, querySequenceId, runId, PAGE_SIZE, currentPage])
 
     useEffect(() => {
+        if (isLoading || isError) return;
         const tableWidth = document.querySelector('#table-head').getBoundingClientRect().width;
         document.querySelector('#runcontent').style.width = `${tableWidth}px`
 
