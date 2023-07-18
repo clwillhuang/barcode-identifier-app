@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { usePagination, useSortBy, useTable} from 'react-table'
+import { useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import { FaExternalLinkAlt, FaSearch, FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa'
@@ -13,7 +13,7 @@ import { useQuery } from 'react-query';
 const resolveCellContent = (cell, modalShow) => {
     switch (cell.column.id) {
         case 'id':
-            return(
+            return (
                 <button className='text-nowrap' target='_blank' rel='noreferrer' onClick={() => modalShow(cell.value)}>
                     <FaSearch />
                 </button>
@@ -34,16 +34,16 @@ const resolveCellContent = (cell, modalShow) => {
                     <FaExternalLinkAlt />
                 </a>
             )
-        case 'taxon_kingdom':
-        case 'taxon_phylum':
-        case 'taxon_class':
-        case 'taxon_order':
-        case 'taxon_family':
-        case 'taxon_genus':
-        case 'taxon_species':
+        case 'taxon_kingdom.scientific_name':
+        case 'taxon_phylum.scientific_name':
+        case 'taxon_class.scientific_name':
+        case 'taxon_order.scientific_name':
+        case 'taxon_family.scientific_name':
+        case 'taxon_genus.scientific_name':
+        case 'taxon_species.scientific_name':
             return cell.value ?
                 <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${cell.value.id}`}>
-                    {cell.value.scientific_name}
+                    {cell.value}
                 </a>
                 :
                 <span>-</span>
@@ -54,7 +54,7 @@ const resolveCellContent = (cell, modalShow) => {
 
 const DbTable = ({ id, sequenceCount }) => {
 
-    const [ sequenceShown, setSequenceShown] = useState(null);
+    const [sequenceShown, setSequenceShown] = useState(null);
 
     const sortTaxaAlphabetically = useCallback((rowA, rowB, columnId, desc) => {
         const valueA = rowA.values[columnId];
@@ -74,86 +74,85 @@ const DbTable = ({ id, sequenceCount }) => {
     const columns = React.useMemo(
         () => {
             const c = [
-            {
-                Header: 'Info',
-                accessor: 'id',
-                description: 'Unique identifier of sequence within this app.'
-            },
-            {
-                Header: 'Accession.Version',
-                accessor: 'version',
-                description: 'Accession.version of GenBank sequence version.'
-            },
-            {
-                Header: 'Organism',
-                accessor: 'organism',
-                description: 'Source organism annotated on GenBank.'
-            },
-            {
-                Header: 'Specimen Voucher',
-                accessor: 'specimen_voucher',
-                description: 'Specimen voucher specified in the sequence features on GenBank.'
-            },
-            {
-                Header: 'Country',
-                accessor: 'country',
-                description: 'Country of collection specified in the sequence features on GenBank.'
-            },
-            {
-                Header: 'Type',
-                accessor: 'type_material',
-                description: 'The type material of the voucher specimen (e.g. paratype, holotype, etc.) annotated on GenBank.'
-            },
-            {
-                Header: 'Isolate',
-                accessor: 'isolate',
-            },
-            {
-                Header: 'Latitude / Longitude',
-                accessor: 'lat_lon',
-                description: 'Latitude and longitude of collection site, expressed using decimal degrees and compass direction.'
-            },
-            {
-                Header: 'Modification Date',
-                accessor: 'genbank_modification_date',
-                description: 'GenBank record modification date, specified at the top of the GenBank flat file.'
-            },
-            {
-                Header: "Kingdom",
-                accessor: "taxon_kingdom",
-            },
-            {
-                Header: "Phylum",
-                accessor: "taxon_phylum",
-            },
-            {
-                Header: "Class",
-                accessor: "taxon_class",
-            },
-            {
-                Header: "Order",
-                accessor: "taxon_order",
-            },
-            {
-                Header: "Family",
-                accessor: "taxon_family",
-            },
-            {
-                Header: "Genus",
-                accessor: "taxon_genus",
-            },
-            {
-                Header: "Species",
-                accessor: "taxon_species",
-            }
-        ]
+                {
+                    Header: 'Info',
+                    accessor: 'id',
+                    description: 'Unique identifier of sequence within this app.'
+                },
+                {
+                    Header: 'Accession.Version',
+                    accessor: 'version',
+                    description: 'Accession.version of GenBank sequence version.'
+                },
+                {
+                    Header: 'Organism',
+                    accessor: 'organism',
+                    description: 'Source organism annotated on GenBank.'
+                },
+                {
+                    Header: 'Specimen Voucher',
+                    accessor: 'specimen_voucher',
+                    description: 'Specimen voucher specified in the sequence features on GenBank.'
+                },
+                {
+                    Header: 'Country',
+                    accessor: 'country',
+                    description: 'Country of collection specified in the sequence features on GenBank.'
+                },
+                {
+                    Header: 'Type',
+                    accessor: 'type_material',
+                    description: 'The type material of the voucher specimen (e.g. paratype, holotype, etc.) annotated on GenBank.'
+                },
+                {
+                    Header: 'Isolate',
+                    accessor: 'isolate',
+                },
+                {
+                    Header: 'Latitude / Longitude',
+                    accessor: 'lat_lon',
+                    description: 'Latitude and longitude of collection site, expressed using decimal degrees and compass direction.'
+                },
+                {
+                    Header: 'Modification Date',
+                    accessor: 'genbank_modification_date',
+                    description: 'GenBank record modification date, specified at the top of the GenBank flat file.'
+                },
+                {
+                    Header: "Kingdom",
+                    accessor: "taxon_kingdom.scientific_name",
+                },
+                {
+                    Header: "Phylum",
+                    accessor: "taxon_phylum.scientific_name",
+                },
+                {
+                    Header: "Class",
+                    accessor: "taxon_class.scientific_name",
+                },
+                {
+                    Header: "Order",
+                    accessor: "taxon_order.scientific_name",
+                },
+                {
+                    Header: "Family",
+                    accessor: "taxon_family.scientific_name",
+                },
+                {
+                    Header: "Genus",
+                    accessor: "taxon_genus.scientific_name",
+                },
+                {
+                    Header: "Species",
+                    accessor: "taxon_species.scientific_name",
+                }
+            ]
             return c.map(cc => {
                 if (cc.accessor.startsWith('taxon_')) {
                     return {
                         ...cc,
-                        sortType: sortTaxaAlphabetically,
-                        description: `The ${cc.accessor.slice(6)} of the source organism's lineage, written with the scientific
-                        name of the corresponding NCBI taxonomy node. Click links to view taxa in the NCBI Taxonomy Browser.`
+                        // sortType: sortTaxaAlphabetically,
+                        description: `Scientific name for the corresponding NCBI taxonomy node. Click links to view taxa in the NCBI Taxonomy Browser.`
                     }
                 } else {
                     return cc;
@@ -166,18 +165,25 @@ const DbTable = ({ id, sequenceCount }) => {
     const PAGE_SIZE = 50
     const pageCount = Math.ceil(sequenceCount / PAGE_SIZE)
     const [currentPage, setCurrentPage] = useState(1)
+    const [fetchKey, setFetchKey] = useState([`blastdb_${id}_${currentPage}`])
 
-    const { isLoading, error, data, isError, isSuccess } = useQuery([`blastdb_${id}_${currentPage}`], () =>
-            fetch(`${urlRoot}/blastdbs/${id}/sequences/?page=${currentPage}&page_size=${PAGE_SIZE}`, {
-                headers: generateHeaders({})
-            })
-                .then(handleResponse()),
-            {
-                refetchInterval: false,
-                retry: false,
-                onSuccess: (data) => data.result
-            }
-    ) 
+    const { isLoading, error, data, isError, isSuccess } = useQuery(fetchKey, () => {
+        const params = {
+            page: currentPage,
+            page_size: PAGE_SIZE,
+            ...(sortBy.length > 0 && { ordering: `${sortBy[0].desc ? '-' : ''}${sortBy[0].id.replace('.scientific_name', '')}` })
+        };
+        return fetch(`${urlRoot}/blastdbs/${id}/sequences/?${(new URLSearchParams(params)).toString()}`, {
+            headers: generateHeaders({})
+        })
+            .then(handleResponse())
+    },
+        {
+            refetchInterval: false,
+            retry: false,
+            onSuccess: (data) => data.result
+        }
+    )
 
     const canPreviousPage = currentPage > 1;
     const canNextPage = currentPage < pageCount
@@ -196,12 +202,15 @@ const DbTable = ({ id, sequenceCount }) => {
         getTableBodyProps,
         headerGroups,
         rows,
-        prepareRow } = useTable(
+        prepareRow,
+        state: {
+            sortBy
+        } } = useTable(
             {
                 columns,
                 data: results,
-                // TODO: Implement manual sort
                 manualSorting: true,
+                manualSortBy: true,
                 initialState: {
                     sortBy: [
                         {
@@ -211,6 +220,11 @@ const DbTable = ({ id, sequenceCount }) => {
                     ]
                 }
             }, useSortBy)
+
+    useEffect(() => {
+        let ordering = sortBy.length > 0 ? `order${sortBy[0].desc ? '-' : ''}${sortBy[0].id}` : ''
+        setFetchKey([`blastdb_${id}_${currentPage}&page_size=${PAGE_SIZE}&ordering=${ordering}`])
+    }, [sortBy, id, currentPage, PAGE_SIZE])
 
     useEffect(() => {
         if (isLoading || isError) return;
@@ -229,24 +243,17 @@ const DbTable = ({ id, sequenceCount }) => {
         });
     })
 
-    const tableTopId = 'db-table-top';
-
     if (isLoading) {
-        return(
-            <div>Loading data ...</div>
-        )
+        return (<div>Loading data ...</div>)
+    } else if (isError) {
+        return (<ErrorMessage error={error} />)
     }
-    else if (isError) {
-        if (isLoading) {
-            return(
-                <ErrorMessage error={error}/>
-            )
-        }
-    }
+
+    const tableTopId = 'db-table-top';
 
     return (
         <div style={{ marginTop: '50px' }} id={tableTopId}>
-            <SequencePopup nuccoreId={sequenceShown} setSequenceShown={setSequenceShown}/>
+            <SequencePopup nuccoreId={sequenceShown} setSequenceShown={setSequenceShown} />
             <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }} >
                 <div id='dbtop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px' }}>
@@ -267,10 +274,10 @@ const DbTable = ({ id, sequenceCount }) => {
                                                         ? <FaSortAlphaUpAlt size={20} />
                                                         : <FaSortAlphaDown size={20} />
                                                     : ''}
-                                                    <span>
+                                                <span>
                                                     {column.description ? column.description : column.Header}
-                                                    <br/><br/><em>Click to sort.</em>
-                                                    </span>
+                                                    <br /><br /><em>Click to sort.</em>
+                                                </span>
                                             </th>
                                         ))
                                     }

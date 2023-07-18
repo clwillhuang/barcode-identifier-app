@@ -46,24 +46,6 @@ const Run = () => {
         }
     )
 
-    // retrieve hits for the currently selected query sequence
-    const { isLoading: areHitsLoading, error: hitsError, isError: areHitsError, isSuccess: areHitsSuccess, data: queryHits } = useQuery([`blast_hits_${selectedQuerySequence}`], () =>
-        fetch(`${urlRoot}/runs/${runId}/queries/${run.queries[selectedQuerySequence].id}/hits`, {
-            headers: generateHeaders({})
-        })
-            .then(handleResponse()),
-        {
-            refetchInterval: false,
-            retry: false,
-            onSuccess: (data) => {
-                if (typeof selectedQuerySequence === 'undefined') {
-                    setSelectedQuerySequence(data.queries.length > 0 ? 0 : undefined)
-                }
-            },
-            enabled: (typeof selectedQuerySequence !== 'undefined') && isSuccess
-        }
-    )
-
     const helmet = <CustomHelmet
         title='Run results'
         description='Get the results of your query on a curated reference library of Neotropical electric fish sequences.'
@@ -148,25 +130,16 @@ const Run = () => {
                             {
                                 (typeof selectedQuerySequence !== 'undefined') && 
                                 <>
-                                <div>
-                                    <h5>Query Sequence Details</h5>
-                                    <b>{run.definition}</b>
-                                    <p>Originally reported identification: {run.queries[selectedQuerySequence].original_species_name ?? 'Unspecified'}</p>
-                                    <h5>Classification Results</h5>
-                                    <p>Classification by BLAST: {run.queries[selectedQuerySequence].results_species_name}</p>
-                                    {/* <p>BLAST run returned <strong>{run.queries[selectedQuerySequence].hits.length}</strong> hits</p> */}
-                                </div>
-                                {
-                                    areHitsLoading ? 
-                                        <p>Retrieving results ... </p>
-                                        : 
-                                        areHitsError ? 
-                                        <ErrorMessage error={hitsError} text={`Encountered an error loading the hits. Please try again.`} />
-                                        :
-                                        areHitsSuccess && <RunTable initialData={queryHits.results}/>
-                                }
-                            </>
-                        }
+                                    <div>
+                                        <h5>Query Sequence Details</h5>
+                                        <b>{run.definition}</b>
+                                        <p>Originally reported identification: {run.queries[selectedQuerySequence].original_species_name ?? 'Unspecified'}</p>
+                                        <h5>Classification Results</h5>
+                                        <p>Classification by BLAST: {run.queries[selectedQuerySequence].results_species_name}</p>
+                                    </div>
+                                    <RunTable querySequenceId={run.queries[selectedQuerySequence].id} runId={runId}/>
+                                </>
+                            }
                         </Tab>
                         {
                             (run.create_db_tree || run.create_hit_tree) &&

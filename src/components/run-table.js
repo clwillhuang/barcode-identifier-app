@@ -6,9 +6,12 @@ import MakeRow from './run-table-row';
 import { FaSortAlphaDownAlt, FaSortAlphaDown } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
 import SequencePopup from './sequence-popup';
+import { useQuery } from 'react-query';
+import { generateHeaders, urlRoot } from '../url';
+import { ErrorMessage, handleResponse } from './error-message';
 
-const RunTable = ({ initialData }) => {
-    
+const RunTable = ({ runId, querySequenceId }) => {
+
     const [ sequenceShown, setSequenceShown] = useState(null);
 
     const columns = React.useMemo(
@@ -65,29 +68,56 @@ const RunTable = ({ initialData }) => {
         []
     )
 
+    const PAGE_SIZE = 20
+    const [count, setCount] = useState(50)
+    const pageCount = Math.ceil(count / PAGE_SIZE)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [fetchKey, setFetchKey] = useState([`runs_${runId}_${querySequenceId}`])
+    const canPreviousPage = currentPage > 1;
+    const canNextPage = currentPage < pageCount
+    const nextPage = () => { if (canNextPage) setCurrentPage(currentPage + 1) }
+    const previousPage = () => { if (canPreviousPage) setCurrentPage(currentPage - 1) }
+    const gotoPage = (newPage) => { if (newPage >= 1 && newPage <= pageCount) setCurrentPage(newPage) }
+    const pageIndex = currentPage;
+    const pageSize = PAGE_SIZE;
+
+    const { isLoading, error, data, isError, isSuccess } = useQuery(fetchKey, () => {
+        const params = {
+            page: currentPage,
+            page_size: PAGE_SIZE,
+            ...(sortBy.length > 0 && { ordering: `${sortBy[0].desc ? '-' : ''}${sortBy[0].id}` })
+        };
+        return fetch(`${urlRoot}/runs/${runId}/queries/${querySequenceId}/hits?${(new URLSearchParams(params)).toString()}`, {
+            headers: generateHeaders({})
+        })
+            .then(handleResponse())
+    },
+        {
+            refetchInterval: false,
+            retry: false,
+            onSuccess: (data) => {
+                setCount(data.count)
+            }
+        }
+    ) 
+
     const tableData = useMemo(() => {
-        // perform any modifications to incoming props here
-        return initialData
-    }, [initialData])
+        if (isLoading || isError || !isSuccess) return []
+        else return data.results
+    }, [data])
 
     const { getTableProps,
         getTableBodyProps,
         headerGroups,
         prepareRow,
-        page,
-        canPreviousPage,
-        canNextPage,
-        pageCount,
-        gotoPage,
-        nextPage,
-        previousPage,
-        state: { pageIndex, pageSize } } = useTable(
+        rows,
+        state: { sortBy } } = useTable(
             {
                 columns,
                 data: tableData,
+                manualSorting: true,
+                manualSortBy: true,
                 initialState: { 
-                    pageIndex: 0, 
-                    pageSize: 50, 
                     enableColumnResizing: false,
                     sortBy: [
                         {
@@ -97,7 +127,12 @@ const RunTable = ({ initialData }) => {
                     ]
                 },
             },
-            useSortBy, usePagination)
+            useSortBy)
+
+    useEffect(() => {
+        let ordering = sortBy.length > 0 ? `order${sortBy[0].desc ? '-' : ''}${sortBy[0].id}` : ''
+        setFetchKey([`runs_${runId}_${querySequenceId}pg${currentPage}ps${PAGE_SIZE}${ordering}`])
+    }, [sortBy, querySequenceId, runId, PAGE_SIZE, currentPage])
 
     useEffect(() => {
         const tableWidth = document.querySelector('#table-head').getBoundingClientRect().width;
@@ -115,6 +150,12 @@ const RunTable = ({ initialData }) => {
         });
     })
 
+    if (isLoading) {
+        return (<div>Loading data ...</div>)
+    } else if (isError) {
+        return (<ErrorMessage error={error} />)
+    }
+        
     const tableTopId = 'run-table-top';
 
     return (
@@ -151,7 +192,7 @@ const RunTable = ({ initialData }) => {
                     </thead>
                     <tbody {...getTableBodyProps()}>
                         {
-                            page.map((row, i) => {
+                            rows.map((row, i) => {
                                 prepareRow(row)
                                 return (
                                     <MakeRow key={`row${i}`} row={row} setSequenceShown={setSequenceShown}/>
