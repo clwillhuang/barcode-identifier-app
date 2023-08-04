@@ -6,6 +6,7 @@ import { urlRoot, appName } from '../url';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 import Wrapper from '../components/wrapper';
+import { csrftoken } from '../getCSRFToken';
 
 function Login() {
 
@@ -17,8 +18,6 @@ function Login() {
         description={`Sign into ${appName}`}
         canonical=''
     />
-
-    const csrftoken = Cookies.get('csrftoken');;
 
     const handleSubmit = (event) => {
 

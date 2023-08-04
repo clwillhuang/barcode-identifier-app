@@ -7,8 +7,9 @@ import { ErrorMessage, handleResponse } from '../components/error-message';
 import Wrapper from '../components/wrapper';
 import Layout from '../components/layout';
 import { generateHeaders, urlRoot } from '../url';
-import { FaFistRaised, FaPaperPlane } from 'react-icons/fa'
+import { FaPaperPlane } from 'react-icons/fa'
 import styles from './blast.module.css'
+import { csrftoken } from '../getCSRFToken';
 
 function Blast() {
 
@@ -91,10 +92,11 @@ function Blast() {
                 }
             })
 
-            let url = `${urlRoot}/blastdbs/${fields.databaseSelect}/run/`
+            let url = `${urlRoot}/blastdbs/${fields.databaseSelect}/run`
 
             let postHeaders = generateHeaders({
                 'Accept': 'application/json',
+                'X-CSRFToken': csrftoken
             })
 
             const response = await fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: formData })

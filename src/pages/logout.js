@@ -6,6 +6,7 @@ import { generateHeaders, hasSignInCookie, urlRoot } from '../url';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout';
+import { csrftoken } from '../getCSRFToken';
 
 const Logout = () => {
 
@@ -44,11 +45,16 @@ const Logout = () => {
     )
 
     useEffect(() => {
-        if (!hasSignInCookie()) navigate('/')
+        if (!hasSignInCookie()) {
+            setTimeout(() => { navigate('/') }, 500)
+            return;
+        }
         if (isLoading) return;
         fetch(`${urlRoot}/logout/`, {
             method: 'POST',
-            headers: generateHeaders({}),
+            headers: generateHeaders({
+                'X-CSRFToken': csrftoken
+            }),
             mode: 'cors'
         })
             .then(response => {
@@ -58,10 +64,10 @@ const Logout = () => {
                     throw new Error();
                 }
             })
-            .catch(() => {})
+            .catch((err) => { console.log(err) })
             .finally(() => {
                 Cookies.remove('knox', { sameSite: "Strict", path: '/' })
-                navigate('/')
+                setTimeout(() => { navigate('/') }, 500)
             })
     }, [isLoading, navigate])
 
