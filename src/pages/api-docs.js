@@ -11,7 +11,7 @@ const ApiDocs = () => {
         <Wrapper>
             <CustomHelmet
                 title='API Documentation'
-                description='View interactive API documentation for the Barcode Identifier API.'
+                description='View interactive API documentation for the Barrel API.'
                 canonical='api-docs'
             />
             <Layout>

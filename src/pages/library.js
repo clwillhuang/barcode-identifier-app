@@ -69,8 +69,8 @@ function Library() {
             />
             <Layout>
             <Breadcrumb>
-                <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                <BreadcrumbItem href='/libraries'>Reference Libraries</BreadcrumbItem>
+                <BreadcrumbItem href='/app/'>Home</BreadcrumbItem>
+                <BreadcrumbItem href='/app/libraries'>Reference Libraries</BreadcrumbItem>
                 <BreadcrumbItem active>{custom_name}</BreadcrumbItem>
             </Breadcrumb>
             <div>

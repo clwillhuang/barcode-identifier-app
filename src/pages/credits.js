@@ -27,7 +27,7 @@ const Credits = () => {
                     This site, including this page, is still a work in progress. Hence, citations may be inconsistent and attributions inaccurate.
                 </p>
                 <h5>Project Motivation</h5>
-                <p>The Barcode Identifier Web App makes available a reference library of approximately 167 barcodes of Neotropical electric knifefish (order: Gymnotiformes) species first compiled by Janzen, Crampton and Lovejoy 2022.
+                <p>The Barrel Web App makes available a reference library of approximately 167 barcodes of Neotropical electric knifefish (order: Gymnotiformes) species first compiled by Janzen, Crampton and Lovejoy 2022.
                 </p>
                 <ol start={getCitationNumber(1)}>
                     <li>

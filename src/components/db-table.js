@@ -62,10 +62,10 @@ const DbTable = ({ id, sequenceCount }) => {
         if (valueA === null && valueB === null) return 0
         else if (valueA === null) return 1;
         else if (valueB === null) return -1;
-        if (valueA.scientific_name < valueB.scientific_name) {
+        if (valueA < valueB) {
             return desc ? 1 : -1;
         }
-        if (valueA.scientific_name > valueB.scientific_name) {
+        if (valueA > valueB) {
             return desc ? -1 : 1;
         }
         return 0;
@@ -151,7 +151,7 @@ const DbTable = ({ id, sequenceCount }) => {
                 if (cc.accessor.startsWith('taxon_')) {
                     return {
                         ...cc,
-                        // sortType: sortTaxaAlphabetically,
+                        sortType: sortTaxaAlphabetically,
                         description: `Scientific name for the corresponding NCBI taxonomy node. Click links to view taxa in the NCBI Taxonomy Browser.`
                     }
                 } else {
@@ -173,7 +173,7 @@ const DbTable = ({ id, sequenceCount }) => {
             page_size: PAGE_SIZE,
             ...(sortBy.length > 0 && { ordering: `${sortBy[0].desc ? '-' : ''}${sortBy[0].id.replace('.scientific_name', '')}` })
         };
-        return fetch(`${urlRoot}/blastdbs/${id}/sequences/?${(new URLSearchParams(params)).toString()}`, {
+        return fetch(`${urlRoot}/blastdbs/${id}/sequences?${(new URLSearchParams(params)).toString()}`, {
             headers: generateHeaders({})
         })
             .then(handleResponse())

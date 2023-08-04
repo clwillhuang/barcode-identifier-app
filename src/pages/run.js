@@ -80,8 +80,8 @@ const Run = () => {
             {helmet}
             <Layout>
                 <Breadcrumb>
-                    <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                    <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
+                    <BreadcrumbItem href='/app/'>Home</BreadcrumbItem>
+                    <BreadcrumbItem href='/app/blast'>Run</BreadcrumbItem>
                     <BreadcrumbItem active>Run {run.id}</BreadcrumbItem>
                 </Breadcrumb>
                 <Modal show={errorText} backdrop='static' keyboard={false}>

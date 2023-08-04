@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { appName } from "../url";
 import styles from "./footer.module.css";
 
@@ -23,7 +24,7 @@ const Footer = () => {
                     <ul className={styles.pages}>
                         {pages.map((page) => (
                             <li key={page.name}>
-                                <a href={page.link}>{page.name}</a>
+                                <Link to={page.link}>{page.name}</Link>
                             </li>
                         ))}
                     </ul>

@@ -67,31 +67,31 @@ function NavigationBar () {
 
     return(
         <Navbar bg='dark' variant='dark' expand='sm'>
-				<Container>
-					<NavbarBrand className={styles.brand} onClick={() => navigate('/')}>{appName}</NavbarBrand>
-					<Navbar.Toggle aria-controls="basic-navbar-nav"/>
-					<NavbarCollapse id="basic-navbar-nav">
-						<Nav className='me-auto'>
-							<NavItem>
-								<NavLink as={Link} to='/libraries'>Libraries</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/blast'>Run</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/manual'>Manual</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/credits'>About</NavLink>
-							</NavItem>
-							<NavItem>
-								<NavLink as={Link} to='/api-docs'>API</NavLink>
-							</NavItem>
-						</Nav>
-						{renderUserInformation()}
-					</NavbarCollapse>
-				</Container>
-			</Navbar>
+			<Container>
+				<NavbarBrand className={styles.brand} onClick={() => navigate('/')}>{appName}</NavbarBrand>
+				<Navbar.Toggle aria-controls="basic-navbar-nav"/>
+				<NavbarCollapse id="basic-navbar-nav">
+					<Nav className='me-auto'>
+						<NavItem>
+							<NavLink as={Link} to='/libraries'>Libraries</NavLink>
+						</NavItem>
+						<NavItem>
+							<NavLink as={Link} to='/blast'>Run</NavLink>
+						</NavItem>
+						<NavItem>
+							<NavLink as={Link} to='/manual'>Manual</NavLink>
+						</NavItem>
+						<NavItem>
+							<NavLink as={Link} to='/credits'>About</NavLink>
+						</NavItem>
+						<NavItem>
+							<NavLink as={Link} to='/api-docs'>API</NavLink>
+						</NavItem>
+					</Nav>
+					{renderUserInformation()}
+				</NavbarCollapse>
+			</Container>
+		</Navbar>
     )
 }
 

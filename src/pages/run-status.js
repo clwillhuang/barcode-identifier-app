@@ -165,8 +165,8 @@ const RunStatus = () => {
             {helmet}
             <Layout>
                 <Breadcrumb>
-                    <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                    <BreadcrumbItem href='/blast'>Run</BreadcrumbItem>
+                    <BreadcrumbItem href='/app/'>Home</BreadcrumbItem>
+                    <BreadcrumbItem href='/app/blast'>Run</BreadcrumbItem>
                     <BreadcrumbItem active>Status</BreadcrumbItem>
                 </Breadcrumb>
                 <div className={styles.parameters}>

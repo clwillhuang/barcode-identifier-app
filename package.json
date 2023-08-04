@@ -1,6 +1,7 @@
 {
   "name": "barcode-identifier",
-  "homepage": "https://What-Is-A-Username.github.io/",
+  "homepage": "/app",
+  "build": "react-scripts build && mkdir build/app && mv build/static build/app/static",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

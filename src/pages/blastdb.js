@@ -118,9 +118,9 @@ const BlastDb = () => {
                     canonical='database'
                 />
                 <Breadcrumb>
-                    <BreadcrumbItem href='/'>Home</BreadcrumbItem>
-                    <BreadcrumbItem href='/libraries'>Reference Libraries</BreadcrumbItem>
-                    <BreadcrumbItem href={`/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
+                    <BreadcrumbItem href='/app/'>Home</BreadcrumbItem>
+                    <BreadcrumbItem href='/app/libraries'>Reference Libraries</BreadcrumbItem>
+                    <BreadcrumbItem href={`/app/libraries/${libraryId}`}>{custom_name}</BreadcrumbItem>
                     <BreadcrumbItem active>Version {version_number} ("{version_custom_name}")</BreadcrumbItem>
                 </Breadcrumb>
 

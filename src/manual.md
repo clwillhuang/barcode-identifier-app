@@ -123,7 +123,7 @@ Unique Run Identifier: 1d86710c-dd8e-4906-bef1-20c533916848
 
 ##### .csv
 ```
-# Barcode Identifier API
+# Barrel API
 # id=1d86710c-dd8e-4906-bef1-20c533916848
 # job_name=Example input and output
 # db_used-id=ae47cd0a-b7b7-4dfe-9223-8e026d2980c5
@@ -144,7 +144,7 @@ Unique Run Identifier: 1d86710c-dd8e-4906-bef1-20c533916848
 
 ##### .txt
 ```
-# Barcode Identifier API
+# Barrel API
 # id=1d86710c-dd8e-4906-bef1-20c533916848
 # job_name=Example input and output
 # db_used-id=ae47cd0a-b7b7-4dfe-9223-8e026d2980c5
