@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { usePagination, useSortBy, useTable } from 'react-table'
+import React, { useEffect, useState } from 'react'
+import { useSortBy, useTable } from 'react-table'
 import { Table } from 'react-bootstrap';
 import TablePagination from './table-pagination';
 import MakeRow from './run-table-row';
@@ -97,14 +97,14 @@ const RunTable = ({ runId, querySequenceId }) => {
             retry: false,
             onSuccess: (data) => {
                 setCount(data.count)
+            },
+            initialData: {
+                results: []
             }
         }
     ) 
 
-    const tableData = useMemo(() => {
-        if (isLoading || isError || !isSuccess) return []
-        else return data.results
-    }, [data])
+    const tableData = (isLoading || isError || !isSuccess) ? [] : data.results;
 
     const { getTableProps,
         getTableBodyProps,

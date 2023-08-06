@@ -95,7 +95,6 @@ function Blast() {
             let url = `${urlRoot}/blastdbs/${fields.databaseSelect}/run`
 
             let postHeaders = generateHeaders({
-                'Accept': 'application/json',
                 'X-CSRFToken': csrftoken
             })
 

@@ -41,8 +41,10 @@ const resolveCellContent = (cell, modalShow) => {
         case 'taxon_family.scientific_name':
         case 'taxon_genus.scientific_name':
         case 'taxon_species.scientific_name':
+            const key = cell.column.id.substring(0, cell.column.id.indexOf('.'))
+            const id = cell.row.original[key].id
             return cell.value ?
-                <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${cell.value.id}`}>
+                <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${id}`}>
                     {cell.value}
                 </a>
                 :
@@ -82,7 +84,7 @@ const DbTable = ({ id, sequenceCount }) => {
                 {
                     Header: 'Accession.Version',
                     accessor: 'version',
-                    description: 'Accession.version of GenBank sequence version.'
+                    description: 'Accession.version of GenBank sequence version. Click link to view record on GenBank.'
                 },
                 {
                     Header: 'Organism',
@@ -111,7 +113,7 @@ const DbTable = ({ id, sequenceCount }) => {
                 {
                     Header: 'Latitude / Longitude',
                     accessor: 'lat_lon',
-                    description: 'Latitude and longitude of collection site, expressed using decimal degrees and compass direction.'
+                    description: 'Latitude and longitude of collection site, expressed using decimal degrees and compass direction. Click link to view on Google Maps.'
                 },
                 {
                     Header: 'Modification Date',

@@ -9,7 +9,11 @@ export default function TablePagination({topId, previousPage, canPreviousPage, g
                 <Col className='col-8'>
                     <Pagination className='d-flex justify-content-left'>
                         <Pagination.Prev href={`#${topId}`} onClick={() => previousPage()} disabled={!canPreviousPage} />
-                        <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(1)} disabled={pageIndex === 1}>{1}</Pagination.Item>
+                        {
+                            pageCount >= 1 ?
+                            <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(1)} disabled={pageIndex === 1}>{1}</Pagination.Item> :
+                            <Pagination.Item href={`#${topId}`} disabled>{0}</Pagination.Item>
+                        }
                         <Pagination.Ellipsis disabled />
                         {pageIndex - 2 >= 1 && <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageIndex - 2)}>{pageIndex - 2}</Pagination.Item>}
                         {pageIndex - 1 >= 1 && <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageIndex - 1)}>{pageIndex - 1}</Pagination.Item>}

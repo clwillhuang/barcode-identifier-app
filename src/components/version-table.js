@@ -7,7 +7,6 @@ import { IconContext } from 'react-icons'
 import { Link } from 'react-router-dom'
 
 const resolveCellContent = (cell, libraryId) => {
-    console.log(cell)
     switch (cell.column.id) {
         case 'custom_name':
             return (<Link to={`/libraries/${libraryId}/version/${cell.row.original.id}`}>{cell.value}</Link>)
