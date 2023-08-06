@@ -1,94 +1,111 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PieChart } from 'chartist'
 import styles from './db-summary.module.css'
 import { Tab, Tabs } from 'react-bootstrap';
+import { generateHeaders, urlRoot } from '../url';
+import { ErrorMessage, handleResponse } from './error-message';
+import { useQuery } from 'react-query';
 
-class DbSummary extends React.Component {
+const DbSummary = ({ id }) => {
 
-    constructor(props) {
-        super(props);
-        const { sequences } = this.props;
-        let countryData = {};
-        let genusData = {};
-        let familyData = {};
-        let orderData = {};
-        let classData = {};
-        let phylumData = {};
-        let kingdomData = {};
+    const [activeData, setActiveData] = useState(0);
+    const [activeChart, setActiveChart] = useState(undefined);
 
-        const incre = (dict, obj) => {
-            if (obj !== null) 
-            dict[obj.scientific_name] = (dict[obj.scientific_name] || 0) + 1;
-            else dict['Unknown'] = (dict['Unknown'] || 0) + 1;
+    const { isLoading, error, data, isError, isSuccess } = useQuery([`${id}_blastdb_summary`], () => 
+        fetch(`${urlRoot}/blastdbs/${id}/summary`, {
+            headers: generateHeaders({})
+        })
+            .then(handleResponse()),
+        {
+            refetchInterval: false,
+            retry: false,
+            initialData:  {
+                'taxon_kingdom__scientific_name': [],
+                'taxon_superkingdom__scientific_name': [],
+                'taxon_phylum__scientific_name': [],
+                'taxon_class__scientific_name': [],
+                'taxon_order__scientific_name': [],
+                'taxon_family__scientific_name': [],
+                'taxon_genus__scientific_name': [],
+                'annotations__annotation_type': [],
+                'country': [],
+                'title': [],
+            }
+        }
+    )
+
+    const {
+        country: countryData,
+        taxon_kingdom__scientific_name: kingdomData,
+        taxon_superkingdom__scientific_name: superkingdomData,
+        taxon_phylum__scientific_name: phylumData,
+        taxon_class__scientific_name: classData,
+        taxon_order__scientific_name: orderData,
+        taxon_family__scientific_name: familyData,
+        taxon_genus__scientific_name: genusData,
+        annotations__annotation_type: annotationData,
+        title: titleData
+    } = data;
+
+    // Return a Chartist data object from an array of data and the 
+    // attribute name corresponding to the values of each object
+    const generateDataObject = (data, attributeName) => {
+        let dataObject = {
+            labels: [],
+            series: []
         }
 
-        for (const seq of sequences) {
-            let { country, 
-                taxon_kingdom,
-                taxon_phylum,
-                taxon_class,
-                taxon_order,
-                taxon_family,
-                taxon_genus } = seq;
-            let colon = country.indexOf(':');
-            if (colon !== -1) {
-                country = country.substring(0, colon);
+        let sorted = data.sort((a, b) => a.count > b.count);
+        let other = 0;
+        let skipped = true;
+        const tot = data.map(x => x.count).reduce((agg, a) => agg + a, 0);
+        for (let item of sorted) {
+            let key = item[attributeName]
+            const value = item.count
+            const percValue = Number(value / tot);
+            let perc = percValue.toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            // stop skipping entries once other composes >= 20% or the current slice is more than 2%
+            if (skipped && (other / tot >= 0.2 || percValue >= 0.02)) {
+                skipped = false;
             }
-            countryData[country] = (countryData[country] || 0) + 1;
-            incre(kingdomData, taxon_kingdom)
-            incre(phylumData, taxon_phylum)
-            incre(classData, taxon_class)
-            incre(orderData, taxon_order)
-            incre(familyData, taxon_family)
-            incre(genusData, taxon_genus)
+            if (!skipped) {
+                let label = key === '' ? 'Unknown' : key;
+                let fullLabel = `${label}, ${value} (${perc})`
+                const shortenedLabel = ((label.length > 20) ? `${label.slice(0, 19)} \u2026` : label)
+                const toolTipLabel = `${shortenedLabel}, ${value} (${perc})`
+                dataObject.labels.push(toolTipLabel);
+                dataObject.series.push({ value: value, meta: fullLabel});
+            } else {
+                other += value;
+            }
         }
-
-        const generateDataObject = (data) => {
-            let dataObject = {
-                labels: [],
-                series: []
-            }
-
-            let sorted = Object.entries(data).sort((a, b) => a[1] - b[1]);
-            let other = 0; 
-            let skipped = true;
-            const tot = Object.values(data).reduce((agg, a) => agg + a, 0);
-
-            for (const [key, value] of sorted) {
-                const percValue = Number(value / tot);
-                let perc = percValue.toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2})
-                // stop skipping entries once other composes >= 20% or the current slice is more than 2%
-                if (skipped && (other / tot >= 0.2 || percValue >= 0.02)) {
-                    skipped = false;
-                }
-                if (!skipped) {
-                    let label = key === '' ? 'Unknown' : key;
-                    label = `${label}, ${value} (${perc})`
-                    dataObject.labels.push(label);
-                    dataObject.series.push({value: value, meta: label});
-                } else {
-                    other += value;
-                }
-            }
-            if (other > 0) {
-                let otherPerc = (other/tot).toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2})
-                let label = `Other, ${other} (${otherPerc})`
-                dataObject.labels.unshift(label);
-                dataObject.series.unshift({value: other, meta: label});
-            }
-            return dataObject;
+        if (other > 0) {
+            let otherPerc = (other / tot).toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            let label = `Other, ${other} (${otherPerc})`
+            dataObject.labels.unshift(label);
+            dataObject.series.unshift({ value: other, meta: label });
         }
-
-        this.charts = ['country', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom']
-        this.data = [countryData, genusData, familyData, orderData, classData, phylumData, kingdomData].map(d => generateDataObject(d))
-        
-        this.state = {
-            activeData: 0,
-            activeChart: undefined,
-        }
+        return dataObject;
     }
 
-    componentDidMount() {
+    // Keys of the attributes of every summary returned within the data object 
+    const dataKeys = [
+        'country',
+        'taxon_superkingdom__scientific_name',
+        'taxon_kingdom__scientific_name',
+        'taxon_phylum__scientific_name',
+        'taxon_class__scientific_name',
+        'taxon_order__scientific_name',
+        'taxon_family__scientific_name',
+        'taxon_genus__scientific_name',
+        'annotations__annotation_type',
+        'title'
+    ]
+    // Names to be displayed for the tabs
+    const dataVerboseKeys = ['country', 'superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'annotation type', 'title']
+    const chartData = [countryData, superkingdomData, kingdomData, phylumData, classData, orderData, familyData, genusData, annotationData, titleData].map((d, index) => generateDataObject(d, dataKeys[index]))
+
+    useEffect(() => {
         const regularStrokeWidth = 30;
         const hoverStrokeWidth = 35;
         const options = {
@@ -98,15 +115,15 @@ class DbSummary extends React.Component {
             startAngle: 270,
             labelOffset: 25,
             labelDirection: 'explode',
-            labelInterpolationFnc: function(value) {
-            return value;
+            labelInterpolationFnc: function (value) {
+                return value;
             }
             // showLabel: false,
-        };          
+        };
 
         const addTooltip = (pie) => {
             let tt = document.querySelector('.customtt');
-            tt.style.visibility = 'hidden';  
+            tt.style.visibility = 'hidden';
             pie.on('created', function (pie) {
                 var elems = document.querySelectorAll('.ct-slice-donut')
                 elems.forEach(inp => {
@@ -114,7 +131,7 @@ class DbSummary extends React.Component {
                         event.originalTarget.setAttribute('style', `stroke-width: ${hoverStrokeWidth}px`)
                         const label = event.originalTarget.getAttribute('ct:meta');
                         let tt = document.querySelector('.customtt');
-                        tt.innerHTML = label;  
+                        tt.innerHTML = label;
                         tt.style.top = `${event.clientY}px`;
                         tt.style.left = `${event.clientX}px`;
                         tt.style.visibility = 'visible';
@@ -125,42 +142,53 @@ class DbSummary extends React.Component {
                         tt.innerHTML = '';
                         tt.style.visibility = 'hidden';
                     })
-                }) 
+                })
             });
         }
-        if (this.state.activeChart) {
-            this.state.activeChart.update(this.data[this.state.activeData])
+        if (activeChart) {
+            activeChart.update(chartData[activeData])
         } else {
-            let dataPie = new PieChart(`.ct-chart`, this.data[this.state.activeData], options);
+            let dataPie = new PieChart(`.ct-chart`, chartData[activeData], options);
             addTooltip(dataPie)
-            this.setState({activeChart: dataPie})
+            setActiveChart(dataPie)
         }
-    }
+    }, [])
 
-    render() {
-        if (this.state.activeChart) {
-            this.state.activeChart.update(this.data[this.state.activeData])
-        } 
+    // update chart object when new chart is selected
+    useEffect(() => {
+        if (activeChart) {
+            activeChart.update(chartData[activeData])
+        }
+    }, [activeChart, activeData, chartData])
 
-        return (
-            <>
-            <div className={styles.graphContainer}>
-                <span className={'customtt bg-primary text-white ' + styles.tooltip}/>
-                <Tabs onSelect={(key) => {this.setState({activeData: parseInt(key)})}}>
-                    {
-                        this.charts.map((id, index) => {
-                            return(
-                                <Tab eventKey={index} title={id} key={id}/>
-                            )
-                        })
-                    }
-                </Tabs>
-                <p className='text-center'>by {this.charts[this.state.activeData]}</p>
-                <div className={`ct-chart`} />
-            </div>
-            </>
-        )
-    }
+    if (isLoading) return (
+        <div className={styles.graphContainer}>
+            <p>Retrieving data ...</p>
+        </div>
+    )
+
+    else if (isError) return (
+        <div className={styles.graphContainer}>
+            <ErrorMessage error={error} text="Could not find reference libraries. Please try again." />
+        </div>
+    )
+
+    return (
+        <div className={styles.graphContainer}>
+            <span className={'customtt bg-primary text-white ' + styles.tooltip} />
+            <Tabs onSelect={(key) => { setActiveData(parseInt(key)) }}>
+                {
+                    dataVerboseKeys.map((id, index) => {
+                        return (
+                            <Tab eventKey={index} title={id} key={id} />
+                        )
+                    })
+                }
+            </Tabs>
+            <p className='text-center'>by {dataVerboseKeys[activeData]}</p>
+            <div className={`ct-chart`} />
+        </div>
+    )
 }
 
 export default DbSummary;

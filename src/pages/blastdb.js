@@ -161,7 +161,7 @@ const BlastDb = () => {
                             <Col className='col-12 col-sm-7'>
                                 <h3>Summary</h3>
                                 <p className='text-muted'>Number of sequences: {sequenceCount}</p>
-                                <DbSummary sequences={[]} />
+                                <DbSummary id={databaseId}/>
                             </Col>
                             <Col className='col-12 col-sm-5'>
                                 <h3>Export</h3>
