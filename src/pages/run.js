@@ -109,7 +109,7 @@ const Run = () => {
                                         <span className='d-block' style={{ width: 'fit-content' }}>Export results as</span>
                                     </Col>
                                     {['csv', 'tsv', 'txt'].map(format => {
-                                        return(
+                                        return (
                                             <Col className='col-auto' key={format}>
                                                 <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download?format=${format}`}>
                                                     .{format}
@@ -122,13 +122,13 @@ const Run = () => {
                             <FormGroup>
                                 <FormLabel htmlFor='selectedQuerySequence'>Select a query sequence to browse hits:</FormLabel>
                                 <FormSelect onChange={onHandleQueryChange} name='selectedQuerySequence'>
-                                    {run.queries.map((query_seq, index) => 
+                                    {run.queries.map((query_seq, index) =>
                                         <option value={index} key={`opt_${index}`}>{query_seq.definition}</option>
                                     )}
                                 </FormSelect>
                             </FormGroup>
                             {
-                                (typeof selectedQuerySequence !== 'undefined') && 
+                                (typeof selectedQuerySequence !== 'undefined') &&
                                 <>
                                     <div>
                                         <h5>Query Sequence Details</h5>
@@ -137,7 +137,7 @@ const Run = () => {
                                         <h5>Classification Results</h5>
                                         <p>Classification by BLAST: {run.queries[selectedQuerySequence].results_species_name}</p>
                                     </div>
-                                    <RunTable querySequenceId={run.queries[selectedQuerySequence].id} runId={runId}/>
+                                    <RunTable querySequenceId={run.queries[selectedQuerySequence].id} runId={runId} />
                                 </>
                             }
                         </Tab>
@@ -154,7 +154,7 @@ const Run = () => {
                                     <span className='d-block' style={{ width: 'fit-content' }}>Export taxonomy as</span>
                                 </Col>
                                 {['csv', 'tsv'].map(format => {
-                                    return(
+                                    return (
                                         <Col className='col-auto' key={format}>
                                             <a target='_blank' rel='noreferrer' className='text-nowrap' href={`${urlRoot}/runs/${runId}/download/taxonomy?format=${format}`}>
                                                 .{format}
@@ -163,7 +163,7 @@ const Run = () => {
                                     )
                                 })}
                             </Row>
-                            <TaxonomyTable initialData={run.queries}/>
+                            <TaxonomyTable initialData={run.queries} />
                         </Tab>
                     </Tabs>
                 </div>
@@ -201,14 +201,18 @@ const Run = () => {
                 <Container className='g-0'>
                     <Row className='py-3'>
                         <Col className='col-auto'>
-                            <Button variant='primary' className='align-middle my-1'>
-                                <Link to={`/blast/`} className='text-white text-decoration-none'>Run new query</Link>
-                            </Button>
+                            <Link to={`/blast/`} className='text-white text-decoration-none'>
+                                <Button variant='primary' className='align-middle my-1'>
+                                    Run new query
+                                </Button>
+                            </Link>
                         </Col>
                         <Col className='col-auto'>
-                            <Button variant='secondary' className='align-middle my-1'>
-                                <Link to={`/blast/?database=${run.db_used.id}`} className='text-white text-decoration-none'>Run new query with same database</Link>
-                            </Button>
+                            <Link to={`/blast/?database=${run.db_used.id}`} className='text-white text-decoration-none'>
+                                <Button variant='secondary' className='align-middle my-1'>
+                                    Run new query with same database
+                                </Button>
+                            </Link>
                         </Col>
                     </Row>
                 </Container>

@@ -69,12 +69,15 @@ const BlastDb = () => {
     const renderRunButton = useCallback(() => {
         if (data.locked) {
             return (
-                <Button variant='primary' className='align-middle'>
-                    <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none'>Run a Query</Link>
-                </Button>)
+                <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none button-primary'>
+                    <Button variant='primary' className='align-middle'>
+                        Run a Query
+                    </Button>
+                </Link>
+            )
         } else {
             return (
-            <p><FaInfoCircle/>This database has not been published yet, so no BLAST queries can be run.</p>)
+                <p><FaInfoCircle />This database has not been published yet, so no BLAST queries can be run.</p>)
         }
     }, [data])
 
@@ -129,22 +132,22 @@ const BlastDb = () => {
                         <h1>{custom_name} </h1>
                         <p>{marker_gene} Reference Library</p>
                     </span>
-                    
+
                     <div className={styles.visibilityInfo}>
                         <p className='mt-0 mb-2 text-muted'>
                             {
                                 is_public_library ?
-                                    <><FaRegEye/> Public Database</>
+                                    <><FaRegEye /> Public Database</>
                                     :
-                                    <><FaRegEyeSlash/> Private Database</>
+                                    <><FaRegEyeSlash /> Private Database</>
                             }
                         </p>
                         <span className='mx-2'>|</span>
                         <p className='text-muted'>
                             {
                                 locked ?
-                                    <><FaLockOpen/> Published</> :
-                                    <><FaLock/> Unpublished</>
+                                    <><FaLockOpen /> Published</> :
+                                    <><FaLock /> Unpublished</>
                             }
                         </p>
                         <p className='mt-0 mb-2 text-muted'>
@@ -161,7 +164,7 @@ const BlastDb = () => {
                             <Col className='col-12 col-sm-7'>
                                 <h3>Summary</h3>
                                 <p className='text-muted'>Number of sequences: {sequenceCount}</p>
-                                <DbSummary id={databaseId}/>
+                                <DbSummary id={databaseId} />
                             </Col>
                             <Col className='col-12 col-sm-5'>
                                 <h3>Export</h3>
@@ -190,7 +193,7 @@ const BlastDb = () => {
                             </Col>
                         </Row>
                     </Container>
-                    <DbTable id={databaseId} sequenceCount={sequenceCount}/>
+                    <DbTable id={databaseId} sequenceCount={sequenceCount} />
                 </div>
             </Layout>
         </Wrapper>

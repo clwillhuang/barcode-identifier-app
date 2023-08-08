@@ -56,6 +56,7 @@ function Libraries() {
 
     return (
         <Wrapper>
+            {helmet}
             <Layout>
                 <div>
                     <Alert variant='secondary'>This website build is accessing data from <a href={urlRoot}>{urlRoot}</a></Alert>
