@@ -4,7 +4,7 @@ import { Pagination, Row, Col, Container } from 'react-bootstrap';
 export default function TablePagination({topId, previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize}) {
     
     return(
-        <Container className='mt-3' id='page'>
+        <Container className='mt-2' id='page'>
             <Row>
                 <Col className='col-8'>
                     <Pagination className='d-flex justify-content-left'>
@@ -12,16 +12,25 @@ export default function TablePagination({topId, previousPage, canPreviousPage, g
                         {
                             pageCount >= 1 ?
                             <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(1)} disabled={pageIndex === 1}>{1}</Pagination.Item> :
-                            <Pagination.Item href={`#${topId}`} disabled>{0}</Pagination.Item>
+                            null
                         }
                         <Pagination.Ellipsis disabled />
                         {pageIndex - 2 >= 1 && <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageIndex - 2)}>{pageIndex - 2}</Pagination.Item>}
                         {pageIndex - 1 >= 1 && <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageIndex - 1)}>{pageIndex - 1}</Pagination.Item>}
-                        <Pagination.Item active>{pageIndex}</Pagination.Item>
+                        {
+                            pageCount >= 1 ?
+                            <Pagination.Item active>{pageIndex}</Pagination.Item> :
+                            <Pagination.Item disabled>1</Pagination.Item>
+                        }
+                        
                         {pageIndex + 1 <= pageCount && <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageIndex + 1)}>{pageIndex + 1}</Pagination.Item>}
                         {pageIndex + 2 <= pageCount && <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageIndex + 2)}>{pageIndex + 2}</Pagination.Item>}
                         <Pagination.Ellipsis disabled />
-                        <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageCount)} disabled={pageIndex === pageCount}>{pageCount}</Pagination.Item>
+                        {
+                            pageCount >= 1 ?
+                            <Pagination.Item href={`#${topId}`} onClick={() => gotoPage(pageCount)} disabled={pageIndex === pageCount}>{pageCount}</Pagination.Item> :
+                            null
+                        }
                         <Pagination.Next href={`#${topId}`} onClick={() => nextPage()} disabled={!canNextPage} />
                     </Pagination>
                 </Col>

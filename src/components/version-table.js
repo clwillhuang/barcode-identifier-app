@@ -108,7 +108,7 @@ const VersionTable = ({ initialData, libraryId }) => {
 
     return (
         <div id={tableTopId}>
-            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex: pageIndex + 1, pageCount, nextPage, canNextPage, pageSize }} />
             <IconContext.Provider value={{ size: '0.8em', className: 'mx-1' }}>
                 <div id='versiontop' style={{ overflow: 'auto', height: '15px', marginBottom: '15px'}}>
                     <div id='versioncontent' style={{ height: '15px' }}>
@@ -158,7 +158,7 @@ const VersionTable = ({ initialData, libraryId }) => {
                     </tbody>
                 </Table>
             </IconContext.Provider>
-            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex, pageCount, nextPage, canNextPage, pageSize }} />
+            <TablePagination topId={tableTopId} {...{ previousPage, canPreviousPage, gotoPage, pageIndex: pageIndex + 1, pageCount, nextPage, canNextPage, pageSize }} />
         </div>
     )
 }

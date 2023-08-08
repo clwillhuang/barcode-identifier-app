@@ -4,7 +4,7 @@ import 'swagger-ui-react/swagger-ui.css';
 import CustomHelmet from '../components/custom-helmet';
 import Wrapper from '../components/wrapper';
 import Layout from '../components/layout';
-import { docsRoot } from '../url';
+import { swaggerRoot } from '../url';
 
 const ApiDocs = () => {
     return (
@@ -16,7 +16,7 @@ const ApiDocs = () => {
             />
             <Layout>
                 <h2>Interactive API Documentation</h2>
-                <SwaggerUI defaultModelsExpandDepth={-1} url={`${docsRoot}/swagger.yaml`} />
+                <SwaggerUI defaultModelsExpandDepth={-1} url={`${swaggerRoot}/swagger.yaml`} />
             </Layout>
         </Wrapper>
     );

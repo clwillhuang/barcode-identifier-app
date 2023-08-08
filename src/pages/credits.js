@@ -101,7 +101,8 @@ const Credits = () => {
                     </li>
                 </ol>
                 <h5>Image Attribution</h5>
-                <p>Homepage image is by <a href="https://unsplash.com/@wawa01?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Waren Brasse</a> on <a href="https://unsplash.com/photos/IzCUWUi_j8I?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                <p>
+                    Homepage image is by <a href="https://unsplash.com/@wawa01?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Waren Brasse</a> on <a href="https://unsplash.com/photos/IzCUWUi_j8I?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
                 </p>
             </Layout>
         </Wrapper>

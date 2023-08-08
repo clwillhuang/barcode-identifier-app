@@ -1,7 +1,7 @@
 import { Button, Col, Container, FormGroup, FormSelect, Row } from 'react-bootstrap';
 import 'phylotree/dist/phylotree.css'
 import React, { useState } from 'react'
-import { runsFolder, urlRoot } from '../url'
+import { staticRunsRoot } from '../url'
 import styles from './hit-tree.module.css'
 import { FaCloudDownloadAlt, FaFileAlt, FaMouse } from 'react-icons/fa'
 import { Tree } from './Tree';
@@ -16,19 +16,19 @@ const RunTreeTab = ({ run_data, querySequences, enabled }) => {
 
     const downloadAlignment = () => {
         if (typeof window !== 'undefined') {
-            window.open(`${urlRoot}/${runsFolder}/${run_data.id}/${treeSelected.id}.aln-clustal_num.clustal_num`)
+            window.open(`${staticRunsRoot}/${run_data.id}/${treeSelected.id}.aln-clustal_num.clustal_num`)
         }
     }
 
     const downloadSequences = () => {
         if (typeof window !== 'undefined') {
-            window.open(`${urlRoot}/${runsFolder}/${run_data.id}/${treeSelected.id}.sequence.txt`)
+            window.open(`${staticRunsRoot}/${run_data.id}/${treeSelected.id}.sequence.txt`)
         }
     }
 
     const downloadTree = () => {
         if (typeof window !== 'undefined') {
-            window.open(`${urlRoot}/${runsFolder}/${run_data.id}/${treeSelected.id}.phylotree.ph`)
+            window.open(`${staticRunsRoot}/${run_data.id}/${treeSelected.id}.phylotree.ph`)
         }
     }
 
