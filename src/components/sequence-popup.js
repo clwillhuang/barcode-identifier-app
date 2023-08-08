@@ -100,15 +100,15 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
     const layout = [
         {
             title: 'Summary',
-            fields: [['version', 'Accession.Version'], 'organism', ['created', 'Date Added'], 'genbank_modification_date', 'organelle', 'type_material', 'definition', 'isolate']
+            fields: [['version', 'Accession.Version'], 'organism', ['created', 'Date Added'], ['genbank_modification_date', 'GenBank Modification Date'], 'organelle', 'type_material', 'definition', 'isolate']
         },
         {
             title: 'Collection Information',
-            fields: ['country', ['lat_lon', 'Latitude, Longitude'], 'specimen_voucher']
+            fields: ['country', ['lat_lon', 'Latitude, Longitude'], ['specimen_voucher', 'Specimen Voucher']]
         },
         {
             title: 'Publication Info',
-            fields: ['journal', 'title', 'authors']
+            fields: ['title', 'authors', 'journal']
         }
     ]
 

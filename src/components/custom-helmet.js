@@ -20,7 +20,7 @@ const CustomHelmet = ({ title, description, canonical, keywords}) => {
 }
 
 CustomHelmet.defaultProps = {
-    title: appName,
+    title: 'Welcome',
     description: 'Browse and utilize a barcode reference library for Neotropical electric fishes.',
     canonical: '',
     keywords: 'fish, barcode, Gymnotiformes',

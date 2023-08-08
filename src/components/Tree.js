@@ -246,82 +246,82 @@ export class Tree extends React.Component {
     render() {
         return (
             <Row>
-                    <div
-                        className={styles.treeContainer}
-                        id='tree_container'
-                        style={this.state.viewportMatchTreeSize ? {
-                            width: `${this.state.width}px`,
-                            height: `${this.state.height}px`
-                        } : {}}
-                        ref={el => (this.state.treeContainer = el)}
-                    >
-                    </div>
-                    <div className={'text-muted ' + styles.treeCaption}>
-                        <em>Interactive tree render made by{' '}
-                            <a href='https://www.npmjs.com/package/phylotree' target='_blank' rel='noopener noreferrer'>phylotree.js</a>. Credit given to original authors.
-                        </em>
-                    </div>
-                    <Accordion className='my-4'>
-                        <Accordion.Item eventKey='0'>
-                            <Accordion.Header>Tree display options</Accordion.Header>
-                            <Accordion.Body>
-                                <Form>
-                                    <Row className='my-3'>
+                <div
+                    className={styles.treeContainer}
+                    id='tree_container'
+                    style={this.state.viewportMatchTreeSize ? {
+                        width: `${this.state.width}px`,
+                        height: `${this.state.height}px`
+                    } : {}}
+                    ref={el => (this.state.treeContainer = el)}
+                >
+                </div>
+                <div className={'text-muted ' + styles.treeCaption}>
+                    <em>Interactive tree render made by{' '}
+                        <a href='https://www.npmjs.com/package/phylotree' target='_blank' rel='noopener noreferrer'>phylotree.js</a>. Credit given to original authors.
+                    </em>
+                </div>
+                <Accordion className='my-4'>
+                    <Accordion.Item eventKey='0'>
+                        <Accordion.Header>Tree display options</Accordion.Header>
+                        <Accordion.Body>
+                            <Form>
+                                <Row className='my-3'>
+                                    <FormGroup>
+                                        <FormCheck id='highlightQueryTips' name='highlightQueryTips' type='checkbox' onChange={this.onChangeHighlightQueryTips} value={this.state.highlightQueryTips} label='Highlight tips of query sequences'></FormCheck>
+                                    </FormGroup>
+                                </Row>
+                                <Row className='my-3'>
+                                    <Col className='col-6 col-md-6 col-lg-3'>
                                         <FormGroup>
-                                            <FormCheck id='highlightQueryTips' name='highlightQueryTips' type='checkbox' onChange={this.onChangeHighlightQueryTips} value={this.state.highlightQueryTips} label='Highlight tips of query sequences'></FormCheck>
+                                            <Form.Label htmlFor="windowWidth">Width (pixels)</Form.Label>
+                                            <Form.Control
+                                                type="numeric"
+                                                id="windowWidth"
+                                                value={this.state.width ?? 0}
+                                                onChange={this.setWidth}
+                                            />
                                         </FormGroup>
-                                    </Row>
-                                    <Row className='my-3'>
-                                        <Col className='col-6 col-md-6 col-lg-3'>
-                                            <FormGroup>
-                                                <Form.Label htmlFor="windowWidth">Width (pixels)</Form.Label>
-                                                <Form.Control
-                                                    type="numeric"
-                                                    id="windowWidth"
-                                                    value={this.state.width ?? 0}
-                                                    onChange={this.setWidth}
-                                                />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col className='col-6 col-md-6 col-lg-3'>
-                                            <FormGroup>
-                                                <Form.Label htmlFor="windowHeight">Height (pixels)</Form.Label>
-                                                <Form.Control
-                                                    type="numeric"
-                                                    id="windowHeight"
-                                                    value={this.state.height ?? 0}
-                                                    onChange={this.setHeight}
-                                                />
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                    <Button onClick={() => this.updateTree()}>
-                                        <FaSyncAlt className={styles.buttonIcon} size={20}/>
-                                        Rerender with new dimensions
-                                    </Button>
-                                    <Row className='my-3'>
+                                    </Col>
+                                    <Col className='col-6 col-md-6 col-lg-3'>
                                         <FormGroup>
-                                            <FormCheck id='viewportMatchTreeSize' name='viewportMatchTreeSize' type='checkbox' onChange={this.onChangeViewportMatchTreeSize} value={this.state.viewportMatchTreeSize} label='Make this size also the viewport size'></FormCheck>
+                                            <Form.Label htmlFor="windowHeight">Height (pixels)</Form.Label>
+                                            <Form.Control
+                                                type="numeric"
+                                                id="windowHeight"
+                                                value={this.state.height ?? 0}
+                                                onChange={this.setHeight}
+                                            />
                                         </FormGroup>
-                                    </Row>
-                                </Form>
-                            </Accordion.Body>
-                        </Accordion.Item>
-                    </Accordion>
-                    <Row className='d-flex align-items-center'>
-                        <Col className='col-auto'>
-                            <Button onClick={() => { this.updateTree(); }}>
-                            <FaSyncAlt className={styles.buttonIcon} size={20}/>
-                                Refresh tree
-                            </Button>
-                            </Col>
-                        <Col className='col-auto'>
-                            <Button onClick={() => { this.downloadTreeSvg(); }}>
-                                <FaImage className={styles.buttonIcon} />
-                                Download current view as SVG
-                            </Button>
-                        </Col>
-                    </Row>
+                                    </Col>
+                                </Row>
+                                <Button onClick={() => this.updateTree()}>
+                                    <FaSyncAlt className={styles.buttonIcon} size={20} />
+                                    Rerender with new dimensions
+                                </Button>
+                                <Row className='my-3'>
+                                    <FormGroup>
+                                        <FormCheck id='viewportMatchTreeSize' name='viewportMatchTreeSize' type='checkbox' onChange={this.onChangeViewportMatchTreeSize} value={this.state.viewportMatchTreeSize} label='Make this size also the viewport size'></FormCheck>
+                                    </FormGroup>
+                                </Row>
+                            </Form>
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+                <Row className='d-flex align-items-center'>
+                    <Col className='col-auto'>
+                        <Button onClick={() => { this.updateTree(); }}>
+                            <FaSyncAlt className={styles.buttonIcon} size={20} />
+                            Refresh tree
+                        </Button>
+                    </Col>
+                    <Col className='col-auto'>
+                        <Button onClick={() => { this.downloadTreeSvg(); }}>
+                            <FaImage className={styles.buttonIcon} />
+                            Download current view as SVG
+                        </Button>
+                    </Col>
+                </Row>
             </Row>
         );
     }
