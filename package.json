@@ -2,7 +2,7 @@
   "name": "barcode-identifier",
   "homepage": "/app",
   "build": "react-scripts build && mkdir build/app && mv build/static build/app/static",
-  "version": "0.1.0",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
