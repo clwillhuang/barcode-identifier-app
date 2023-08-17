@@ -68,8 +68,9 @@ const BlastDb = () => {
 
     const renderRunButton = useCallback(() => {
         if (data.locked) {
+            const blastParams = new URLSearchParams({library: libraryId, database: data.id})
             return (
-                <Link to={`/blast/?database=${data.id}`} className='text-white text-decoration-none button-primary'>
+                <Link to={`/blast?${blastParams.toString()}`} className='text-white text-decoration-none button-primary'>
                     <Button variant='primary' className='align-middle'>
                         Run a Query
                     </Button>

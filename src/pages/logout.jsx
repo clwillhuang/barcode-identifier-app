@@ -31,11 +31,8 @@ const Logout = () => {
                     throw new Error()
                 }
             })
-            .then(data => {
-
-            }).catch(err => {
+            .catch(err => {
                 console.log(err)
-                console.log("Outer error");
             }),
         {
             refetchInterval: false,

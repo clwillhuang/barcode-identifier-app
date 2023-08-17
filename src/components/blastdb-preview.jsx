@@ -21,6 +21,7 @@ const BlastDbPreview = ({ database, libraryId }) => {
     }
 
     const { id, version_number, custom_name, sequence_count, description, created, locked } = database
+    const blastParams = new URLSearchParams({library: libraryId, database: id})
 
     return (
         <div className={styles.container}>
@@ -30,7 +31,7 @@ const BlastDbPreview = ({ database, libraryId }) => {
             <div className={styles.buttonRow}>
                 {
                     locked ? 
-                    <Link to={`/blast/?database=${id}`} className='text-white text-decoration-none'>
+                    <Link to={`/blast?${blastParams.toString()}`} className='text-white text-decoration-none'>
                         <Button variant='primary'>
                             Run a Query
                         </Button>

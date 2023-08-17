@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const domain = ''
+const domain = 'http://localhost:8000'
 // URL address of interactive API documentation
 export const swaggerRoot = `${domain}/api`
 // URL address of backend API

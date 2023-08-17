@@ -2,12 +2,9 @@
   "name": "barcode-identifier",
   "homepage": "/app",
   "build": "react-scripts build && mkdir build/app && mv build/static build/app/static",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.2.2",
     "chartist": "^1.3.0",
     "js-cookie": "^3.0.5",
@@ -21,20 +18,14 @@
     "react-minimal-pie-chart": "^8.4.0",
     "react-query": "^3.39.2",
     "react-router-dom": "^6.4.2",
-    "react-scripts": "5.0.1",
     "react-table": "^7.8.0",
-    "source-map-explorer": "^2.5.3",
     "swagger-ui-react": "^4.18.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "start": "GENERATE_SOURCEMAP=false && react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false && react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -53,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.4"
   }
 }

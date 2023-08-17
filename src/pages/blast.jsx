@@ -101,11 +101,15 @@ function Blast() {
             const response = await fetch(url, { method: 'POST', headers: postHeaders, mode: 'cors', body: formData })
 
             if (response.ok) {
-                return response.json()
+                return response.json();
             } else {
-                setResponseError(`Error ${response.status}: ${response.statusText}.`)
-                setSequenceInvalid(true)
-                throw new Error(`Error ${response.status}: ${response.statusText}.`)
+                if (response.status >= 400 && response.status < 500) {
+                    const errorMessage = await response.json();
+                    setResponseError(`Error ${response.status}: ${response.statusText}. ${errorMessage['message']}`)
+                    setSequenceInvalid(true)
+                } else {
+                    setResponseError(`Error ${response.status}: ${response.statusText}.`)
+                }
             }
         },
         onSuccess: (data) => navigate(`/run/${data.id}/status`),
@@ -248,7 +252,7 @@ function Blast() {
                             onChange={handleChange}
                             placeholder='Provide accession number(s) or GI(s)' />
                         <Form.Control.Feedback type="invalid">
-                            {"Error: " + responseError}
+                            {responseError}
                         </Form.Control.Feedback>
                     </FormGroup>
 
@@ -264,7 +268,7 @@ function Blast() {
                             <>
                                 <FormGroup className='my-3 mx-5'>
                                     <FormLabel htmlFor='librarySelect'>Reference Library</FormLabel>
-                                    <FormSelect aria-label='Select reference library to query on' name='librarySelect' id='librarySelect' defaultValue={libraries[0].id} onChange={handleChange}>
+                                    <FormSelect aria-label='Select reference library to query on' name='librarySelect' id='librarySelect' defaultValue={fields.librarySelect ?? libraries[0].id} onChange={handleChange}>
                                         {libraries.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
                                     </FormSelect>
                                     <div className='d-flex justify-content-end'>

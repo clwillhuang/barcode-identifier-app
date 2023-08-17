@@ -15,8 +15,10 @@ const resolveCellContent = (cell, libraryId) => {
         case 'id':
             return (<Link to={`/libraries/${libraryId}/version/${cell.value}`}>View</Link>)
         case 'blastId':
-            if (cell.value.length > 0) 
-                return (<Link to={`/blast?library=${libraryId}&database=${cell.value}`}>Query</Link>)
+            if (cell.value.length > 0) {
+                const blastParams = new URLSearchParams({library: libraryId, database: cell.value})
+                return (<Link to={`/blast?${blastParams.toString()}`}>Query</Link>)
+            }
             else 
                 return <></>
         default:

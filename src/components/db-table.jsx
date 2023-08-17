@@ -42,9 +42,9 @@ const resolveCellContent = (cell, modalShow) => {
         case 'taxon_genus.scientific_name':
         case 'taxon_species.scientific_name':
             const key = cell.column.id.substring(0, cell.column.id.indexOf('.'))
-            const id = cell.row.original[key].id
+            const taxa = cell.row.original
             return cell.value ?
-                <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${id}`}>
+                <a target='_blank' rel='noreferrer' href={`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${taxa[key].id}`}>
                     {cell.value}
                 </a>
                 :

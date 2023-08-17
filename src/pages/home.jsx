@@ -10,7 +10,6 @@ import Wrapper from '../components/wrapper';
 function Home() {
 
 	let navigate = useNavigate();
-	const exampleLink = '/run/1d86710c-dd8e-4906-bef1-20c533916848/results';
 
 	const helmet = <CustomHelmet
 		title='Welcome'
@@ -48,7 +47,6 @@ function Home() {
 					<div className={styles.content}>
 						<h2>Run BLAST and multiple alignment with one click</h2>
 						<p>Perform both BLAST and multiple sequence alignment with the same click, without having to visit multiple websites.</p>
-						<Link to={exampleLink}>View an example</Link>
 					</div>
 					<div className={styles.sideImage}>
 						<img src='/app/blastn_results.png' alt='Screenshot of webpage for browsing blast results' />
@@ -58,7 +56,6 @@ function Home() {
 					<div className={styles.content}>
 						<h2>View and download results effortlessly</h2>
 						<p>View the BLAST results and phylogenetic tree plots directly in the browser, and download the output files.</p>
-						<Link to={exampleLink}>View an example</Link>
 					</div>
 					<div className={styles.sideImage}>
 						<img src='/app/tree_results.png' alt='Screenshot of webpage for browsing phylogenetic tree results'/>

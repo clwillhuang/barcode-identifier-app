@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import { useQuery } from 'react-query';
-import { ErrorMessage, handleResponse } from '../components/error-message';
+import { ErrorMessage, handleResponse } from './error-message';
 import { generateHeaders, urlRoot } from '../url';
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import styles from './sequence-popup.module.css'
