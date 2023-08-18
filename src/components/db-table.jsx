@@ -99,7 +99,7 @@ const DbTable = ({ id, sequenceCount }) => {
                 {
                     Header: 'Country',
                     accessor: 'country',
-                    description: 'Country of collection specified in the sequence features on GenBank.'
+                    description: 'Location where the record was sampled or isolated, per political names of locations and water bodies. May also include region and/or locality.'
                 },
                 {
                     Header: 'Type',
@@ -109,6 +109,16 @@ const DbTable = ({ id, sequenceCount }) => {
                 {
                     Header: 'Isolate',
                     accessor: 'isolate',
+                },
+                {
+                    Header: 'Collection Date',
+                    accessor: 'collection_date',
+                    description: 'Date/time at or date/time range in which the original sample was collected, as indicated on GenBank.'
+                },
+                {
+                    Header: 'Identified by',
+                    accessor: 'identified_by',
+                    description: 'Name of expert who made the taxonomic identification of the species, as indicated on GenBank.'
                 },
                 {
                     Header: 'Latitude / Longitude',

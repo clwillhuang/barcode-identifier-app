@@ -104,7 +104,7 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
         },
         {
             title: 'Collection Information',
-            fields: ['country', ['lat_lon', 'Latitude, Longitude'], ['specimen_voucher', 'Specimen Voucher']]
+            fields: ['collection_date', 'collected_by', 'identified_by', 'country', ['lat_lon', 'Latitude, Longitude'], ['specimen_voucher', 'Specimen Voucher']]
         },
         {
             title: 'Publication Info',
