@@ -146,13 +146,29 @@ export class Tree extends React.Component {
 
         const elem = document.querySelector(this.state.treeContainerId);
         const svgNodes = elem.querySelectorAll("svg");
+        const messageNodes = elem.querySelectorAll("p");
 
+        // Remove existing svg nodes
         for (let i = 0; i < svgNodes.length; i++) {
             const svgNode = svgNodes[i];
             elem.removeChild(svgNode);
         }
+        messageNodes.forEach((node) => elem.removeChild(node));
 
-        let treeObj = new phylotree(this.props.tree);
+        let treeObj = undefined;
+        try {
+            treeObj = new phylotree(this.props.tree);
+        } catch (err) {
+            // On error, show an error message
+            let errorElem = document.createElement('p')
+            errorElem.textContent = 'Unexpected error, could not render interactive tree.'
+            errorElem.className = 'text-danger'
+            elem.appendChild(errorElem)
+            console.log(err)
+            // Skip everything else
+            return;
+        }
+        
         const boundingRect = elem.getBoundingClientRect();
         let treeRender = treeObj.render({
             container: this.state.treeContainerId,
