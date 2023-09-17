@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 
-const domain = 'http://localhost:8000'
+// Domain of the backend API. Leave '' if same site.
+const domain = ''
 // URL address of interactive API documentation
 export const swaggerRoot = `${domain}/api`
 // URL address of backend API
@@ -10,8 +11,7 @@ export const staticRunsRoot = `${domain}/static/runs`
 // Name of app
 export const appName = 'Barrel Web App'
 
-// TODO: Change to domain name once known
-export const webRoot = 'https://fish-barcodes.com/'
+export const webRoot = 'https://barrel.utsc.utoronto.ca/app'
 
 export const generateHeaders = (additionalHeaders) => {
     const token = Cookies.get('knox')
