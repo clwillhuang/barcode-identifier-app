@@ -10,7 +10,7 @@ const Footer = () => {
         { name: "Home", link: "/" },
         { name: "Libraries", link: "/libraries" },
         { name: "Run", link: "/blast" },
-        { name: "Manual", link: "/manual" },
+        { name: "Manual", link: "/docs" },
         { name: "About", link: "/credits" },
         { name: "API", link: "/api-docs"}
     ];
