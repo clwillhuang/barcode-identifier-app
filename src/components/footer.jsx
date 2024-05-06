@@ -10,9 +10,9 @@ const Footer = () => {
         { name: "Home", link: "/" },
         { name: "Libraries", link: "/libraries" },
         { name: "Run", link: "/blast" },
-        { name: "Manual", link: "/docs" },
+        { name: "Documentation", link: "/docs/", anchor: true },
         { name: "About", link: "/credits" },
-        { name: "API", link: "/api-docs"}
+        { name: "API", link: "/api-docs" }
     ];
 
     return (
@@ -24,11 +24,18 @@ const Footer = () => {
                 </div>
                 <div className={styles.right}>
                     <ul className={styles.pages}>
-                        {pages.map((page) => (
-                            <li key={page.name}>
-                                <Link to={page.link}>{page.name}</Link>
-                            </li>
-                        ))}
+                        {
+                            pages.map((page) =>
+                                <li key={page.name}>
+                                    {
+                                        page.anchor ?
+                                            <a href={page.link}>{page.name}</a>
+                                            :
+                                            <Link relative='path' to={page.link}>{page.name}</Link>
+                                    }
+                                </li>
+                            )
+                        }
                     </ul>
                 </div>
             </div>

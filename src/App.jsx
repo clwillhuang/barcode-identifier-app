@@ -10,7 +10,6 @@ import RunStatus from './pages/run-status';
 import { HelmetProvider } from 'react-helmet-async';
 import NotFound from './pages/not-found';
 import Credits from './pages/credits';
-import Manual from './pages/manual';
 import ApiDocs from './pages/api-docs';
 import Libraries from './pages/libraries';
 import Footer from './components/footer';
@@ -34,7 +33,6 @@ function App() {
 					<Route path='run/:runId/results' element={<Run/>}/>
 					<Route path='blast' element={<Blast/>}/>
 					<Route path='credits' element={<Credits/>}/>
-					<Route path='manual' element={<Manual/>}/>
 					<Route path='api-docs' element={<ApiDocs/>}/>
 					<Route path='login' element={<Login/>}/>
 					<Route path='logout' element={<Logout/>}/>

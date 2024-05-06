@@ -79,7 +79,7 @@ function NavigationBar () {
 							<NavLink as={Link} to='/blast'>Run</NavLink>
 						</NavItem>
 						<NavItem>
-							<NavLink as={Link} to='/docs'>Manual</NavLink>
+							<NavLink href='/docs'>Documentation</NavLink>
 						</NavItem>
 						<NavItem>
 							<NavLink as={Link} to='/credits'>About</NavLink>
