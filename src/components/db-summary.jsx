@@ -58,7 +58,8 @@ const DbSummary = ({ id }) => {
         if (attributeName === 'country') {
             let newData = {}
             data.forEach(item => {
-                newData[item.country_name] = 1 + (newData[item.country_name] || 0);
+                const itemKey = item.country_name || item.country
+                newData[itemKey] = item.count + (newData[itemKey] || 0);
             })
             data = []
             for (let key in newData) {
