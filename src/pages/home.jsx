@@ -74,7 +74,7 @@ function Home() {
 				<div className={styles.ready}>
 					<p>Ready to run a query?</p>
 					<Button onClick={() => navigate('/blast')}>Submit a query.</Button>
-					<Button onClick={() => navigate('/manual')}>View the user manual.</Button>
+					<Button href='/docs'>View the documentation.</Button>
 				</div>
 			</Layout>
 		</Wrapper>

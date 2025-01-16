@@ -31,6 +31,7 @@ const DbSummary = ({ id }) => {
                 'annotations__annotation_type': [],
                 'country': [],
                 'title': [],
+                'data_source': []
             }
         }
     )
@@ -45,7 +46,8 @@ const DbSummary = ({ id }) => {
         taxon_family__scientific_name: familyData,
         taxon_genus__scientific_name: genusData,
         annotations__annotation_type: annotationData,
-        title: titleData
+        title: titleData,
+        data_source: dataSourceData
     } = data;
 
     // Return a Chartist data object from an array of data and the 
@@ -58,7 +60,8 @@ const DbSummary = ({ id }) => {
         if (attributeName === 'country') {
             let newData = {}
             data.forEach(item => {
-                newData[item.country_name] = 1 + (newData[item.country_name] || 0);
+                const itemKey = item.country_name || item.country
+                newData[itemKey] = item.count + (newData[itemKey] || 0);
             })
             data = []
             for (let key in newData) {
@@ -69,11 +72,13 @@ const DbSummary = ({ id }) => {
         }
         let sorted = data.sort((a, b) => a.count > b.count);
         let other = 0;
-        let skipped = true;
+        // Collapse attributes if there are too many elements
+        let skipped = sorted.length > 10;
         const tot = data.map(x => x.count).reduce((agg, a) => agg + a, 0);
         for (let item of sorted) {
             let key = item[attributeName]
             const value = item.count
+            if (value === 0) continue;
             const percValue = Number(value / tot);
             let perc = percValue.toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 })
             // stop skipping entries once other composes >= 20% or the current slice is more than 2%
@@ -81,7 +86,7 @@ const DbSummary = ({ id }) => {
                 skipped = false;
             }
             if (!skipped) {
-                let label = key === '' ? 'Unknown' : key;
+                let label = !key ? 'Unknown' : key;
                 let fullLabel = `${label}, ${value} (${perc})`
                 const shortenedLabel = ((label.length > 20) ? `${label.slice(0, 19)} \u2026` : label)
                 const toolTipLabel = `${shortenedLabel}, ${value} (${perc})`
@@ -111,11 +116,12 @@ const DbSummary = ({ id }) => {
         'taxon_family__scientific_name',
         'taxon_genus__scientific_name',
         'annotations__annotation_type',
-        'title'
+        'title',
+        'data_source'
     ]
     // Names to be displayed for the tabs
-    const dataVerboseKeys = ['country', 'superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'annotation type', 'title']
-    const chartData = [countryData, superkingdomData, kingdomData, phylumData, classData, orderData, familyData, genusData, annotationData, titleData].map((d, index) => generateDataObject(d, dataKeys[index]))
+    const dataVerboseKeys = ['country', 'superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'annotation type', 'title', 'source']
+    const chartData = [countryData, superkingdomData, kingdomData, phylumData, classData, orderData, familyData, genusData, annotationData, titleData, dataSourceData].map((d, index) => generateDataObject(d, dataKeys[index]))
 
     useEffect(() => {
         setTt(document.querySelector('.customtt'));
