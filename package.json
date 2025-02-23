@@ -2,7 +2,7 @@
   "name": "barcode-identifier",
   "homepage": "/app",
   "build": "react-scripts build && mkdir build/app && mv build/static build/app/static",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.2.2",

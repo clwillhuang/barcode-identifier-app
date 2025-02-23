@@ -147,7 +147,7 @@ function Blast() {
                         {databaseData.map(db => <option value={db.id} key={db.id}>Version {db.version_number}, "{db.custom_name}" ({db.id})</option>)}
                     </FormSelect>
                     <div className='d-flex justify-content-end'>
-                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`app/libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
+                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`libraries/${fields.librarySelect}/version/${fields.databaseSelect}`}>Browse this database</a>
                     </div>
                 </FormGroup>
             )
@@ -272,7 +272,7 @@ function Blast() {
                                         {libraries.map(library => <option value={library.id} key={library.id}>{library.custom_name} ({library.id})</option>)}
                                     </FormSelect>
                                     <div className='d-flex justify-content-end'>
-                                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`app/libraries/${fields.librarySelect}`}>Browse this reference library</a>
+                                        <a target='_blank' rel='noreferrer' style={{ fontSize: '0.9em', textAlign: 'right' }} href={`libraries/${fields.librarySelect}`}>Browse this reference library</a>
                                     </div>
                                 </FormGroup>
                                 {renderDatabaseOptions()}
