@@ -68,7 +68,7 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
     const taxonomic_data = taxa.map(name => {
         let key = `taxon_${name.toLowerCase()}`
         let d = data[key]
-        if (typeof d === 'undefined' || d === null) {
+        if (!d) {
             return <div key={name}>
                 <span>{name}: </span>
                 <p>Unknown</p>
@@ -128,7 +128,7 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
                                         category.fields.map(field => {
                                             let displayName = Array.isArray(field) ? field[1] : toTitleCase(field)
                                             let keyName = Array.isArray(field) ? field[0] : field
-                                            if (keyName === 'lat_lon') {
+                                            if (keyName === 'lat_lon' && data[keyName]) {
                                                 return (
                                                     <React.Fragment key={field}>
                                                         <b key={field}>{displayName}</b>
@@ -143,7 +143,7 @@ const SequencePopup = ({ nuccoreId, setSequenceShown }) => {
                                             return (
                                                 <React.Fragment key={field}>
                                                     <b>{displayName}</b>
-                                                    <p>{data[keyName].length > 0 ? data[keyName] : '-'}</p>
+                                                    <p>{(data[keyName] && data[keyName].length) > 0 ? data[keyName] : '-'}</p>
                                                 </React.Fragment>
                                             )
                                         })
