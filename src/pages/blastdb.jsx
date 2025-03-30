@@ -89,6 +89,7 @@ const BlastDb = () => {
                     title='BLAST Database'
                     description='Browse a database version of a barcode reference library .'
                     canonical='/libraries'
+                    useChartist
                 />
                 <div>
                     <p>Retrieving data ...</p>

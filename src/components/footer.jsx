@@ -40,7 +40,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className={styles.bottom}>
-                <p>©2023 Lovejoy Lab at the University of Toronto. All rights reserved.</p>
+                <p>©2022-2025 Lovejoy Lab at the University of Toronto. All rights reserved.</p>
             </div>
         </footer>
     );
