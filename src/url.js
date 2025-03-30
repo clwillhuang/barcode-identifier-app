@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 
 // Domain of the backend API. Leave '' if same site.
-const domain = ''
+const domain = 'https://barrel.utsc.utoronto.ca'
 // URL address of interactive API documentation
 export const swaggerRoot = `${domain}/api`
 // URL address of backend API

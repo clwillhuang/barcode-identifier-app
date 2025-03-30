@@ -18,6 +18,7 @@ function NavigationBar () {
 		else 
 		fetch(`${urlRoot}/users/`, {
 			mode: 'cors',
+			credentials: 'include',
 			headers: generateHeaders({})
 		})
             .then(response => {
@@ -29,8 +30,9 @@ function NavigationBar () {
 				}
 			})
 			.then(data => {
-				if (data)
-				setLoginData(data);
+				if (data) {
+					setLoginData(data);
+				}
 				else {
 					console.log('deleted cookie')
 					if (Cookies.get('knox')) {
@@ -42,7 +44,7 @@ function NavigationBar () {
 				}
 			})
 			.catch()
-	}, [])
+	}, [hasSignInCookie()])
 
 	const renderUserInformation = useCallback(() => {
 		if (!loginData || loginData.username === 'not') {
