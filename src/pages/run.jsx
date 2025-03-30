@@ -50,6 +50,8 @@ const Run = () => {
         title='Run results'
         description='Get the results of your query on a curated reference library of Neotropical electric fish sequences.'
         canonical='run'
+        useChartist
+        usePhylotree
     />
 
     if (isLoading) return (

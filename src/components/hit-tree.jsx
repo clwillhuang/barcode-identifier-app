@@ -1,5 +1,4 @@
 import { Button, Col, Container, FormGroup, FormSelect, Row } from 'react-bootstrap';
-import 'phylotree/dist/phylotree.css'
 import React, { useState } from 'react'
 import { staticRunsRoot } from '../url'
 import styles from './hit-tree.module.css'
