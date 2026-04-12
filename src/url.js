@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 
 // Domain of the backend API. Leave '' if same site.
-const domain = 'https://barrel.utsc.utoronto.ca'
+const domain = import.meta.env.VITE_API_URL;
 // URL address of interactive API documentation
 export const swaggerRoot = `${domain}/api`
 // URL address of backend API
@@ -11,7 +11,7 @@ export const staticRunsRoot = `${domain}/static/runs`
 // Name of app
 export const appName = 'Barrel Web App'
 
-export const webRoot = 'https://barrel.utsc.utoronto.ca/app'
+export const webRoot = `${domain}/app`
 
 export const generateHeaders = (additionalHeaders) => {
     const token = Cookies.get('knox')

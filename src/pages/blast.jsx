@@ -42,7 +42,7 @@ function Blast() {
                 if (data.length > 0) {
                     librarySelection = data.find(library => library.id === fields.librarySelect) ?? data[0]
                 }
-                setFields({ ...fields, librarySelect: librarySelection.id })
+                setFields({ ...fields, librarySelect: librarySelection?.id })
             },
             refetchInterval: false,
             retry: false,
